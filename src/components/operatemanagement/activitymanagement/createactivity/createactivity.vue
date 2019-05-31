@@ -298,7 +298,8 @@ export default {
 <style lang="scss" scoped>
 .container {
   width: 1120px;
-  margin: 90px auto;
+  margin: 0 auto;
+  padding-top: 90px;
 
   header {
     width: 1120px;

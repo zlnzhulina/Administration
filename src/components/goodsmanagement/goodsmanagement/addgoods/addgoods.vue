@@ -42,8 +42,8 @@ export default {
 <style lang="scss" scoped>
 .wrap {
   width: 1200px;
-  height: 600px;
-  margin: 90px auto;
+  padding-top: 90px;
+  margin: 0 auto;
   h3 {
     width: 100%;
     height: 88px;
@@ -134,6 +134,7 @@ export default {
       width: 290px;
       height: 40px;
       margin: 86px auto;
+      margin-bottom: 0;
       display: flex;
       justify-content: space-between;
 

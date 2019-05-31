@@ -43,8 +43,8 @@ export default {
 <style lang="scss" scoped>
 .wrap {
   width: 1200px;
-  height: 600px;
-  margin: 90px auto;
+  padding-top: 90px;
+  margin: 0 auto;
   h3 {
     width: 100%;
     height: 88px;
