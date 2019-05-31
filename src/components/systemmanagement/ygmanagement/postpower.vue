@@ -174,6 +174,7 @@ li {
 .container {
   width: 960px;
   height: 622px;
+  
   .search {
     width: 960px;
     height: 58px;

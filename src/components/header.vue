@@ -38,12 +38,10 @@ export default {
     width: 1200px;
     height: 60px;
     background: #f2f2f2;
-    margin: 0 auto;
+    margin: -0 auto;
     position: absolute;
     left: 50%;
     margin-left: -600px;
-    top: 30px;
-
     top: 30px;
     .logo{
         width: 250px;

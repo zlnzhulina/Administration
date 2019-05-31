@@ -83,7 +83,8 @@ export default {
 <style>
 .wrap {
   width: 1200px;
-  margin: 90px auto;
+  margin: 0 auto;
+  padding-top: 90px;
 }
 </style>
 

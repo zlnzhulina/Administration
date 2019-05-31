@@ -21,7 +21,7 @@ a{
 }
 #app {
   width: 100%;
-  /* position: relative; */
-  margin-top: 30px;
+  height: 100%;
+  position: relative;
 }
 </style>

@@ -87,6 +87,7 @@ export default {
 .container {
   width: 960px;
   height: 622px;
+  
   position: relative;
 
   .search {

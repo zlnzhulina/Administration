@@ -22,7 +22,8 @@ export default {
 .wrap {
   width: 1200px;
   height: 600px;
-  margin: 90px auto;
+  margin: 0 auto;
+  padding-top: 90px;
   
   .welimg{
     width: 270px;
