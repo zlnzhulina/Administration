@@ -19,10 +19,10 @@
         <el-button type="text" size="small">移除</el-button>
         <el-button type="text" size="small">编辑</el-button>
       </el-table-column>
-      <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-      <el-table-column prop="tel" label="联系方式" width="120"></el-table-column>
-      <el-table-column prop="department" label="部门" show-overflow-tooltip></el-table-column>
-      <el-table-column prop="post" label="岗位" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="adminName" label="姓名" width="120"></el-table-column>
+      <el-table-column prop="phoneNumber" label="联系方式" width="120"></el-table-column>
+      <el-table-column prop="departmentName" label="部门" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="postName" label="岗位" show-overflow-tooltip></el-table-column>
     </el-table>
     <div class="addcanvas" v-if="addstaffcanvas">
       <div class="edit">
@@ -30,19 +30,19 @@
         <ul>
           <li>
             <span>部门</span>
-            <select name="department" id="department" class="department">
+            <select name="department" id="department" class="department"  v-for="(item,index) in departmentlist">
               <option value="volvo">—请选择—</option>
-              <option value="saab">研发部</option>
-              <option value="opel">销售部</option>
+              <option>{{item.departmentName}}</option>
+              
             </select>
             <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理部门</span>
           </li>
           <li>
             <span>岗位</span>
-            <select name="department" id="department" class="department">
-              <option value="volvo">—请选择—</option>
-              <option value="saab">研发部</option>
-              <option value="opel">销售部</option>
+            <select name="department" id="department" class="department" v-for="(item,index) in postlist">
+              <option>—请选择—</option>
+              <option>{{item.postName}}</option>
+              
             </select>
             <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理岗位</span>
           </li>
@@ -71,130 +71,73 @@
 </template>
 
 <script>
+ import Axios from "axios";
 export default {
+ 
   data() {
     return {
       delstaffcanvas:false,
       addstaffcanvas: false,
       tableData: [
         {
-          name: "小虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王小",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王小虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王小虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        },
-        {
           name: "王虎",
           tel: "17823453378",
           department: "研发部",
           post: "web前端工程师"
         }
-      ]
-    };
+      ],
+      pageNo:1,
+      pageSize:7,
+      departmentlist:[],
+    }
   },
-
+created(){
+  Axios({
+    method: "get",
+        url: "api/systemManager/adminUserList",
+        params: {
+          pageNo: this.pageNo,
+          adminPassword: this.userpwd,
+          adminName:"",
+        },
+        headers:{
+              "ADMINLOGINTOKEN":localStorage.ADMINLOGINTOKEN
+            }
+      }).then(data=>{
+        this.tableData=data.data.data.userPage.records;
+        console.log(data);
+      });
+      Axios({
+        method: "get",
+        url: "api/systemManager/postList",
+        params: {
+          pageNo: "1",
+          pageSize: "30",
+          postName:"",
+        },
+        headers:{
+              "ADMINLOGINTOKEN":localStorage.ADMINLOGINTOKEN
+            }
+      }).then(data=>{
+         this.postlist=data.data.data.postPage.records
+        console.log(data);
+      });
+      Axios({
+        method: "get",
+        url: "api/systemManager/departmengList",
+        params: {
+          pageNo: "1",
+          pageSize: "30",
+          departmentName:"",
+        },
+        headers:{
+              "ADMINLOGINTOKEN":localStorage.ADMINLOGINTOKEN
+            }
+      }).then(data=>{
+          this.departmentlist=data.data.data.departmentPage.records
+        console.log(data);
+      })
+},
   methods: {
     addstaff() {
       this.addstaffcanvas = true;

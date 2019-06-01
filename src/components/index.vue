@@ -2,7 +2,7 @@
   <div class="wrap">
     <div class="welimg"><img src="../assets/welcome.png"></div>
     <div class="welsay">
-      <h1>欢迎你！XXX</h1>
+      <h1>欢迎你！{{name}}</h1>
 <h2>美好的一天从微笑开始</h2>
 
 <h2>加油、加油、加油......</h2></div>
@@ -12,7 +12,13 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      name
+    };
+  },
+  created(){
+   this.name=localStorage.name;
+   
   }
 };
 </script>

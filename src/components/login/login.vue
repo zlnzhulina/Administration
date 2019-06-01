@@ -31,13 +31,31 @@ export default {
     login() {
       Axios({
         method: "post",
-        url: "http://192.168.1.128:8001/loginManager/userLogin",
+        url: "api/loginManager/userLogin",
         data: {
           adminUserName: this.username,
           adminPassword: this.userpwd
         }
       }).then(data => {
-        console.log(data);
+        console.log(data)
+        if(data.data.code==0){
+          console.log(1);
+          localStorage.setItem("ADMINLOGINTOKEN",data.data.data.ADMINLOGINTOKEN);
+          localStorage.setItem("name",data.data.data.userInfo.nickName);
+          Axios({
+            url:"api/loginManager/info",
+            method:"get",
+            headers:{
+              "ADMINLOGINTOKEN":data.data.data.ADMINLOGINTOKEN
+            }
+          }).then(data=>{
+            console.log(data)
+            this.$router.push("/index")
+          })
+          // this.$router.push("/index")
+        }
+      }).catch(err=>{
+        console.log(err)
       });
     }
   }
