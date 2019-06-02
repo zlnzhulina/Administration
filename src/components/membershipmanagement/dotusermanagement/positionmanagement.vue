@@ -6,7 +6,7 @@
         </div>
         <ul>
             <li v-for="(item,index) in position">
-                <span>{{item}}</span>
+                <span>{{item.userCatName}}</span>
                 <div><i>编辑</i><i>删除</i></div>
                 
             </li>
@@ -14,30 +14,83 @@
         <div class="addcontent" v-if="addinput">
             <input type="text" placeholder="请输入设备类型" v-model="addcontent">
         </div>
+        <!-- 分页功能-->
+        <div class="block fr" style="margin-top: 10px;">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-size="pagesize"
+                    layout="total,  prev, pager, next, jumper"
+                    :total="totalCount">
+            </el-pagination>
+        </div>
         <div class="ok" @click="ok">保存</div>
+        
     </div>
+    
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
 //职位管理
 data(){
     return {
         addcontent:"",
         addinput:false,
-        position:["网点负责人","机修工","SA"]
+        position:[],
+        pagesize: 10,
+        currentPage: 1,
+        totalCount: 0,
     }
+    
 },
+created: function () {
+    this.selectUserCatList();
+  },
 methods:{
+    selectUserCatList:function(){
+        Axios(
+        {
+          method: "get",
+          url: "api/networkUserManager/UserCatList"+'?pageNo='+this.currentPage+'&pageSize='+this.pagesize,
+        }
+      ).then(data => {
+          console.log(data)
+        this.position = data.data.data.userCatPage.records;
+        console.log(this.position)
+      })
+    },
 showinput(){
     this.addinput=true;
 },
 ok(){
-    this.position.push(this.addcontent);
-    console.log(this.position);
-    this.addcontent="";
-    this.addinput=false;
-}
+    
+    console.log(this.addcontent);
+    Axios(
+        {
+          method: "post",
+          url: "api/networkUserManager/addUserCat?userCatName="+this.addcontent,
+        //   data:{
+        //       "userCatName":this.addcontent
+        //   }
+        }
+      ).then(data => {
+          this.addcontent="";
+         this.addinput=false;
+         this.selectUserCatList();
+          console.log(data)
+        
+      })
+    
+},
+  handleSizeChange(val) {
+    },
+    handleCurrentChange(val) {
+        this.currentPage = val;
+        this.getTable();
+    },
 }
 }
 </script>

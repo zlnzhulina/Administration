@@ -18,8 +18,8 @@
         <el-button type="text" size="small">重命名</el-button>
         <el-button type="text" size="small">删除</el-button>
       </el-table-column>
-      <el-table-column prop="post" label="岗位" width="440px"></el-table-column>
-      <el-table-column prop="Department" label="部门"></el-table-column>
+      <el-table-column prop="postName" label="岗位"  align="center" width="440px"></el-table-column>
+      <el-table-column prop="departmentName" label="部门"  align="center"></el-table-column>
     </el-table>
 
     <!-- 添加弹窗 -->
@@ -29,16 +29,18 @@
         <ul>
           <li>
             <span>部门</span>
-            <select name="department" id="department" class="department">
+            <!-- <select name="department" id="department" class="department">
               <option value="volvo">—请选择—</option>
-              <option value="saab">研发部</option>
-              <option value="opel">销售部</option>
+              
+            </select> -->
+            <select v-model="postModel.departmentId"  class="department" name="department" id="department" >
+              <option v-for="(department,index) in departmentList" :key="index" :value="department.departmentId">{{ department.departmentName }}</option>
             </select>
             <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理部门</span>
           </li>
           <li>
             <span>名称</span>
-            <input type="text">
+            <input type="text"  v-model="postModel.postName" >
           </li>
         </ul>
         <div class="but">
@@ -53,42 +55,98 @@
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="del">确认</span>
     </div>
+    <!-- 分页功能-->
+        <div class="block fr" style="margin-top: 10px;">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-size="pagesize"
+                    layout="total,  prev, pager, next, jumper"
+                    :total="totalCount">
+            </el-pagination>
+        </div>
   </div>
+  
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   // 岗位管理
   data() {
     return {
+        select:'',
+        postName:'',
         addpostcanvas:false,
         delpostcanvas:false,
-      postdata: [
-        {
-          post: "web前端开发",
-          Department: "研发部"
-        },
-         {
-          post: "web前端开发",
-          Department: "研发部"
-        },
-         {
-          post: "web前端开发",
-          Department: "研发部"
-        },
-         {
-          post: "web前端开发",
-          Department: "研发部"
+        pagesize: 10,
+        currentPage: 1,
+        totalCount: 0,
+        postdata: [],
+        departmentList:[],
+        postModel:{
+          postName:'',
+          departmentId:'',
         }
-      ]
     };
   },
+  created: function () {
+    this.postList();
+    this.initDepartment();
+  },
   methods:{
+      //初始化部门列表
+      initDepartment:function(){
+          Axios(
+        {
+          method: "get",
+          url: "api/systemManager/departmengList"+'?pageNo='+this.currentPage+'&pageSize=100',
+          
+        }
+      ).then(data => {
+        
+        this.departmentList = data.data.data.departmentPage.records;
+        console.log(this.departmentList)
+      })
+      },
+      postList:function(){
+        Axios(
+        {
+          method: "get",
+          url: "api/systemManager/postList"+'?pageNo='+this.currentPage+'&pageSize='+this.pagesize+'&postName='+this.postName,
+          
+        }
+      ).then(data => {
+        
+        self.totalCount = data.data.data.postPage.total;
+        self.pagesize = data.data.data.postPage.size;
+        self.currentPage = data.data.data.postPage.current;
+        this.postdata = data.data.data.postPage.records;
+        console.log(this.postdata)
+      })
+      },
       addpost(){
           this.addpostcanvas=true;
       },
       yes(){
-          this.addpostcanvas=false;
+        console.log(this.postModel)
+        // this.$axios.post(this.url, {"post":JSON.stringify(this.postModel)}
+        Axios(
+        {
+          method: "post",
+          url: "api/systemManager/addPost"+"?postName="+this.postModel.postName+"&departmentId="+this.postModel.departmentId,
+          // data:{
+            // "post":JSON.stringify(this.postModel)
+            // "postName":this.postModel.postName,
+            // "departmentId":this.postModel.departmentId
+          // }
+        }
+      ).then(data => {
+        this.addpostcanvas=false;
+        this.postList();
+      })
+          
       },
       exit(){
           this.addpostcanvas=false;
@@ -100,8 +158,13 @@ export default {
       },
       del(){
           this.delpostcanvas=false;
-      }
-
+      },
+      handleSizeChange(val) {
+    },
+    handleCurrentChange(val) {
+        this.currentPage = val;
+        this.getTable();
+    },
   }
 };
 </script>

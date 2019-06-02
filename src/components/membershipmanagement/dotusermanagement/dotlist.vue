@@ -17,15 +17,26 @@
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
-      <el-table-column prop="distributorid" label="经销商编号" width="168px"></el-table-column>
-      <el-table-column prop="dotname" label="网点名称" width="248px"></el-table-column>
-      <el-table-column prop="dotaddress" label="网点地址"></el-table-column>
+      <el-table-column prop="networkCode" label="经销商编号" width="168px"></el-table-column>
+      <el-table-column prop="newworkName" label="网点名称" width="248px"></el-table-column>
+      <el-table-column prop="address" label="网点地址"></el-table-column>
       <el-table-column fixed="right" label="操作" width="130px">
         <el-button type="text" size="small" @click="seedetails(id)">查看</el-button>
         <el-button type="text" size="small" @click="edit(id)">编辑</el-button>
         <el-button type="text" size="small">删除</el-button>
       </el-table-column>
     </el-table>
+    <!-- 分页功能-->
+        <div class="block fr" style="margin-top: 10px;">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-size="pagesize"
+                    layout="total,  prev, pager, next, jumper"
+                    :total="totalCount">
+            </el-pagination>
+        </div>
     <div class="delcanvas" v-if="delcanvas">
       <h3>温馨提示</h3>
       <p>岗位信息删除后不可恢复，确认删除？</p>
@@ -36,21 +47,41 @@
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   //网点列表
   data() {
     return {
       delcanvas: false,
-      tabledata: [
-        {
-          distributorid: "12543245543",
-          dotname: "北京xxxxx汽车服务销售有限公司",
-          dotaddress: "北京市海淀区中关村"
-        }
-      ]
+      tabledata: [],
+      pagesize: 10,
+        currentPage: 1,
+        totalCount: 0,
     };
   },
+  created: function () {
+    this.selectNetWorkList();
+  },
   methods: {
+    selectNetWorkList:function(){
+      Axios(
+        {
+          method: "get",
+          url: "api/networkUserManager/networkList?pageNo="+this.currentPage+'&pageSize='+this.pagesize,
+          // data:{
+            // "post":JSON.stringify(this.postModel)
+            // "postName":this.postModel.postName,
+            // "departmentId":this.postModel.departmentId
+          // }
+        }
+      ).then(data => {
+        console.log(data)
+        self.totalCount = data.data.data.networkPage.total;
+        self.pagesize = data.data.data.networkPage.size;
+        self.currentPage = data.data.data.networkPage.current;
+        this.tabledata = data.data.data.networkPage.records;
+      })
+    },
     //查看
     seedetails(id) {
       this.$router.push({
@@ -81,7 +112,13 @@ export default {
 
     del() {
       this.delcanvas = false;
-    }
+    },
+    handleSizeChange(val) {
+    },
+    handleCurrentChange(val) {
+        this.currentPage = val;
+        this.getTable();
+    },
   }
 };
 </script>
