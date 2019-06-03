@@ -1,10 +1,6 @@
 <template>
   <div class="container">
-    <!-- <div class="header">
-      <span class="add" @click="addgoods">添加商品</span>
-      <span class="add" @click="deleteall">批量删除</span>
-      <input type="text" placeholder="账号"><img src="@/assets/sousuo.png"/>
-    </div> -->
+    
 
     <div class="search">
         <span>
@@ -38,7 +34,6 @@
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
-      @row-click=editrow
     >
       <!-- stripe="true" -->
       <el-table-column prop="parametername" label="参数名称" width="362px"></el-table-column>
@@ -49,8 +44,10 @@
           </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作">
-        <el-button type="text" size="small" @click="edit(rowdata)">编辑</el-button>
+        <template slot-scope="scope">
+        <el-button type="text" size="small" @click="edit(scope.$index,scope.row)">编辑</el-button>
         <el-button type="text" size="small">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
     <div class="delcanvas" v-if="delcanvas">
