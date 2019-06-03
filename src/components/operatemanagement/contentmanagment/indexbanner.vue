@@ -13,17 +13,17 @@
       @row-click="editrow"
     >
       <!-- stripe="true" -->
-      <el-table-column prop="index" label="序" width="30px"></el-table-column>
-      <el-table-column prop="name" label="名称" width="185px"></el-table-column>
-      <el-table-column prop="showphoto" label="展示图" width="220px">
+      <el-table-column prop="orderNum" label="序" width="30px"></el-table-column>
+      <el-table-column prop="bannerName" label="名称" width="185px"></el-table-column>
+      <el-table-column prop="img" label="展示图" width="220px">
         <template slot-scope="scope">
-          <img :src="scope.row.showphoto" style="width:140px;height:79px;">
+          <img :src="scope.row.img" style="width:140px;height:79px;">
         </template>
       </el-table-column>
 
-      <el-table-column prop="alink" label="链接">
+      <el-table-column prop="url" label="链接">
         <template slot-scope="scope">
-          <input type="text" :value="scope.row.alink" style="width:100%;height:50px;border:none"/>
+          <input type="text" :value="scope.row.url" style="width:100%;height:50px;border:none"/>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="195px">
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   //商品列表
   data() {
@@ -63,23 +64,23 @@ export default {
           name: "name",
           showphoto: require("@/assets/welcome.png"),
           alink: "https:www.baidu.com"
-        },
-        {
-          index: 1,
-          name: "name",
-          showphoto: require("@/assets/welcome.png"),
-          alink: "https:www.baidu.com"
-        },
-        {
-          index: 1,
-          name: "name",
-          showphoto: require("@/assets/welcome.png"),
-          alink: "https:www.baidu.com"
         }
       ]
     };
   },
+  created(){
+    this.bannerlist();
+  },
   methods: {
+    bannerlist(){
+      Axios({
+        url:"api/contentManager/bannerList",
+        method:"get",
+      }).then(data=>{
+        console.log(data)
+        this.tabledata=data.data.data.bannerList;
+      })
+    },
     //编辑
     editrow(row) {
       this.rowdata = row;

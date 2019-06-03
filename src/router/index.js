@@ -22,8 +22,10 @@ import operatemanagement from '@/components/operatemanagement'
       import indexbanner from '@/components/operatemanagement/contentmanagment/indexbanner'
       //首页扫码入口
       import indexcodeentrance from '@/components/operatemanagement/contentmanagment/indexcodeentrance'
-      //首页活动咨询
+      //首页活动资讯
       import indexactivityinformation from '@/components/operatemanagement/contentmanagment/indexactivityinformation'
+          //添加资讯
+          import addactivitynews from '@/components/operatemanagement/contentmanagment/addactivitynews/addactivitynews'
       //登陆页验真展示
       import loginverifytruthshow from '@/components/operatemanagement/contentmanagment/loginverifytruthshow'
       //消费者活动说明
@@ -175,6 +177,7 @@ export default new Router({
             flag:true,
           },
         },
+        
         {
           path:"loginverifytruthshow",
           name:"loginverifytruthshow",
@@ -192,6 +195,14 @@ export default new Router({
           },
         }
       ]
+    },
+    {
+      path:"/addactivitynews",
+      name:"addactivitynews",
+      component:addactivitynews,
+      meta:{
+        flag:true
+      }
     },
     {
       path:"/createactivity",
