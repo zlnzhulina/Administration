@@ -3,7 +3,7 @@
     <div class="search">
       <span @click="adddepartment">添加部门</span>
       <span class="delete" @click="deldepartment">删除选中</span>
-      <input type="text"   placeholder="请输入关键字搜索">
+      <input type="text"   placeholder="请输入关键字搜索" v-model="departmentName">
       
     </div>
     <el-table
@@ -100,6 +100,11 @@ export default {
   created: function () {
             this.departmentList();
   },
+  watch:{
+    departmentName(){
+      this.departmentList();
+    }
+  },
   methods: {
     departmentList: function(){
       Axios(
@@ -109,9 +114,9 @@ export default {
           
         }
       ).then(data => {
-        self.totalCount = data.data.data.departmentPage.total;
-        self.pagesize = data.data.data.departmentPage.size;
-        self.currentPage = data.data.data.departmentPage.current;
+        this.totalCount = data.data.data.departmentPage.total;
+        this.pagesize = data.data.data.departmentPage.size;
+        this.currentPage = data.data.data.departmentPage.current;
         this.departmentData = data.data.data.departmentPage .records;
         
       })

@@ -3,7 +3,7 @@
     <div class="search">
       <span @click="addstaff">添加员工</span>
       <span class="delete" @click="delstaff">删除选中</span>
-      <input type="text" placeholder="请输入关键字搜索">
+      <input type="text" placeholder="请输入关键字搜索" v-model="searchval">
     </div>
     <el-table
       :header-cell-style="{background:'#9decff',height:'32'}"
@@ -11,13 +11,14 @@
       :data="tableData"
       tooltip-effect="dark"
       style="width: 100%"
-      
     >
-    <!-- stripe="true" -->
+      <!-- stripe="true" -->
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column fixed="left" label="操作" width="120">
-        <el-button type="text" size="small">移除</el-button>
-        <el-button type="text" size="small">编辑</el-button>
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="delyg(scope.$index,scope.row)">移除</el-button>
+          <el-button type="text" size="small" @click="edityg(scope.$index,scope.row)">编辑</el-button>
+        </template>
       </el-table-column>
       <el-table-column prop="adminName" label="姓名" width="120"></el-table-column>
       <el-table-column prop="phoneNumber" label="联系方式" width="120"></el-table-column>
@@ -30,29 +31,40 @@
         <ul>
           <li>
             <span>部门</span>
-            <select name="department" id="department" class="department"  v-for="(item,index) in departmentlist">
+            <select
+              name="department"
+              id="department"
+              class="department"
+              v-model="departmentmodle.departmentid"
+            >
               <option value="volvo">—请选择—</option>
-              <option>{{item.departmentName}}</option>
-              
+              <option
+                v-for="(item,index) in department"
+                :value="item.departmentId"
+              >{{item.departmentName}}</option>
             </select>
             <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理部门</span>
           </li>
           <li>
             <span>岗位</span>
-            <select name="department" id="department" class="department" v-for="(item,index) in postlist">
+            <select
+              name="department"
+              id="department"
+              class="department"
+              v-model="departmentmodle.postId"
+            >
               <option>—请选择—</option>
-              <option>{{item.postName}}</option>
-              
+              <option v-for="(item,index) in post" :value="item.postId">{{item.postName}}</option>
             </select>
             <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理岗位</span>
           </li>
           <li>
             <span>姓名</span>
-            <input type="text">
+            <input type="text" v-model="departmentmodle.adminName">
           </li>
           <li>
             <span>联系方式</span>
-            <input type="tel">
+            <input type="tel" v-model="departmentmodle.phoneNumber">
           </li>
         </ul>
         <div class="but">
@@ -61,100 +73,246 @@
         </div>
       </div>
     </div>
-    <div class="delcanvas" v-if="delstaffcanvas">
+    <div class="addcanvas" v-if="editstaffcanvas">
+      <div class="edit">
+        <h3>编辑员工</h3>
+        <ul>
+          <li>
+            <span>部门</span>
+            <select
+              name="department"
+              id="department"
+              class="department"
+              v-model="editmodle.departmentid"
+            >
+              <option value="volvo">—请选择—</option>
+              <option
+                v-for="(item,index) in department"
+                :value="item.departmentId"
+              >{{item.departmentName}}</option>
+            </select>
+            <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理部门</span>
+          </li>
+          <li>
+            <span>岗位</span>
+            <select
+              name="department"
+              id="department"
+              class="department"
+              v-model="editmodle.postId"
+            >
+              <option>—请选择—</option>
+              <option v-for="(item,index) in post" :value="item.postId">{{item.postName}}</option>
+            </select>
+            <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理岗位</span>
+          </li>
+          <li>
+            <span>姓名</span>
+            <input type="text" v-model="editmodle.adminName">
+          </li>
+          <li>
+            <span>联系方式</span>
+            <input type="tel" v-model="editmodle.phoneNumber">
+          </li>
+        </ul>
+        <div class="but">
+          <button class="yes" style="background:#169bd5;color:#fff;border:none" @click="yesedit">确认</button>
+          <button class="no" @click="exit">取消</button>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="delcanvas" v-if="delstaffcanvas">
       <h3>温馨提示</h3>
       <p>员工信息删除后不可恢复，确认删除？</p>
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="del">确认</span>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
- import Axios from "axios";
+import Axios from "axios";
 export default {
- 
   data() {
     return {
-      delstaffcanvas:false,
+      searchval:"",
+      delstaffcanvas: false,
       addstaffcanvas: false,
-      tableData: [
-        {
-          name: "王虎",
-          tel: "17823453378",
-          department: "研发部",
-          post: "web前端工程师"
-        }
-      ],
-      pageNo:1,
-      pageSize:7,
-      departmentlist:[],
+      editstaffcanvas: false,
+      pageNo: 1,
+      pageSize: 7,
+      department: [],
+      departmentName: "",
+      postName: "",
+      tableData: [],
+      departmentmodle: {
+        departmentid: "",
+        adminName: "",
+        postId: "",
+        phoneNumber: ""
+      },
+      editmodle: {
+        departmentid: "",
+        adminName: "",
+        postId: "",
+        phoneNumber: ""
+      }
+    };
+  },
+  created() {
+    this.yglist();
+    this.postlist();
+    this.departmentlist();
+  },
+  watch:{
+    searchval(){
+      this.yglist();
     }
   },
-created(){
-  Axios({
-    method: "get",
+  methods: {
+     //搜索功能
+    yglist() {
+      Axios({
+        method: "get",
         url: "api/systemManager/adminUserList",
         params: {
           pageNo: this.pageNo,
           adminPassword: this.userpwd,
-          adminName:"",
+          adminName: this.searchval,
         },
-        headers:{
-              "ADMINLOGINTOKEN":localStorage.ADMINLOGINTOKEN
-            }
-      }).then(data=>{
-        this.tableData=data.data.data.userPage.records;
+        headers: {
+          ADMINLOGINTOKEN: localStorage.ADMINLOGINTOKEN
+        }
+      }).then(data => {
+        this.tableData = data.data.data.userPage.records;
         console.log(data);
       });
+    },
+    postlist() {
       Axios({
         method: "get",
         url: "api/systemManager/postList",
         params: {
           pageNo: "1",
           pageSize: "30",
-          postName:"",
+          postName: ""
         },
-        headers:{
-              "ADMINLOGINTOKEN":localStorage.ADMINLOGINTOKEN
-            }
-      }).then(data=>{
-         this.postlist=data.data.data.postPage.records
+        headers: {
+          ADMINLOGINTOKEN: localStorage.ADMINLOGINTOKEN
+        }
+      }).then(data => {
+        this.post = data.data.data.postPage.records;
         console.log(data);
       });
+    },
+    departmentlist() {
       Axios({
         method: "get",
         url: "api/systemManager/departmengList",
         params: {
           pageNo: "1",
           pageSize: "30",
-          departmentName:"",
+          departmentName: ""
         },
-        headers:{
-              "ADMINLOGINTOKEN":localStorage.ADMINLOGINTOKEN
-            }
-      }).then(data=>{
-          this.departmentlist=data.data.data.departmentPage.records
+        headers: {
+          ADMINLOGINTOKEN: localStorage.ADMINLOGINTOKEN
+        }
+      }).then(data => {
+        this.department = data.data.data.departmentPage.records;
         console.log(data);
-      })
-},
-  methods: {
+      });
+    },
     addstaff() {
       this.addstaffcanvas = true;
     },
+    // 添加员工
     yes() {
+      Axios({
+        url: "api/systemManager/addAdminUser",
+        method: "post",
+        data: {
+          adminUserName: localStorage.name,
+          adminName: this.departmentmodle.adminName,
+          departmentId: this.departmentmodle.departmentid,
+          postId: this.departmentmodle.postId,
+          phoneNumber: this.departmentmodle.phoneNumber
+        }
+      }).then(data => {
+        console.log(data);
+        this.yglist();
+      });
       this.addstaffcanvas = false;
+    },
+    //编辑员工
+    edityg(index, row) {
+      console.log(row);
+      
+      this.editmodle.departmentid = row.departmentId;
+      this.editmodle.postId=row.postId;
+      this.editmodle.adminName=row.adminName;
+      this.editmodle.adminUserName=row.adminUserName;
+      this.editmodle.phoneNumber=row.phoneNumber;
+      this.editmodle.adminUserId=row.adminUserId;
+      this.editstaffcanvas = true;
+    },
+    yesedit(){
+      Axios({
+        url:"api/systemManager/editAdminUser",
+        method:"post",
+        data:{
+          adminUserName:this.editmodle.adminUserName,
+          adminName:this.editmodle.adminName,
+          departmentId:this.editmodle.departmentid,
+          postId:this.editmodle.postId,
+          phoneNumber:this.editmodle.phoneNumber,
+          adminUserId:this.editmodle.adminUserId,
+        }
+      }).then(data=>{
+        if(data.data.code==0){
+          this.yglist();
+           this.editstaffcanvas = false;
+        }
+        console.log(data);
+      })
     },
     exit() {
       this.addstaffcanvas = false;
-      this.delstaffcanvas=false;
+      this.delstaffcanvas = false;
+      this.editstaffcanvas = false;
     },
-    delstaff(){
-      this.delstaffcanvas=true;
-    },
-    del(){
-      this.delstaffcanvas=false;
-    }
+   delyg(index,row){
+     this.adminUserIds=row.adminUserId
+     this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          Axios({
+            url:"api/systemManager/delAdminUser",
+            method:"get",
+            params:{
+              adminUserIds:this.adminUserIds
+            }
+          }).then(data=>{
+            if(data.data.code==0){
+              this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.yglist();
+            }
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+   },
+   delstaff(){
+     
+   }
   }
 };
 </script>
@@ -194,11 +352,10 @@ created(){
     }
   }
   .el-table {
-      margin-top: 13px;
+    margin-top: 13px;
     .el-table__header-wrapper {
-    height: 34px;
-}
-    
+      height: 34px;
+    }
   }
   .addcanvas {
     width: 100%;
@@ -288,28 +445,28 @@ created(){
     margin-left: -150px;
     top: 190px;
     background: #eff1f5;
-    h3{
-            width: 100%;
-            height: 60px;
-            font-size: 18px;
-            text-align: center;
-            line-height:60px;
-          }
-          p{
-            width: 100%;
-            height: 54px;
-            margin-top: 16px;
-            text-align: center;
-            font-size: 12px;
-          }
-          span{
-            display: block;
-            width: 150px;
-            float: left;
-            height: 40px;
-            text-align: center;
-            line-height: 40px;
-          }
+    h3 {
+      width: 100%;
+      height: 60px;
+      font-size: 18px;
+      text-align: center;
+      line-height: 60px;
+    }
+    p {
+      width: 100%;
+      height: 54px;
+      margin-top: 16px;
+      text-align: center;
+      font-size: 12px;
+    }
+    span {
+      display: block;
+      width: 150px;
+      float: left;
+      height: 40px;
+      text-align: center;
+      line-height: 40px;
+    }
   }
 }
 </style>

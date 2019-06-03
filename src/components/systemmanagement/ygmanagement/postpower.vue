@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="search">
-      <input type="text" placeholder="请输入关键字搜索">
+      <input type="text" placeholder="请输入关键字搜索" >
     </div>
     <div class="tab">
       <el-table
@@ -10,17 +10,18 @@
         :data="jurisdictionData"
         tooltip-effect="dark"
         style="width: 100%"
-        @row-click="set"
       >
         <!-- stripe="true" -->
         <el-table-column type="selection" width="55"></el-table-column>
 
-        <el-table-column prop="department" label="部门" width="124"></el-table-column>
-        <el-table-column prop="post" label="岗位" width="124"></el-table-column>
-        <el-table-column prop="jurisdiction" label="权限" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="departmentName" label="部门" width="124"></el-table-column>
+        <el-table-column prop="postName" label="岗位" width="124"></el-table-column>
+        <el-table-column prop="menuList" label="权限" show-overflow-tooltip></el-table-column>
 
         <el-table-column fixed="right" label="设置岗位权限" width="124">
-          <el-button type="text" size="small" @click="setcanvas">设置</el-button>
+          <template slot-scope="scope">
+          <el-button type="text" size="small" @click="set(scope.$index,scope.row)">设置</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <div class="canvas" v-if="canvas">
@@ -117,11 +118,13 @@
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   // 岗位权限
   data() {
     return {
       canvas: false,
+      
       jurisdictionData: [
         {
           department: "研发部",
@@ -136,15 +139,27 @@ export default {
       isIndeterminate: true
     };
   },
+  created(){
+    this.postpowerlist();
+  },
   methods: {
-    setcanvas: function() {
-      this.canvas = true;
+   
+    postpowerlist(){
+      Axios({
+        url:"api/systemManager/menuEntList",
+        method:"get",
+        params:{
+          pageNo:"1",
+          pageSize:"10",
+        }
+      }).then(data=>{
+        console.log(data);
+        this.jurisdictionData=data.data.data.postPage.records
+      })
     },
-    set: function(row) {
-      console.log(row);
-      //得到一行的数据
-      //点击设置按钮一定会触发
-      
+    set: function(index,row) {
+      this.canvas = true;
+
     },
     designAllChange: function(val) {
       this.checkeddesign = val ? design : [];
