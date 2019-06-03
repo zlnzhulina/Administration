@@ -18,12 +18,14 @@
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
       <el-table-column prop="networkCode" label="经销商编号" width="168px"></el-table-column>
-      <el-table-column prop="newworkName" label="网点名称" width="248px"></el-table-column>
+      <el-table-column prop="networkName" label="网点名称" width="248px"></el-table-column>
       <el-table-column prop="address" label="网点地址"></el-table-column>
       <el-table-column fixed="right" label="操作" width="130px">
+        <template slot-scope="scope">
         <el-button type="text" size="small" @click="seedetails(id)">查看</el-button>
-        <el-button type="text" size="small" @click="edit(id)">编辑</el-button>
-        <el-button type="text" size="small">删除</el-button>
+        <el-button type="text" size="small" @click="edit(scope.$index,scope.row)">编辑</el-button>
+        <el-button type="text" size="small" @click="delnetwork(scope.$index,scope.row)">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
     <!-- 分页功能-->
@@ -76,11 +78,50 @@ export default {
         }
       ).then(data => {
         console.log(data)
-        self.totalCount = data.data.data.networkPage.total;
-        self.pagesize = data.data.data.networkPage.size;
-        self.currentPage = data.data.data.networkPage.current;
+        this.totalCount = data.data.data.networkPage.total;
+        this.pagesize = data.data.data.networkPage.size;
+        this.currentPage = data.data.data.networkPage.current;
         this.tabledata = data.data.data.networkPage.records;
       })
+    },
+    delnetwork(index,row){
+        this.$confirm('此操作将永久删除该网点, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    Axios(
+                        {
+                        method: "get",
+                        url: "api/networkUserManager/delNetwork"+'?networkIds='+row.networkId,
+                        }
+                    ).then(data => {
+                        this.selectNetWorkList();
+                        console.log(data)
+                        if(data.data.code == '0'){
+                            this.$message({
+                                message: data.data.msg,
+                                type: 'success'
+                            });
+                        }
+                        if(data.data.code == '-1'){
+                            this.$message({
+                                message: data.data.msg,
+                                type: 'error'
+                            });
+                        }
+                        
+                        
+                    })
+                    
+                    
+                }).catch(() => {
+                    this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                    });          
+                });
+        
     },
     //查看
     seedetails(id) {
@@ -92,15 +133,18 @@ export default {
     //添加
     adddot() {
       this.$router.push({
-        path: "/adddot"
+        path: "/adddot",
         // params: {Id:id}
+        query:{
+          flag:'0'
+        }
       });
     },
     //编辑
-    edit(id) {
+    edit(index,row) {
       this.$router.push({
         path: "/adddot",
-        params: { Id: id }
+        query: {flag:'1',networkParm:row}
       });
     },
     deleteall() {
