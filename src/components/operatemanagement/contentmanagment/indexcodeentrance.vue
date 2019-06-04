@@ -22,7 +22,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="195px">
         <template slot-scope="scope">
-        <span @click="replace(scope.row)">替换</span>
+          <el-button size="small" type="text" @click="replace(scope.row)">替换</el-button>
         </template>
       </el-table-column>
     </el-table>

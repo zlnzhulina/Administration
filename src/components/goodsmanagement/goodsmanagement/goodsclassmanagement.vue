@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  //商品列表
+  //商品分类管理
   data() {
     return {
       addcanvas: false,
