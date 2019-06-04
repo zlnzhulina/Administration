@@ -22,7 +22,7 @@
       <el-table-column prop="address" label="网点地址"></el-table-column>
       <el-table-column fixed="right" label="操作" width="130px">
         <template slot-scope="scope">
-        <el-button type="text" size="small" @click="seedetails(id)">查看</el-button>
+        <el-button type="text" size="small" @click="seedetails(scope.$index,scope.row)">查看</el-button>
         <el-button type="text" size="small" @click="edit(scope.$index,scope.row)">编辑</el-button>
         <el-button type="text" size="small" @click="delnetwork(scope.$index,scope.row)">删除</el-button>
         </template>
@@ -124,9 +124,10 @@ export default {
         
     },
     //查看
-    seedetails(id) {
+    seedetails(index,row) {
       this.$router.push({
-        path: "/distributordetails"
+        path: "/distributordetails",
+        query:{flag:'1',networkId:row.networkId}
         // params: {Id:id}
       });
     },
