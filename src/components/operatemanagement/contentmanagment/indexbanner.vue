@@ -75,7 +75,7 @@
         </div>
       </div>
     </div>
-     <div class="addcanvas" v-if="editbannercanvas">
+    <div class="addcanvas" v-if="editbannercanvas">
       <div class="edit">
         <h3>编辑</h3>
         <ul>
@@ -105,7 +105,7 @@
           </li>
         </ul>
         <div class="but">
-          <button class="yes" style="background:#169bd5;color:#fff;border:none" @click="edit">确认</button>
+          <button class="yes" style="background:#169bd5;color:#fff;border:none" @click="editok">确认</button>
           <button class="no" @click="exit">取消</button>
         </div>
       </div>
@@ -130,7 +130,7 @@ export default {
       cuo: require("@/assets/no.png"),
       delcanvas: false,
       addbannercanvas: false,
-      editbannercanvas:false,
+      editbannercanvas: false,
       tabledata: [
         {
           index: 1,
@@ -174,9 +174,51 @@ export default {
     },
     //编辑
     edit(row) {
-      // console.log(row)
-      // this.name = row;
-      
+      console.log(row);
+      this.name = row.bannerName;
+      this.link = row.url;
+      this.imgUrl = row.img;
+      this.editbannercanvas = true;
+    },
+    //确认修改banner
+    editok() {
+      if (!this.name) {
+        this.$message({
+          type: "error",
+          message: "活动名不能为空"
+        });
+      } else if (!this.link) {
+        this.$message({
+          type: "error",
+          message: "链接不能为空"
+        });
+      } else if (!this.imgurl) {
+        this.$message({
+          type: "error",
+          message: "未上传图片"
+        });
+      } else {
+      Axios({
+        url:"contentManager/editBanner",
+        method:"post",
+        data:{
+          img: this.imgurl,
+            url: this.link,
+            bannerName: this.name,
+            orderNum: 5
+        }
+      }).then(data=>{
+        console.log(data);
+        if(data.data.code==0){
+           this.$message({
+          type: "success",
+          message: "修改成功"
+        });
+        this.bannerList();
+        }
+      })
+      }
+      this.editbannercanvas = false;
     },
     //添加
     addbanner() {
@@ -233,6 +275,7 @@ export default {
     exit() {
       this.delcanvas = false;
       this.addbannercanvas = false;
+      this.editbannercanvas = false;
     },
 
     delbanner(row) {

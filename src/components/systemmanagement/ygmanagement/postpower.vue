@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="search">
-      <input type="text" placeholder="请输入关键字搜索" >
+      <input type="text" placeholder="请输入关键字搜索" v-module="searchval">
     </div>
     <div class="tab">
       <el-table
@@ -123,6 +123,7 @@ export default {
   // 岗位权限
   data() {
     return {
+      searchval:"",
       canvas: false,
       
       jurisdictionData: [
@@ -141,6 +142,11 @@ export default {
   },
   created(){
     this.postpowerlist();
+  },
+  watch:{
+    // searchval(val){
+    //   this.
+    // }
   },
   methods: {
    
