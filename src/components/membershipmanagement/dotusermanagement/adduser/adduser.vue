@@ -6,40 +6,111 @@
     <ul>
       <li>
         <span>选择用户类型</span>
-        <select name="department" id="department" class="department">
-          <option value="volvo">会员类型</option>
-          <option value="saab">研发部</option>
-          <option value="opel">销售部</option>
-        </select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <el-select v-model="user.userCatId" placeholder="请选择用户职位">
+          <el-option
+            v-for="item in initUserCat"
+            :key="item.userCatName"
+            :label="item.userCatName"
+            :value="item.userCatId">
+          </el-option>
+        </el-select>
       </li>
       <li>
         <span>选择所属网点</span>
-        <select name="department" id="department" class="department">
-          <option value="volvo">请选择所属网点</option>
-          <option value="saab">研发部</option>
-          <option value="opel">销售部</option>
-        </select>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <el-select v-model="user.networkId" placeholder="请选择所属网点">
+          <el-option
+            v-for="item in initNetwork"
+            :key="item.networkName"
+            :label="item.networkName"
+            :value="item.networkId">
+          </el-option>
+        </el-select>
       </li>
       <li>
         <span>姓名</span>
-        <input type="text" placeholder="请填写使用者姓名">
+        <input type="text" v-model="user.name" placeholder="请填写用户姓名">
       </li>
       <li>
         <span>手机号</span>
-        <input type="text" placeholder="请填写使用者手机号">
+        <input type="text" v-model="user.phoneNumber" placeholder="请填写用户手机号">
       </li>
 
       <div class="tips">账号添加成功后将发送短信至该手机号，其内容包含：账号信息（该手机号）、初始密码以及要登录的小程序名称</div>
       <div class="tips" style="color:#aaaaaa;margin-top:15px;">【解放渠道产品分销系统】张xx您好！登录账号：xxxxxxxx，初始密码：15613512，请您尽快登录小程序“解放渠道分销平台”修改密码。</div>
-      <span class="sub">提交</span>
+      <span class="sub" @click="addUser">提交</span>
     </ul>
 
   </div>
 </template>
 
 <script>
+import Axios from 'axios';
+
 export default {
   //经销商用户编辑
+  data() {
+    return {
+      initUserCat:[],
+      initNetwork:[],
+      user:{
+        userId:'',
+        phoneNumber:'',
+        name:'',
+        networkId:'',
+        userCatId:''
+      }
+    };
+  },
+  created:function(){
+    this.initData();
+  },
+  methods:{
+
+    addUser:function(){
+      console.log(this.user)
+      Axios(
+        {
+          method: "post",
+          url: "api/networkUserManager/addUser",
+          data:JSON.stringify(this.user),
+          headers:{
+            "Content-Type":"application/json"
+          }
+        }
+      ).then(data => {
+        if(data.data.code == '0'){
+              this.$message({
+                  message: data.data.msg,
+                  type: 'success'
+              });
+          }
+          if(data.data.code == '-1'){
+              this.$message({
+                  message: data.data.msg,
+                  type: 'error'
+              });
+          }
+      })
+    },
+    initData:function(){
+      Axios(
+        {
+          method: "get",
+          url: "api/networkUserManager/initUserCatAndNetworkList",
+          
+        }
+      ).then(data => {
+        console.log(this.initUserCat)
+        this.initNetwork = data.data.data.networkList;
+        this.initUserCat = data.data.data.userCatList;
+        console.log(this.initUserCat)
+      })
+    },
+    
+
+  }
 };
 </script>
 

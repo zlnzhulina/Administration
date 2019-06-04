@@ -22,15 +22,28 @@
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
-      <el-table-column prop="VIPid" label="会员账号" width="148px"></el-table-column>
-      <el-table-column prop="userclass" label="用户类型" width="158px"></el-table-column>
+      <el-table-column prop="phoneNumber" label="会员账号" width="148px"></el-table-column>
+      <el-table-column prop="userCat.userCatName" label="用户类型" width="158px"></el-table-column>
       <el-table-column prop="name" label="真实姓名" width="120px"></el-table-column>
-      <el-table-column prop="dotname" label="网点名称"></el-table-column>
+      <el-table-column prop="network.networkName" label="网点名称"></el-table-column>
       <el-table-column fixed="right" label="操作" width="126px">
+        <template slot-scope="scope">
         <el-button type="text" size="small" @click="seedetails(id)">查看</el-button>
-        <el-button type="text" size="small">删除</el-button>
+        <el-button type="text" size="small" @click="deleteUser(scope.$index,scope.row)">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
+     <!-- 分页功能-->
+        <div class="block fr" style="margin-top: 10px;">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-size="pagesize"
+                    layout="total,  prev, pager, next, jumper"
+                    :total="totalCount">
+            </el-pagination>
+        </div>
     <div class="delcanvas" v-if="delcanvas">
       <h3>温馨提示</h3>
       <p>岗位信息删除后不可恢复，确认删除？</p>
@@ -41,22 +54,83 @@
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   //网点列表
   data() {
     return {
       delcanvas: false,
-      tabledata: [
-        {
-          VIPid: "12543245543",
-          userclass:"机修工",
-          name:"张三",
-          dotname: "北京xxxxx汽车服务销售有限公司"
-        }
-      ]
+      pagesize: 10,
+      currentPage: 1,
+      totalCount: 0,
+      tabledata: []
     };
   },
+  created:function(){
+      this.init();
+  },
   methods: {
+    deleteUser(index,row){
+      console.log(row)
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    Axios(
+                        {
+                        method: "get",
+                        url: "api/networkUserManager/delUser"+'?userIds='+row.userId,
+                        }
+                    ).then(data => {
+                        this.init();
+                        console.log(data)
+                        if(data.data.code == '0'){
+                            this.$message({
+                                message: data.data.msg,
+                                type: 'success'
+                            });
+                        }
+                        if(data.data.code == '-1'){
+                            this.$message({
+                                message: data.data.msg,
+                                type: 'error'
+                            });
+                        }
+                        
+                        
+                    })
+                    
+                    
+                }).catch(() => {
+                    this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                    });          
+                });
+    },
+    init:function(){
+      Axios(
+        {
+          method: "get",
+          url: "api/networkUserManager/userList"+'?pageNo='+this.currentPage+'&pageSize='+this.pagesize,
+          
+        }
+      ).then(data => {
+        console.log(data)
+        this.totalCount = data.data.data.userPage.total;
+        this.pagesize = data.data.data.userPage.size;
+        this.currentPage = data.data.data.userPage.current;
+        this.tabledata = data.data.data.userPage.records;
+        
+      })
+    },
+    handleSizeChange(val) {
+    },
+    handleCurrentChange(val) {
+        this.currentPage = val;
+        this.getTable();
+    },
     //查看
     seedetails(id) {
       this.$router.push({

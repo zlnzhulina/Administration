@@ -4,11 +4,11 @@
       <span>网点用户详情>经销商名称...</span>
     </h3>
     <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="distributorNumber" label="经销商编号" width="290"></el-table-column>
-      <el-table-column prop="dotname" label="网点名称" width="310"></el-table-column>
-      <el-table-column prop="position" label="职位"></el-table-column>
+      <el-table-column prop="network.networkCode" label="经销商编号" width="290"></el-table-column>
+      <el-table-column prop="network.networkId" label="网点名称" width="310"></el-table-column>
+      <el-table-column prop="userCat.userCatName" label="职位"></el-table-column>
       <el-table-column prop="name" label="姓名"></el-table-column>
-      <el-table-column prop="number" label="账号"></el-table-column>
+      <el-table-column prop="phoneNumber" label="账号"></el-table-column>
       <el-table-column fixed="right" label="操作" width="130px">
         <el-button type="text" size="small" @click="edit">编辑</el-button>
         <el-button type="text" size="small">删除</el-button>
@@ -18,10 +18,13 @@
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   //查看经销商详细信息
   data() {
     return {
+      networkId:'',
+
       tableData: [
         {
           distributorNumber:"116574564568348",
@@ -33,7 +36,29 @@ export default {
       ]
     };
   },
+  created:function(){
+      this.init();
+  },
   methods:{
+    init:function(){
+      if(this.$route.query.flag == 1){
+        //网点详情
+        this.networkId = this.$route.query.networkId;
+        this.networkDetail(this.networkId);
+      }
+      
+    },
+    networkDetail(netId){
+      Axios(
+            {
+            method: "get",
+            url: "api/networkUserManager/networkDetail"+'?networkId='+netId,
+            }
+        ).then(data => {
+          console.log(data)
+            this.tableData = data.data.data.userList;
+        })
+    },
       edit(){
           this.$router.push("/modify")
       }
