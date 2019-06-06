@@ -13,6 +13,10 @@ import operatemanagement from '@/components/operatemanagement'
       import prizelist from '@/components/operatemanagement/prizemanagement/prizelist'
       //奖品分类
       import prizeclass from '@/components/operatemanagement/prizemanagement/prizeclass'
+        //查看奖品分类详情
+        import prizeclassdetails from '@/components/operatemanagement/prizemanagement/prizeclassdetails/prizeclassdetails'
+        //添加奖品
+        import addprize from '@/components/operatemanagement/prizemanagement/prizeclassdetails/addprize/addprize'
       //奖品参数
       import prizeattribute from '@/components/operatemanagement/prizemanagement/prizeattribute'
       //中奖信息
@@ -50,6 +54,10 @@ import Membershipmanagement from '@/components/membershipmanagement'
       import batchmaintenance from '@/components/membershipmanagement/dotusermanagement/Batchmaintenance'
 // 二维码管理
 import qrcodemanagement from '@/components/qrcodemanagement'
+      //二维码列表
+      import qrcodelist from '@/components/qrcodemanagement/qrcodelist'
+      //创建二维码
+      import addqrcode from '@/components/qrcodemanagement/addqrcode/addqrcode'
 //商品管理 
 import goodsmanagement from '@/components/goodsmanagement'
     //商品列表
@@ -196,6 +204,24 @@ export default new Router({
         }
       ]
     },
+    //查看奖品详情
+    {
+      path:"/prizeclassdetails",
+      name:"prizeclassdetails",
+      component:prizeclassdetails,
+      meta:{
+        flag:true,
+      },
+    },
+    //添加奖品
+    {
+      path:"/addprize",
+      name:"addprize",
+      component:addprize,
+      meta:{
+        flag:true,
+      }
+    },
     {
       path:"/addactivitynews",
       name:"addactivitynews",
@@ -299,6 +325,25 @@ export default new Router({
       meta:{
         flag:true,
       },
+      redirect:"qrcodemanagement/qrcodelist",
+      children:[
+        {
+          path:"qrcodelist",
+          name:"qrcodelist",
+          component:qrcodelist,
+          meta:{
+            flag:true,
+          }
+        }
+      ]
+    },
+    {
+      path:"/addqrcode",
+      name:"addqrcode",
+      component:addqrcode,
+      meta:{
+        flag:true
+      }
     },
     
     {

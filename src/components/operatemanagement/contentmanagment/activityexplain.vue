@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import Axios from "axios";
 export default {
   // 消费者活动说明页
   data(){
@@ -42,7 +43,22 @@ export default {
 
       }
   },
+  created(){
+this.activityexplainlist();
+  },
   methods:{
+    activityexplainlist(){
+       Axios({
+        url:"api/contentManager/pageSetList",
+        method:"get",
+        params:{
+          type:3
+        }
+      }).then(data=>{
+        console.log(data)
+        this.tabledata=data.data.data.pageSetList;
+      })
+    },
       replace(){
 
       }

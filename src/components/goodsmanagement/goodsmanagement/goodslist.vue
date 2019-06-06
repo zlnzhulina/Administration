@@ -38,25 +38,55 @@
       <el-table-column prop="goodsclass" label="商品分类" width="194px"></el-table-column>
       <el-table-column prop="data" label="时间"></el-table-column>
       <el-table-column fixed="right" label="操作" width="146px">
-        <el-button type="text" size="small" @click="seedetails(id)">编辑</el-button>
+        <template slot-scope="scope">
+        <el-button type="text" size="small" @click="seedetails(scope.row)">编辑</el-button>
         <el-button type="text" size="small">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
-    <div class="delcanvas" v-if="delcanvas">
-      <h3>温馨提示</h3>
-      <p>删除账号后不可恢复，确认删除？</p>
-      <span style="background:#fff" @click="exit">取消</span>
-      <span style="background:#169bd5" @click="del">确认</span>
+   <div class="addcanvas" v-if="editgoodlistcanvas">
+      <div class="edit">
+        <h3>编辑员工</h3>
+        <ul>
+          
+         
+          <li>
+            <span>商品名称</span>
+            <input type="text" v-model="goodsName">
+          </li>
+           <li>
+            <span>商品分类</span>
+            <select
+              name="department"
+              id="department"
+              class="department"
+              v-model="goodclass"
+            >
+              <option>—请选择—</option>
+              <option v-for="(item,index) in post" :value="item.goodsId">{{item.postName}}</option>
+            </select>
+            <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理岗位</span>
+          </li>
+        </ul>
+        <div class="but">
+          <button class="yes" style="background:#169bd5;color:#fff;border:none" @click="yesedit">确认</button>
+          <button class="no" @click="exit">取消</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   //商品列表
   data() {
     return {
-      delcanvas: false,
+     
+     editgoodlistcanvas:false,
+     goodsclass:"",
+     goodsName:"",
       tabledata: [
         {
           goodsid: "12543245543",
@@ -67,13 +97,25 @@ export default {
       ]
     };
   },
+  created(){
+    this.goodslist()
+  },
   methods: {
+    goodslist(){
+      // Axios({
+      //   url:"api/",
+      //   method:"get"
+      // }).then(data=>{
+      //   console.log(data)
+      //   this.tabledata=data.data.data;
+      // })
+    },
     //查看
-    seedetails(id) {
-      this.$router.push({
-        path: "/distributordetails"
-        // params: {Id:id}
-      });
+    seedetails(row) {
+      console.log(row);
+      this.goodsName=row.goodsname;
+      this.goodsId=row.goodsid
+      this.editgoodlistcanvas=true;
     },
     //添加
     addgoods() {
@@ -82,11 +124,16 @@ export default {
       });
     },
     //编辑
-    deleteall() {
-      this.delcanvas = true;
+    yesedit(){
+
+    },
+    //批量删除
+    deleteall(){
+
     },
     exit() {
       this.delcanvas = false;
+      this.editgoodlistcanvas=false;
     },
 
     del() {
@@ -188,41 +235,86 @@ export default {
   .el-table {
     margin-top: 13px;
   }
-  .delcanvas {
-    width: 360px;
-    height: 240px;
+  .addcanvas {
+    width: 100%;
+    height: 100%;
     position: absolute;
-    left: 50%;
-    margin-left: -180px;
-    top: 190px;
-    background: #eff1f5;
-    border-radius: 8px;
-    overflow: hidden;
-    z-index: 99;
-    border: 1px solid #dfdfdf;
-    h3 {
-      width: 100%;
-      height: 60px;
-      font-size: 18px;
-      text-align: center;
-      line-height: 60px;
-    }
-    p {
-      width: 100%;
-      height: 114px;
-      margin-top: 16px;
-      text-align: center;
-      font-size: 12px;
-    }
-    span {
-      display: block;
-      width: 180px;
-      font-size: 12px;
-      float: left;
-      height: 50px;
-      text-align: center;
-      line-height: 50px;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    .edit {
+      width: 620px;
+      height: 532px;
+      position: absolute;
+      left: 50%;
+      top: 30px;
+      margin-left: -310px;
+      background: rgb(253, 253, 253);
+      border: 1px solid #000;
+      h3 {
+        width: 100%;
+        height: 84px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 84px;
+      }
+      ul {
+        width: 438px;
+        margin: 0 auto;
+        li {
+          width: 100%;
+          height: 58px;
+          line-height: 58px;
+          list-style: none;
+          span {
+            display: inline-block;
+            width: 75px;
+            height: 58px;
+            text-align: right;
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+          }
+          .department {
+            width: 252px;
+            height: 38px;
+            background: #eff1f5;
+            font-size: 12px;
+            color: #555;
+            margin-left: 17px;
+            text-align: center;
+            border: none;
+          }
+          input {
+            width: 252px;
+            height: 38px;
+            font-size: 12px;
+            color: #555;
+            margin-left: 17px;
+            border: 1px solid #555;
+            border-radius: 5px;
+          }
+        }
+      }
+      .but {
+        width: 308px;
+        height: 40px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-around;
+        margin-top: 86px;
+        button {
+          width: 140px;
+          height: 40px;
+          background: #fff;
+          border: 1px solid #aaa;
+          border-radius: 8px;
+          font-size: 13px;
+        }
+      }
     }
   }
+  
 }
 </style>

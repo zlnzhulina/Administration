@@ -85,6 +85,7 @@ export default {
                   message: data.data.msg,
                   type: 'success'
               });
+              this.$router.back();
           }
           if(data.data.code == '-1'){
               this.$message({

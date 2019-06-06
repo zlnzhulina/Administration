@@ -17,7 +17,7 @@
       </li>
       <li>
           <span>资讯封面图：</span>
-          <div class=""></div>
+          <div class="coverimg"></div>
       </li>
     </ul>
     <div class="title">
@@ -100,6 +100,9 @@ export default {
           border-radius: 5px;
           display: block;
           float: right;
+      }
+      .coverimg{
+        
       }
     }
   }

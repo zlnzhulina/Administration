@@ -1,17 +1,24 @@
 <template>
   <div class="container">
     <header>运营管理>创建活动</header>
-    <div class="activityselect"></div>
+    <div class="activityselect">
+      <el-steps :active="active" finish-status="success">
+        <el-step title="步骤 1"></el-step>
+        <el-step title="步骤 2"></el-step>
+        <el-step title="步骤 3"></el-step>
+      </el-steps>
+    </div>
     <div class="main">
       <div class="preview"></div>
       <div class="right">
-        <div class="deposit">
-          <button>保存</button>
-        </div>
         <el-tabs v-model="activeName">
           <el-tab-pane label="基本设置" name="first">
             <div class="basic">
               <el-form ref="form" :model="form" label-width="80px">
+                <el-form-item label="活动类型">
+                  <el-button>扫码领红包</el-button>
+                  <el-button>滚动抽奖</el-button>
+                </el-form-item>
                 <el-form-item label="活动名称">
                   <el-input v-model="form.name"></el-input>
                 </el-form-item>
@@ -32,13 +39,94 @@
                 <p></p>
                 <!-- 展示图 -->
               </el-form>
+              <el-form :model="form" label-width="100px">
+                <el-form-item label="是否首页推广">
+                  <el-radio-group v-model="form.resource">
+                    <el-radio label="否"></el-radio>
+                    <el-radio label="是"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="页面链接">
+                  <el-input v-model="form.alink"></el-input>
+                </el-form-item>
+                <el-form-item label="活动说明">
+                  <el-input type="textarea" v-model="form.describe"></el-input>
+                </el-form-item>
+              </el-form>
+              <el-form :model="form" label-width="130px">
+                <el-form-item label="消费者码状态条件">
+                  <el-radio-group v-model="form.customerstate">
+                    <el-radio label="否"></el-radio>
+                    <el-radio label="是"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-select v-model="form.region" placeholder="请选择消费者码状态条件">
+                    <el-option label="已关联" value="shanghai"></el-option>
+                    <el-option label="已查询(防伪查询)" value="shanghai"></el-option>
+                    <el-option label="已激活" value="beijing"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="消费者延时扫码">
+                  <el-radio-group v-model="form.delay">
+                    <el-radio label="否"></el-radio>
+                    <el-radio label="是"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-input style="width:240px;" placeholder="只能输入整数"></el-input>
+                  <el-select v-model="form.time" placeholder="单位" style="width:100px;">
+                    <el-option label="小时" value="hour"></el-option>
+                    <el-option label="分钟" value="Minute"></el-option>
+                    <el-option label="秒" value="second"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="白名单">
+                  <el-radio-group v-model="form.white">
+                    <el-radio label="否"></el-radio>
+                    <el-radio label="是"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item label="条码占用期">
+                  <el-radio-group v-model="form.occupy">
+                    <el-radio label="否"></el-radio>
+                    <el-radio label="是"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-input style="width:240px;" placeholder="只能输入整数"></el-input>
+                  <el-select v-model="form.occupytime" placeholder="单位" style="width:100px;">
+                    <el-option label="小时" value="hour"></el-option>
+                    <el-option label="分钟" value="Minute"></el-option>
+                    <el-option label="秒" value="second"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="条码保护期">
+                  <el-radio-group v-model="form.protect">
+                    <el-radio label="否"></el-radio>
+                    <el-radio label="是"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-input style="width:240px;" placeholder="只能输入整数"></el-input>
+                  <el-select v-model="form.protecttime" placeholder="单位" style="width:100px;">
+                    <el-option label="小时" value="hour"></el-option>
+                    <el-option label="分钟" value="Minute"></el-option>
+                    <el-option label="秒" value="second"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="next">下一步</el-button>
+                </el-form-item>
+              </el-form>
             </div>
           </el-tab-pane>
+
           <el-tab-pane label="派奖设置" name="second">
             <div class="send">
               <div
                 style="width:97%;height:44px;border-bottom:1px solid #ccc;line-height:48px;margin:0 auto;font-size:14px;color:#555"
-              >抽奖限制</div>
+              >派奖规则</div>
               <div style="width:646px;heigth:90px;margin-left:30px;">
                 <p style="height:52px;line-height:52px;">
                   <span style="display:inline-block;width:86px; font-weight:bold;">每人可领</span>
@@ -58,10 +146,19 @@
                     style="width:98px;height:24px;border:1px solid #ccc"
                   >个
                 </p>
+                <p style="height:52px;line-height:52px;">
+                  <sapn style="display:inline-block;width:86px;font-weight:bold;">每辆车可领</sapn>
+                  <el-checkbox>不限</el-checkbox>
+                  <input
+                    type="number"
+                    placeholder="设置数量"
+                    style="width:98px;height:24px;border:1px solid #ccc"
+                  >个
+                </p>
               </div>
               <div
                 style="width:97%;height:44px;border-bottom:1px solid #ccc;line-height:48px;margin:0 auto;font-size:14px;color:#555"
-              >领奖限制</div>
+              >领奖规则</div>
               <div class="receive" style="width:97%;">
                 <p>
                   <span style="font-weight:bold;text-align:right">1.是否需要添加车辆</span>
@@ -75,57 +172,12 @@
                 </p>
                 <p>
                   <span style="text-align:right">车辆信息</span>
-                  <span style="width:80%;border-bottom:1px solid #ccc; color:red">添加车辆时需填写的字段</span>
+                  <el-radio v-model="Authentication" label="1">是</el-radio>
+                  <el-radio v-model="Authentication" label="2">否</el-radio>
                 </p>
-                <div class="select">
-                  <p>
-                    车牌号&nbsp;
-                    <el-switch v-model="carcode"></el-switch>
-                    &nbsp;{{carcode?"是":"关"}}
-                  </p>
-                  <p>
-                    车型&nbsp;
-                    <el-switch v-model="carclass"></el-switch>
-                    &nbsp;{{carclass?"是":"关"}}
-                  </p>
-                  <p>
-                    排量&nbsp;
-                    <el-switch v-model="displacement"></el-switch>
-                    &nbsp;{{displacement?"是":"关"}}
-                  </p>
-                  <p>
-                    年款&nbsp;
-                    <el-switch v-model="yearclass"></el-switch>
-                    &nbsp;{{yearclass?"是":"关"}}
-                  </p>
-                  <p>
-                    VIN&nbsp;
-                    <el-switch v-model="VIN"></el-switch>
-                    &nbsp;{{VIN?"是":"关"}}
-                  </p>
-                </div>
-                <div class="select">
-                  <p>
-                    当前里程&nbsp;
-                    <el-switch v-model="currentmileage"></el-switch>
-                    &nbsp;{{currentmileage?"是":"关"}}
-                  </p>
-                  <p>
-                    用油量&nbsp;
-                    <el-switch v-model="oilamount"></el-switch>
-                    &nbsp;{{oilamount?"是":"关"}}
-                  </p>
-                  <p>
-                    发动机号&nbsp;
-                    <el-switch v-model="enginenmb"></el-switch>
-                    &nbsp;{{enginenmb?"是":"关"}}
-                  </p>
-                  <p>
-                    发动机型号&nbsp;
-                    <el-switch v-model="enginecode"></el-switch>
-                    &nbsp;{{enginecode?"是":"关"}}
-                  </p>
-                </div>
+                <p
+                  style="width:350px;height:80px;border:2px dashed #ccc;margin:10px 0 0 80px;"
+                >开启车辆信息，用户需填写：车牌号、车型、排量、年款、当前历程、拥有量、发动机号、发动机型号、VIN等信息</p>
               </div>
               <div class="receive" style="width:97%;">
                 <p>
@@ -134,24 +186,30 @@
                   <el-radio v-model="Authenticationpeople" label="2">否</el-radio>
                 </p>
                 <p>
-                  <span style="text-align:right">上传身份证</span>
+                  <span style="text-align:right">是否分享</span>
                   <el-radio v-model="identity" label="1">是</el-radio>
                   <el-radio v-model="identity" label="2">否</el-radio>
                 </p>
               </div>
             </div>
+            <el-form style="text-align:center;">
+              <el-form-item>
+                <el-button type="primary" @click="nexttwo">下一步</el-button>
+              </el-form-item>
+            </el-form>
           </el-tab-pane>
+
           <el-tab-pane label="奖项设置" name="third">
             <div class="prizeset">
               <div class="relation">
                 <span v-for="item in relationgoods">{{item}}</span>
-                <span>添加</span>
+                <span @click="addgoods">添加</span>
               </div>
 
-              <div class="selectgoods">
+              <div class="selectgoods" v-if="selectgoods">
                 <p style="height:40px;">
                   <span>选择商品</span>
-                  <router-link :to="addgoods">添加商品</router-link>
+                  <a>添加商品</a>
                 </p>
                 <p>
                   <el-dropdown>
@@ -204,7 +262,6 @@
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
                       <el-dropdown-item>黄金糕</el-dropdown-item>
-                   
                     </el-dropdown-menu>
                   </el-dropdown>
                 </p>
@@ -247,13 +304,15 @@
 export default {
   data() {
     return {
-      addgoods: "/addgoods",
+      selectgoods:false,
+      active: "0",
+      // addgoods: "/addgoods",
       addprize: "/addprize",
       creatcar: "1", //是否添加车辆
       Authentication: "1", //是否认证
-      Authenticationpeople:"1",//是否需要实名认证
+      Authenticationpeople: "1", //是否需要实名认证
       identity: "1", //是否上传身份证
-      activeName: "second",
+      activeName: "first",
       carcode: false, //车牌号
       carclass: false, //车型
       displacement: false, //排量
@@ -290,6 +349,17 @@ export default {
   methods: {
     handleClick() {
       alert("button click");
+    },
+    next() {
+      if (this.active++ > 3) this.active = 0;
+      this.activeName = "second";
+    },
+    nexttwo() {
+      if (this.active++ > 3) this.active = 0;
+      this.activeName = "third";
+    },
+    addgoods(){
+      this.selectgoods=true;
     }
   }
 };
@@ -368,12 +438,6 @@ export default {
               display: inline-block;
               width: 130px;
             }
-          }
-          .select {
-            width: 80%;
-            display: flex;
-            justify-content: space-around;
-            margin-left: 90px;
           }
         }
       }

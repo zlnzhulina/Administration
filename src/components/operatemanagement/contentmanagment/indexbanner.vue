@@ -20,11 +20,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="url" label="链接">
-        <template slot-scope="scope">
-          <input type="text" :value="scope.row.url" style="width:100%;height:50px;border:none">
-        </template>
-      </el-table-column>
+      <el-table-column prop="url" label="链接"></el-table-column>
       <el-table-column fixed="right" label="操作" width="195px">
         <template slot-scope="scope">
           <el-button type="text" size="small">上移</el-button>
@@ -175,10 +171,11 @@ export default {
     //编辑
     edit(row) {
       console.log(row);
+      this.bannerId = row.bannerId;
       this.name = row.bannerName;
       this.link = row.url;
-      this.imgUrl = row.img;
       this.editbannercanvas = true;
+      console.log(this.imgUrl);
     },
     //确认修改banner
     editok() {
@@ -198,25 +195,30 @@ export default {
           message: "未上传图片"
         });
       } else {
-      Axios({
-        url:"contentManager/editBanner",
-        method:"post",
-        data:{
-          img: this.imgurl,
+        Axios({
+          url: "api/contentManager/editBanner",
+          method: "post",
+          data: {
+            bannerId: this.bannerId,
+            img: this.imgurl,
             url: this.link,
             bannerName: this.name,
             orderNum: 5
-        }
-      }).then(data=>{
-        console.log(data);
-        if(data.data.code==0){
-           this.$message({
-          type: "success",
-          message: "修改成功"
+          }
+        }).then(data => {
+          console.log(data);
+          if (data.data.code == 0) {
+            this.$message({
+              type: "success",
+              message: "修改成功"
+            });
+          }
+          this.name = "";
+          this.link = "";
+          this.imgurl = "";
+          this.bannerlist();
+          this.bannerList();
         });
-        this.bannerList();
-        }
-      })
       }
       this.editbannercanvas = false;
     },
@@ -268,7 +270,7 @@ export default {
         // this.addbannercanvas = false;
       }
     },
-    //编辑
+    //删除
     deleteall() {
       this.delcanvas = true;
     },

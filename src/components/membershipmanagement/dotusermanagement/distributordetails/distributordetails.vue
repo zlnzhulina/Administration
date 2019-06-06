@@ -45,6 +45,8 @@ export default {
         //网点详情
         this.networkId = this.$route.query.networkId;
         this.networkDetail(this.networkId);
+      }else if(this.$route.query.flag == 2){
+        console.log(this.$route.query.data)
       }
       
     },

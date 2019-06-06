@@ -28,7 +28,7 @@
       <el-table-column prop="network.networkName" label="网点名称"></el-table-column>
       <el-table-column fixed="right" label="操作" width="126px">
         <template slot-scope="scope">
-        <el-button type="text" size="small" @click="seedetails(id)">查看</el-button>
+        <el-button type="text" size="small" @click="seedetails(scope.row)">查看</el-button>
         <el-button type="text" size="small" @click="deleteUser(scope.$index,scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -132,9 +132,11 @@ export default {
         this.getTable();
     },
     //查看
-    seedetails(id) {
+    seedetails(row) {
+
       this.$router.push({
-        path: "/distributordetails"
+        path: "/distributordetails",
+        query:{flag:'2',data:row}
         // params: {Id:id}
       });
     },

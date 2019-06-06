@@ -10,10 +10,11 @@
       ref="multipleTable"
       :data="tableData"
       tooltip-effect="dark"
+      @selection-change="handleSelectionChange"
       style="width: 100%"
     >
       <!-- stripe="true" -->
-      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column type="selection" width="55" v-model="checkList"></el-table-column>
       <el-table-column fixed="left" label="操作" width="120">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="delyg(scope.$index,scope.row)">移除</el-button>
@@ -135,6 +136,8 @@ import Axios from "axios";
 export default {
   data() {
     return {
+      useridarr:[],
+      checkList:[],
       searchval:"",
       delstaffcanvas: false,
       addstaffcanvas: false,
@@ -167,9 +170,20 @@ export default {
   watch:{
     searchval(){
       this.yglist();
+    },
+    checkList(val){
+      console.log(val);
     }
   },
   methods: {
+    handleSelectionChange(val) {
+       this.useridarr.length=0;
+      for(var i=0;i<val.length;i++){
+        this.useridarr.push(val[i].adminUserId)
+      };
+        
+        this.deluserids=this.useridarr.toString()
+      },
      //搜索功能
     yglist() {
       Axios({
@@ -310,8 +324,42 @@ export default {
           });          
         });
    },
+   //删除选中
    delstaff(){
-     
+     this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          Axios({
+            url:"api/systemManager/delAdminUser",
+            method:"get",
+            params:{
+              adminUserIds:this.deluserids,
+            }
+          }).then(data=>{
+            console.log(data);
+            if(data.data.code==0){
+              this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.yglist();
+            }else{
+              this.$message({
+            type: 'error',
+            message: '删除失败!'
+          });
+            }
+
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
    }
   }
 };

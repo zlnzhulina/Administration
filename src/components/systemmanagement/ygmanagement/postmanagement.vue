@@ -10,6 +10,7 @@
       ref="multipleTable"
       :data="postdata"
       tooltip-effect="dark"
+      @selection-change="handleSelectionChange"
       style="width: 100%"
     >
       <!-- stripe="true" -->
@@ -75,12 +76,7 @@
         </div>
       </div>
     </div>
-    <!-- <div class="delcanvas" v-if="delpostcanvas">
-      <h3>温馨提示</h3>
-      <p>岗位信息删除后不可恢复，确认删除？</p>
-      <span style="background:#fff" @click="exit">取消</span>
-      <span style="background:#169bd5" @click="del">确认</span>
-    </div> -->
+    
     <!-- 分页功能-->
     <div class="block fr" style="margin-top: 10px;">
       <el-pagination
@@ -161,6 +157,16 @@ export default {
         this.postdata = data.data.data.postPage.records;
         //console.log(this.postdata);
       });
+    },
+    //批量选中
+    handleSelectionChange(val){
+      console.log(val)
+      this.postidarr=[];
+      for(var i=0;i<val.length;i++){
+        this.postidarr.push(val[i].postId)
+      }
+      console.log(this.postidarr);
+
     },
     addpost() {
       this.addpostcanvas = true;
@@ -254,7 +260,40 @@ export default {
         });
     },
     delpost() {
-      this.delpostcanvas = true;
+      this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          Axios({
+            url:"api/systemManager/delPost",
+            method:"get",
+            params:{
+              postIds:this.postidarr.toString(),
+            }
+          }).then(data=>{
+            console.log(data);
+            if(data.data.code==0){
+              this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.postList();
+            }else{
+              this.$message({
+            type: 'error',
+            message: '删除失败!'
+          });
+            }
+
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
     },
     del() {
       this.delpostcanvas = false;

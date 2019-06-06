@@ -11,6 +11,7 @@
       ref="multipleTable"
       :data="departmentData"
       tooltip-effect="dark"
+       @selection-change="handleSelectionChange"
       style="width: 100%"
     >
       <!-- stripe="true" -->
@@ -66,12 +67,12 @@
         </div>
       </div>
     </div>
-    <div class="delcanvas" v-if="deldepartmentcanvas">
+    <!-- <div class="delcanvas" v-if="deldepartmentcanvas">
       <h3>温馨提示</h3>
       <p>部门信息删除后不可恢复，确认删除？</p>
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="del">确认</span>
-    </div>
+    </div> -->
   </div>
 
   
@@ -85,7 +86,7 @@ export default {
     return {
       adddepartmentcanvas:false,
       editdepartmentcanvas:false,
-      deldepartmentcanvas:false,
+      // deldepartmentcanvas:false,
       check: false,
       pagesize: 10,
       currentPage: 1,
@@ -127,10 +128,84 @@ export default {
     },
     deleteDepartment(index,row){
       this.editId = row.departmentId;
-      this.deldepartmentcanvas=true;
+       this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          Axios({
+            url:"api/systemManager/delDepartment",
+            method:"get",
+            params:{
+              departmentids:this.editId,
+            }
+          }).then(data=>{
+            console.log(data);
+            if(data.data.code==0){
+              this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.departmentList();
+            }else{
+              this.$message({
+            type: 'error',
+            message: '删除失败!'
+          });
+            }
+
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
     },
+    handleSelectionChange(val){
+      console.log(val);
+      this.departmentidarr=[];
+      for(var i=0;i<val.length;i++){
+        this.departmentidarr.push(val[i].departmentId)
+      }
+    },
+    //确定批量删除
     deldepartment() {
-      this.deldepartmentcanvas=true;
+       this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          Axios({
+            url:"api/systemManager/delDepartment",
+            method:"get",
+            params:{
+              departmentids:this.departmentidarr.toString(),
+            }
+          }).then(data=>{
+            console.log(data);
+            if(data.data.code==0){
+              this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.departmentList();
+            }else{
+              this.$message({
+            type: 'error',
+            message: '删除失败!'
+          });
+            }
+
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
     },
     yes() {
       
@@ -149,7 +224,7 @@ export default {
                     message: data.data.msg,
                     });  
         }
-        console.log(this.addInput);
+        //console.log(this.addInput);
         this.adddepartmentcanvas=false;
         this.addInput = '',
         this.departmentList();
@@ -178,6 +253,7 @@ export default {
                     type: 'error',
                     message: data.data.msg,
                     });  
+                    
         }
         this.editdepartmentcanvas=false;
         this.addInput = '',
@@ -195,9 +271,9 @@ export default {
         {
           method: "get",
           url: "api/systemManager/delDepartment"+'?departmentids='+this.editId,
-          // data:{
-          //   departmentName:this.addInput,
-          // }
+          params:{
+            departmentName:this.addInput,
+          }
         }
       ).then(data => {
         this.deldepartmentcanvas=false;
