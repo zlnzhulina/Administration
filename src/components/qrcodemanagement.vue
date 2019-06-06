@@ -15,7 +15,7 @@ export default {
                     threemenu:[
                         {
                             title:"二维码列表",
-                            navto:"qrcodemanagement/qrcodelist"
+                            navto:"/qrcodemanagement/qrcodelist"
                         }
                     ]
                 }
@@ -28,6 +28,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+.wrap {
+  width: 1200px;
+  margin: 0 auto;
+  padding-top: 90px;
+}
 </style>
 
