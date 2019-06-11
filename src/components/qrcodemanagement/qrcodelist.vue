@@ -353,9 +353,7 @@ export default {
           margin-top: 16px;
           font-weight: bold;
         }
-        .el-table {
-          font-size: 12px;
-        }
+        
         select {
           width: 404px;
           height: 38px;
@@ -366,5 +364,8 @@ export default {
       }
     }
   }
+  .el-table {
+          font-size: 12px;
+        }
 }
 </style>

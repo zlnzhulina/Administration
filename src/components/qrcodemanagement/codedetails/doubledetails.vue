@@ -349,5 +349,8 @@ export default {
       }
     }
   }
+  .el-table {
+          font-size: 12px;
+        }
 }
 </style>

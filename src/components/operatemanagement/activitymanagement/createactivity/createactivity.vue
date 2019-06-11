@@ -9,7 +9,24 @@
       </el-steps>
     </div>
     <div class="main">
-      <div class="preview"></div>
+      <!-- 预览区 -->
+      <div class="preview">
+        <div class="one">
+          <div class="bgimg">
+            <el-upload
+              
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+            >
+              <img v-if="imagebgUrl" :src="imagebgUrl" class="avatar">
+              <i v-else>编辑</i>
+            </el-upload>
+          </div>
+        </div>
+        <div class="two"></div>
+        <div class="three"></div>
+      </div>
       <div class="right">
         <el-tabs v-model="activeName">
           <el-tab-pane label="基本设置" name="first">
@@ -291,9 +308,7 @@
                     </el-table-column>
                   </el-table>
                 </div>
-                <div class="addreq">
-                  保存 关联码
-                </div>
+                <div class="addreq">保存 关联码</div>
               </div>
             </div>
           </el-tab-pane>
@@ -307,6 +322,7 @@
 export default {
   data() {
     return {
+      imagebgUrl: "",
       selectgoods: false,
       active: "0",
       // addgoods: "/addgoods",
@@ -363,7 +379,12 @@ export default {
     },
     addgoods() {
       this.selectgoods = true;
-    }
+    },
+
+    handleAvatarSuccess(res, file) {
+      console.log(file);
+      this.imagebgUrl = URL.createObjectURL(file.raw);
+    },
   }
 };
 </script>
@@ -394,12 +415,58 @@ export default {
       width: 338px;
       height: 600px;
       background: firebrick;
+      position: relative;
       float: left;
-      .bgselect {
-        width: 20px;
-        height: 13px;
-        font-size: 1px;
-        color: #fff;
+      .one {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        .bgimg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          .avatar-uploader .el-upload{
+             width: 338px;height: 600px;
+          }
+          .avatar {
+            width: 338px;
+            height: 600px;
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 11px;
+          }
+          // div{
+          //   width: 338px;height: 600px;
+          //   .el-upload{
+          //   width: 338px;height: 600px;
+          //   display: block;
+          // }
+          // }
+          
+          
+        }
+      }
+      .two {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        display: none;
+      }
+      .three {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        display: none;
       }
     }
     .right {
@@ -539,7 +606,7 @@ export default {
           .addreq {
             width: 80px;
             height: 40px;
-            background: #409EFF;
+            background: #409eff;
             color: #fff;
             text-align: center;
             line-height: 40px;

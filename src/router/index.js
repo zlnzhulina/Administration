@@ -6,8 +6,12 @@ import login from '@/components/login/login'
 import operatemanagement from '@/components/operatemanagement'
     //活动管理-活动列表
       import activitylist from '@/components/operatemanagement/activitymanagement/activitylist'
-        //
+        //创建活动
         import createactivity from '@/components/operatemanagement/activitymanagement/createactivity/createactivity'
+        //活动详情页面
+        import activitydetails from '@/components/operatemanagement/activitymanagement/activitydetails/activitydetails'
+        //出奖详情
+        import awarddetails from '@/components/operatemanagement/activitymanagement/awarddetails/awarddetails'
     //奖品管理
       //奖品列表
       import prizelist from '@/components/operatemanagement/prizemanagement/prizelist'
@@ -15,10 +19,14 @@ import operatemanagement from '@/components/operatemanagement'
       import prizeclass from '@/components/operatemanagement/prizemanagement/prizeclass'
         //查看奖品分类详情
         import prizeclassdetails from '@/components/operatemanagement/prizemanagement/prizeclassdetails/prizeclassdetails'
-        //添加奖品
-        import addprize from '@/components/operatemanagement/prizemanagement/prizeclassdetails/addprize/addprize'
+        //添加奖品(一类奖品)
+        import addprize from '@/components/operatemanagement/prizemanagement/addprize/addprize'
+        //添加此类奖品
+        import addthisclassprize from '@/components/operatemanagement/prizemanagement/prizeclassdetails/addthisclassprize/addthisclassprize'
       //奖品参数
       import prizeattribute from '@/components/operatemanagement/prizemanagement/prizeattribute'
+          //添加奖品参数
+          import addprizeattribute from '@/components/operatemanagement/prizemanagement/addprizeattribute/addprizeattribute'
       //中奖信息
       import prizeinformation from '@/components/operatemanagement/prizemanagement/prizeinformation'
     //内容管理
@@ -40,6 +48,8 @@ import Membershipmanagement from '@/components/membershipmanagement'
       import userlist from '@/components/membershipmanagement/dotusermanagement/userlist'
         //添加用户
         import adduser from '@/components/membershipmanagement/dotusermanagement/adduser/adduser'
+        //查看用户详情
+        import userdetails from '@/components/membershipmanagement/dotusermanagement/userdetails/userdetails'
       //网点列表
       import dotlist from '@/components/membershipmanagement/dotusermanagement/dotlist'
          //查看网点详情
@@ -218,11 +228,29 @@ export default new Router({
         flag:true,
       },
     },
-    //添加奖品
+    //添加奖品(添加一类商品)
     {
       path:"/addprize",
       name:"addprize",
       component:addprize,
+      meta:{
+        flag:true,
+      }
+    },
+    //添加此类奖品
+    {
+      path:"/addthisclassprize",
+      name:"addthisclassprize",
+      component:addthisclassprize,
+      meta:{
+        flag:true,
+      }
+    },
+    //添加奖品参数
+    {
+      path:"/addprizeattribute",
+      name:"addprizeattribute",
+      component:addprizeattribute,
       meta:{
         flag:true,
       }
@@ -244,7 +272,24 @@ export default new Router({
       },
 
     },
-
+//查看活动详情
+    {
+      path:"/activitydetails",
+      name:"activitydetails",
+      component:activitydetails,
+      meta:{
+        flag:true,
+      }
+    },
+    //出奖详情
+    {
+      path:"/awarddetails",
+      name:"awarddetails",
+      component:awarddetails,
+      meta:{
+        flag:true,
+      }
+    },
     {
       path:'/Membershipmanagement',
       name:'Membershipmanagement',
@@ -287,6 +332,16 @@ export default new Router({
           },
         }
       ]
+    },
+    //查看用户详情
+    {
+      path:"/userdetails",
+      name:"userdetails",
+      component:userdetails,
+      meta:{
+        flag:true,
+      }
+
     },
     
     {

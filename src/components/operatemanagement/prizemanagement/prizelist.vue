@@ -118,9 +118,9 @@ export default {
     },
     //添加
     addprize() {
-      // this.$router.push({
-      //   path: "/addprize"
-      // });
+      this.$router.push({
+        path: "/addprize"
+      });
     },
     //编辑
     yesedit(){

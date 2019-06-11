@@ -6,14 +6,15 @@
     </div>
     <el-table :data="tableData" stripe style="width: 100%">
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="date" label="活动名称" width="180"></el-table-column>
-      <el-table-column prop="name" label="有效时间" width="180"></el-table-column>
+      <el-table-column prop="date" label="活动名称" width="185"></el-table-column>
+      <el-table-column prop="name" label="有效时间" width="185"></el-table-column>
       <el-table-column prop="address" label="活动状态"></el-table-column>
-      <el-table-column fixed="right" label="操作" width="320">
-        <el-button type="text" size="small">查看</el-button>
+      <el-table-column fixed="right" label="操作" width="310">
+        <template slot-scope="scope">
+        <el-button type="text" size="small" @click="details(scope.row)">查看</el-button>
         <el-button type="text" size="small">修改</el-button>
         <el-button type="text" size="small">结束</el-button>
-        <el-button type="text" size="small">二维码管理</el-button>
+        </template>
       </el-table-column>
     </el-table>
   </div>
@@ -51,6 +52,13 @@ export default {
   methods:{
     createactivity:function(){
       this.$router.push("/createactivity")
+    },
+    //查看活动详情
+    details(row){
+      this.$router.push({
+        path:"/activitydetails",
+
+      })
     }
   }
 };

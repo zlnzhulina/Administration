@@ -2,7 +2,7 @@
   <div class="wrap">
     <h3>
       <span>添加京东卡</span>
-      <span
+      <span @click="back"
         style="width:100px;height:34px;background-color:#ccc;border-radius:5px;float:right;margin-top:26px;line-height:34px;font-size:16px;text-align:center;font-weight:normal"
       >返回</span>
     </h3>
@@ -73,6 +73,11 @@ export default {
           }
       ]
     };
+  },
+  methods:{
+    back(){
+      this.$router.back()
+    }
   }
 };
 </script>

@@ -135,7 +135,7 @@ export default {
     seedetails(row) {
 
       this.$router.push({
-        path: "/distributordetails",
+        path: "/userdetails",
         query:{flag:'2',data:row}
         // params: {Id:id}
       });

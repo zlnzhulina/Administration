@@ -20,7 +20,7 @@
       <el-table-column fixed="right" label="操作" width="176px">
         <template>
           <el-button type="text" size="small" @click="prizedetails">查看</el-button>
-          <el-button type="text" size="small" @click="addprize">添加分类奖品</el-button>
+          <el-button type="text" size="small" @click="addthisclassprize">添加分类奖品</el-button>
           <el-button type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -83,8 +83,8 @@ export default {
       this.$router.push("/prizeclassdetails");
     },
     //添加奖品
-    addprize() {
-      this.$router.push("/addprize");
+    addthisclassprize() {
+      this.$router.push("/addthisclassprize");
     },
     //保存添加分类
     yesedit(){
