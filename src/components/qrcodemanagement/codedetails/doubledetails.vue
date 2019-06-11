@@ -1,32 +1,72 @@
 <template>
-  <div class="container">
-    <div class="createbatch" @click="createbatch">创建批次</div>
-    <div class="search">
-      <span>消费者活动</span>
-      <select name="user">
-        <option>负责人</option>
-        <option>机修工</option>
-        <option>SA</option>
-      </select>
-      <span>渠道活动</span>
-      <select name="userclass">
-        <option>负责人</option>
-        <option>机修工</option>
-        <option>SA</option>
-      </select>
-      <span>批次查询</span>
-      <select name="userclass">
-        <option>负责人</option>
-        <option>机修工</option>
-        <option>SA</option>
-      </select>
-      <span>批次类型</span>
-      <select name="userclass">
-        <option>负责人</option>
-        <option>机修工</option>
-        <option>SA</option>
-      </select>
+  <div class="wrap">
+    <div class="header">
+      <b
+        style="display:block;float:left;width:82px;border-left:3px solid #027db4;height:16px;font-size:12px;text-align:center;color:#666;margin-top:23px;"
+      >批次详情</b>
+      <span
+        @click="back()"
+        style="display:block;width:102px;height:30px;float:right;text-align:center;line-height:30px;border:1px solid #555;font-size:14px;margin-top:16px;"
+      >返回</span>
     </div>
+    <div class="search">
+      <div class="title">
+        <b>筛选查询</b>
+      </div>
+      <div class="searchactivity">
+        <span>活动：</span>
+        <select name="user">
+          <option>请选择活动</option>
+          <option>机修工</option>
+          <option>SA</option>
+        </select>
+        <span>条码状态：</span>
+        <select name="user">
+          <option>请选择状态</option>
+          <option>机修工</option>
+          <option>SA</option>
+        </select>
+        <span>小程序码状态：</span>
+        <select name="user">
+          <option>请选择状态</option>
+          <option>机修工</option>
+          <option>SA</option>
+        </select>
+        <span>编号查询：</span>
+        <input placeholder="请输入码的编号"/>
+        
+      </div>
+      <div class="searchactivity">
+          <span>商品：</span>
+        <select name="userw">
+          <option>请选择商品库</option>
+          <option>机修工</option>
+          <option>SA</option>
+        </select>
+        <select name="userw">
+          <option>请选择商品类型</option>
+          <option>机修工</option>
+          <option>SA</option>
+        </select>
+        <select name="userw">
+          <option>请选择商品品牌</option>
+          <option>机修工</option>
+          <option>SA</option>
+        </select>
+        <select name="userw">
+          <option>请选择商品系列</option>
+          <option>机修工</option>
+          <option>SA</option>
+        </select>
+        <select name="userw">
+          <option>请选择商品</option>
+          <option>机修工</option>
+          <option>SA</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 二维码列表 -->
     <el-table
       :header-cell-style="{background:'#9decff',height:'32'}"
       ref="multipleTable"
@@ -35,17 +75,18 @@
       style="width: 100%"
     >
       <!-- stripe="true" -->
-      <el-table-column type="selection" width="55px"></el-table-column>
-      <el-table-column prop="batchId" label="批次编号" width="148px"></el-table-column>
-      <el-table-column prop="batchName" label="批次名称" width="158px"></el-table-column>
-      <el-table-column prop="type" label="批次类型" width="120px"></el-table-column>
-      <el-table-column prop="count" label="批次数量"></el-table-column>
-      <el-table-column prop="Occupy" label="占用"></el-table-column>
-      <el-table-column prop="residueCount" label="未占用"></el-table-column>
-      <el-table-column prop="consumeractivity" label="消费者活动"></el-table-column>
-      <el-table-column prop="activity" label="渠道活动"></el-table-column>
-
-      <el-table-column fixed="right" label="操作" width="126px">
+      <el-table-column type="selection" width="55px;"></el-table-column>
+      <el-table-column prop="goodsid" label="ID" width="104px"></el-table-column>
+      <el-table-column prop="goodsname" label="批次名称" width="156"></el-table-column>
+      <el-table-column prop="goodsclass" label="批次类型" width="76"></el-table-column>
+      <el-table-column prop="data" label="消费者活动" width="146"></el-table-column>
+      <el-table-column prop="data" label="消费者状态" width="90"></el-table-column>
+      <el-table-column prop="data" label="IMG"></el-table-column>
+      <el-table-column prop="data" label="渠道活动" width="146"></el-table-column>
+<el-table-column prop="data" label="渠道状态" width="90"></el-table-column>
+<el-table-column prop="data" label="IMG"></el-table-column>
+<el-table-column prop="data" label="关联商品" width="142"></el-table-column>
+      <el-table-column fixed="right" label="操作" >
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="edit(scope.row)">详情</el-button>
           <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
@@ -55,6 +96,8 @@
         </template>
       </el-table-column>
     </el-table>
+
+
     <div class="relationcanvas" v-if="relationcanvas">
       <div class="scroll">
         <h3>
@@ -63,24 +106,7 @@
         </h3>
         <div class="main">
           <span>关联数量：</span>
-          <el-table
-            ref="multipleTable"
-            :header-cell-style="{background:'#eaedf1',height:'32',}"
-            :data="tabledata"
-            tooltip-effect="dark"
-            show-summary="true"
-            :summary-method="getTotal"
-            style="width:404px;float:left;margin-left:20px;"
-          >
-            <el-table-column prop="batchid" label="批次编号" width="92"></el-table-column>
-            <el-table-column prop="batchname" label="批次名称" width="130"></el-table-column>
-            <el-table-column prop="batchclass" label="可用数量"></el-table-column>
-            <el-table-column prop="batchnum" label="关联数量">
-              <template>
-                <input type="text" style="width:50px;height:25px;font-size:12px;">
-              </template>
-            </el-table-column>
-          </el-table>
+          <input type="text"/>
           <span>
             <i>*</i>关联渠道活动：
           </span>
@@ -121,16 +147,12 @@
 </template>
 
 <script>
-import Axios from "axios";
+//双码详情
 export default {
-  created(){
-    this.qrcodelist()
-  },
   data() {
     return {
-      //关联码弹窗
-      relationcanvas: false,
-      tabledata: [
+        relationcanvas:false,
+        tabledata: [
         {
           batchname: "wefw",
           batchid: "834576356",
@@ -175,144 +197,101 @@ export default {
     };
   },
   methods: {
-    qrcodelist(){
-      Axios({
-        //url:"http://192.168.1.128:8101/codeManager/batchList",
-        url:"api/codeManager/batchList",
-        method:"get",
-        params:{
-          pageNo:"1",
-          batchCode:"",
-          type:""
-        }
-      }).then(data=>{
-        console.log(data)
-        this.tabledata=data.data.data.userPage.records;
-      })
+    back() {
+      this.$router.back();
     },
-    //创建批次
-    createbatch(){
-      this.$router.push({
-        path:"/addqrcode"
-      })
-    },
-    edit() {
+     edit(){
       //查看详情
-      // this.$router.push({
-      //   path:"/doubledetails"
-      // })
-      //单码
       this.$router.push({
-        path: "/singledetails"
-      });
+        path:"/doubledetails"
+      })
     },
-    download() {
+    download(){
       //下载
     },
-    relation() {
+    relation(){
       //关联
-      this.relationcanvas = true;
-    },
-    del() {
-      //删除
-    },
-    withdraw() {
-      //撤回
+      this.relationcanvas=true;
+    
     },
     exit(){
-      this.relationcanvas=false;
+        this.relationcanvas=false;
     },
-    getTotal(param) {
-            const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-      if (index === 0) {
-      sums[index] = '合计关联数量';
-      return;
-      }
-      const values = data.map(item => Number(item[column.property]));
-      if (column.property === 'num') {
-      sums[index] = values.reduce((prev, curr) => {
-      const value = Number(curr);
-      if (!isNaN(value)) {
-      return prev + curr;
-      } else {
-      return prev;
-      }
-      }, 0);
-      sums[index];
-      } else {
-      sums[index] = '';
-      }
-      });
-
-      return sums;
+    del(){
+      //删除
+    },
+    withdraw(){
+      //撤回
     }
   }
 };
-//二维码列表
 </script>
 
 <style lang="scss" scoped>
-.container {
-  width: 960px;
-  height: 622px;
-  position: relative;
-  .createbatch{
-    width: 80px;
-      height: 24px;
-     
-      font-size: 12px;
-      text-align: center;
-      border: 1px solid #797979;
-      line-height: 24px;
-      border-radius: 6px; 
+.wrap {
+  width: 1120px;
+  margin: 0 auto;
+  padding-top: 90px;
+  .header {
+    width: 100%;
+    height: 62px;
   }
   .search {
     width: 100%;
-    height: 70px;
-    margin-top: 10px;
-    line-height: 70px;
-    clear: both;
-    background: #f2f2f2;
-    input {
-      width: 212px;
+    height: 206px;
+    .title {
+      width: 100%;
+      height: 60px;
+      line-height: 60px;
+      background: #f3f3f3;
+      b {
+        margin-left: 14px;
+        font-size: 18px;
+      }
+    }
+    .searchactivity {
+      width: 100%;
+      height: 72px;
+      span {
+        padding-left:24px;
+        height: 43px;
+        display: inline-block;
+        line-height: 43px;
+        font-size: 18px;
+        color: #7f7f7f;
+      }
+      input {
+      width: 170px;
       height: 34px;
-      margin-left: 16px;
-      background: #fff;
+     
+      background: #f2f2f2;
       border: 1px solid #dfdfdf;
       text-align: center;
       font-size: 12px;
-      color: #dfdfdf;
+      
     }
     select {
       width: 150px;
       height: 34px;
-      margin-left: 16px;
+      
       background: #fff;
       border: 1px solid #dfdfdf;
       text-align: center;
       font-size: 12px;
       color: #555;
     }
-    span {
-      display: inline-block;
-
-      text-align: center;
-      line-height: 36px;
-      font-size: 12px;
-      margin-top: 18px;
-      margin-left: 16px;
-      border-radius: 4px;
     }
   }
-  .relationcanvas {
+  .el-table td, .el-table th{
+      text-align: center;
+  }
+   .relationcanvas {
     width: 832px;
-    height: 100%;
+    height: auto;
     //height: 764px;
     position: absolute;
     left: 50%;
-    top: 20px;
+    top: 136px;
     margin-left: -416px;
     border: 1px solid #555;
     background: #fff;
@@ -353,9 +332,13 @@ export default {
           margin-top: 16px;
           font-weight: bold;
         }
-        .el-table {
-          font-size: 12px;
-        }
+       input{
+           width: 404px;
+          height: 38px;
+          float: left;
+          margin-left: 20px;
+          margin-top: 13px;
+       }
         select {
           width: 404px;
           height: 38px;

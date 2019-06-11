@@ -202,7 +202,7 @@
           <el-tab-pane label="奖项设置" name="third">
             <div class="prizeset">
               <div class="relation">
-                <span v-for="item in relationgoods">{{item}}</span>
+                <span v-for="(item,index) in relationgoods">{{item}}</span>
                 <span @click="addgoods">添加</span>
               </div>
 
@@ -291,6 +291,9 @@
                     </el-table-column>
                   </el-table>
                 </div>
+                <div class="addreq">
+                  保存 关联码
+                </div>
               </div>
             </div>
           </el-tab-pane>
@@ -304,7 +307,7 @@
 export default {
   data() {
     return {
-      selectgoods:false,
+      selectgoods: false,
       active: "0",
       // addgoods: "/addgoods",
       addprize: "/addprize",
@@ -358,8 +361,8 @@ export default {
       if (this.active++ > 3) this.active = 0;
       this.activeName = "third";
     },
-    addgoods(){
-      this.selectgoods=true;
+    addgoods() {
+      this.selectgoods = true;
     }
   }
 };
@@ -386,6 +389,7 @@ export default {
   .main {
     width: 1120px;
     height: 640px;
+    position: relative;
     .preview {
       width: 338px;
       height: 600px;
@@ -401,6 +405,9 @@ export default {
     .right {
       width: 764px;
       float: right;
+      .el-tabs__content {
+        overflow: visible;
+      }
       .deposit {
         width: 100%;
         height: 60px;
@@ -528,6 +535,16 @@ export default {
                 text-align: center;
               }
             }
+          }
+          .addreq {
+            width: 80px;
+            height: 40px;
+            background: #409EFF;
+            color: #fff;
+            text-align: center;
+            line-height: 40px;
+            margin: 20px auto;
+            border-radius: 6px;
           }
         }
       }

@@ -58,6 +58,11 @@ import qrcodemanagement from '@/components/qrcodemanagement'
       import qrcodelist from '@/components/qrcodemanagement/qrcodelist'
       //创建二维码
       import addqrcode from '@/components/qrcodemanagement/addqrcode/addqrcode'
+      //查看单码详情
+      import singledetails from '@/components/qrcodemanagement/codedetails/singledetails'
+      
+      //查看双码详情
+      import doubledetails from '@/components/qrcodemanagement/codedetails/doubledetails'
 //商品管理 
 import goodsmanagement from '@/components/goodsmanagement'
     //商品列表
@@ -337,6 +342,7 @@ export default new Router({
         }
       ]
     },
+    //创建二维码批次
     {
       path:"/addqrcode",
       name:"addqrcode",
@@ -345,7 +351,22 @@ export default new Router({
         flag:true
       }
     },
-    
+    {
+      path:"/singledetails",
+      name:"singledetails",
+      component:singledetails,
+      meta:{
+        flag:true
+      }
+    },
+    {
+      path:"/doubledetails",
+      name:"doubledetails",
+      component:doubledetails,
+      meta:{
+        flag:true
+      }
+    },
     {
       path:'/goodsmanagement',
       name:'goodsmanagement',
