@@ -6,9 +6,14 @@
                 <router-link :to="{name:item.name}">{{item.title}}</router-link>
             </li>
         </ul>
-        <div class="search">
-            <input type="text" placeholder="请输入要操作的事件">
-        </div>
+        <ul class="search">
+            <li><img style="width:30px;margin-right:8px;" src="@/assets/wode.png"/>{{name}}</li>
+            
+            <li><img src="@/assets/shouye.png" @click="first"/></li>
+            <li><img src="@/assets/zhedie.png"/></li>
+            <li><img src="@/assets/nitification.png"/></li>
+            <li><img src="@/assets/guanbi.png" @click="exit"/></li>
+        </ul>
     </div>
 </template>
 <script>
@@ -16,6 +21,7 @@ import axios from "axios";
 export default {
     data(){
         return {
+            name:"",
             navlist:[
                     {title:"首页",name:"index"},
                     {title:"运营管理",name:"operatemanagement"},
@@ -25,6 +31,37 @@ export default {
                     {title:"统计",name:"statistics"},
                     {title:"系统管理",name:"systemmanagement"}
                 ]
+        }
+    },
+    created(){
+        this.name=localStorage.getItem("name")
+    },
+    methods:{
+        first(){
+            this.$router.push("/index");
+        },
+        exit(){
+             this.$confirm('请确定是否退出登录', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+            this.$router.push("/login");
+            localStorage.removeItem('name');
+            localStorage.removeItem('ADMINLOGINTOKEN');
+            if(!localStorage.getItem('ADMINLOGINTOKEN')){
+                 this.$message({
+            type: 'success',
+            message: '成功退出登录!'
+          });
+            }
+         
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消退出登录'
+          });          
+        });
         }
     }
 } 
@@ -37,7 +74,7 @@ export default {
 .header{
     width: 1200px;
     height: 60px;
-    background: #f2f2f2;
+    background: #595e6c;
     margin: -0 auto;
     position: absolute;
     left: 50%;
@@ -51,6 +88,7 @@ export default {
         font-size: 20px;
         font-weight: bold;
         float: left;
+        color: rgba(255, 255, 255, 0.801);
     }
     ul{
         width: 543px;
@@ -62,27 +100,29 @@ export default {
             line-height: 60px;
             list-style: none;
             a{
-                color: #169bd5;
+                color: #fff;
                 font-size: 14px;
             }
         }
 
     }
     .search{
-        width: 230px;
+        width: auto;
         height: 60px;
         line-height: 60px;
-        float: left;
-        margin-left: 50px;
-        input{
-            width: 200px;
-            height: 35px;
-            border-radius: 20px;
-            border: none;
-            margin: 0 auto;
-            font-size: 12px;
-            color: darkgrey;
-            padding-left:5px; 
+        float: right;
+        //background: #eee;
+        // margin-left: 50px;
+        li{
+            padding: 0 10px 0 10px;
+            justify-content:flex-start;
+            line-height: 60px;
+            color: #fff;
+            img{
+                width: 16px;
+                vertical-align: middle;
+            }
+            
         }
     }
 }

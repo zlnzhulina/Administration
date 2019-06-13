@@ -1,7 +1,10 @@
 <template>
   <div class="container">
-    <div class="left" style="width:342px;float:left;
-    height:606px;background:#ccc"></div>
+    <div class="left" style="width:342px;float:left;height:606px;background:#ccc">
+      <div class="bgimg"></div>
+      <div class="title"></div>
+      
+    </div>
     <div class="right" style="float:right;width:600px;">
       <el-table
         :header-cell-style="{background:'#9decff',height:'32'}"
@@ -21,21 +24,18 @@
         <el-table-column prop="url" label="链接">
           <template slot-scope="scope">
             <p>{{scope.row.url}}</p>
-            
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="102px">
           <template slot-scope="scope">
-              <el-button type="text" size="small" @click="replace(scope.row)">更换</el-button>
-              <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
-
+            <el-button type="text" size="small" @click="replace(scope.row)">更换</el-button>
+            <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-
-     <div class="addcanvas" v-if="editcanvas">
+    <div class="addcanvas" v-if="editcanvas">
       <div class="edit">
         <h3>编辑</h3>
         <ul>
@@ -81,45 +81,41 @@
 import Axios from "axios";
 export default {
   // 登陆页验真展示
-  data(){
-      return {
-          tabledata:[],
-          name:"",
-          url:"",
-          id:"",
-          imageUrl:"",
-          imgurl:"",
-          editcanvas:false,
-
-      }
+  data() {
+    return {
+      tabledata: [],
+      name: "",
+      url: "",
+      id: "",
+      imageUrl: "",
+      imgurl: "",
+      editcanvas: false
+    };
   },
-  created(){
-this.activityinfolist();
+  created() {
+    this.activityinfolist();
   },
-  methods:{
-     activityinfolist(){
+  methods: {
+    activityinfolist() {
       Axios({
-        url:"api/contentManager/pageSetList",
-        method:"get",
-        params:{
-          type:2
+        url: "api/contentManager/pageSetList",
+        method: "get",
+        params: {
+          type: 2
         }
-      }).then(data=>{
-        console.log(data)
-        this.tabledata=data.data.data.pageSetList;
-      })
+      }).then(data => {
+        console.log(data);
+        this.tabledata = data.data.data.pageSetList;
+      });
     },
-      replace(row){
-        console.log(row)
-        this.name=row.title;
-        this.url=row.url;
-        this.id=row.id;
-        this.imageUrl=row.imageUrl,
-        
-        this.editcanvas=true;
-
-      },
-      handleAvatarSuccess(res, file) {
+    replace(row) {
+      console.log(row);
+      this.name = row.title;
+      this.url = row.url;
+      this.id = row.id;
+      (this.imageUrl = row.imageUrl), (this.editcanvas = true);
+    },
+    handleAvatarSuccess(res, file) {
       console.log(res);
       if (res.code == 0) {
         //图片显示的本地路径
@@ -128,9 +124,9 @@ this.activityinfolist();
         this.imgurl = res.data.fileUrl;
       }
     },
-      //确定更换
-      ok(){
-        Axios({
+    //确定更换
+    ok() {
+      Axios({
         url: "api/contentManager/editScanQrPage",
         method: "post",
         data: {
@@ -145,21 +141,19 @@ this.activityinfolist();
             type: "success",
             message: "修改成功"
           });
-          this.editcanvas=false;
+          this.editcanvas = false;
         }
         this.name = "";
         this.link = "";
         this.imgurl = "";
         this.activityinfolist();
       });
-      },
-      //取消
-      no(){
-        this.editcanvas=false;
-      },
-      del(){
-          
-      }
+    },
+    //取消
+    no() {
+      this.editcanvas = false;
+    },
+    del() {}
   }
 };
 </script>
@@ -169,7 +163,7 @@ this.activityinfolist();
   width: 960px;
   height: 622px;
   position: relative;
-.addcanvas {
+  .addcanvas {
     width: 100%;
     height: 100%;
     position: absolute;

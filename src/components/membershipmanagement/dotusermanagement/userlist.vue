@@ -26,9 +26,10 @@
       <el-table-column prop="userCat.userCatName" label="用户类型" width="158px"></el-table-column>
       <el-table-column prop="name" label="真实姓名" width="120px"></el-table-column>
       <el-table-column prop="network.networkName" label="网点名称"></el-table-column>
-      <el-table-column fixed="right" label="操作" width="126px">
+      <el-table-column fixed="right" label="操作" width="140px">
         <template slot-scope="scope">
         <el-button type="text" size="small" @click="seedetails(scope.row)">查看</el-button>
+        <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
         <el-button type="text" size="small" @click="deleteUser(scope.$index,scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -146,6 +147,13 @@ export default {
         path: "/adduser"
         
       });
+    },
+    edit(row){
+      this.$router.push({
+        path:"/adduser",
+        query: {flag:'1',networkParm:row}
+      })
+      
     },
     //编辑
     deleteall() {

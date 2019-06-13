@@ -17,7 +17,7 @@ export default {
     };
   },
   created(){
-   this.name=localStorage.name;
+   this.name=localStorage.getItem("name");
    
   }
 };

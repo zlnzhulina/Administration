@@ -117,6 +117,7 @@ export default new Router({
       component: index,
       meta:{
         flag:true,
+        requireAuth:true,
       }
     },
     {
@@ -133,6 +134,7 @@ export default new Router({
       component: operatemanagement,
       meta:{
         flag:true,
+        requireAuth:true,
       },
       redirect:'operatemanagement/activitylist',
       children:[
@@ -142,6 +144,7 @@ export default new Router({
           component:activitylist,
           meta:{
             flag:true,
+            requireAuth:true,
           }
         },
         {
@@ -150,6 +153,7 @@ export default new Router({
           component:prizelist,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -158,6 +162,7 @@ export default new Router({
           component:prizeclass,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -166,6 +171,7 @@ export default new Router({
           component:prizeattribute,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -174,6 +180,7 @@ export default new Router({
           component:prizeinformation,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -182,6 +189,7 @@ export default new Router({
           component:indexbanner,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -190,6 +198,7 @@ export default new Router({
           component:indexcodeentrance,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -198,6 +207,7 @@ export default new Router({
           component:indexactivityinformation,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         
@@ -207,6 +217,7 @@ export default new Router({
           component:loginverifytruthshow,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -215,6 +226,7 @@ export default new Router({
           component:activityexplain,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         }
       ]
@@ -226,6 +238,7 @@ export default new Router({
       component:prizeclassdetails,
       meta:{
         flag:true,
+        requireAuth:true,
       },
     },
     //添加奖品(添加一类商品)
@@ -235,6 +248,7 @@ export default new Router({
       component:addprize,
       meta:{
         flag:true,
+        requireAuth:true,
       }
     },
     //添加此类奖品
@@ -244,6 +258,7 @@ export default new Router({
       component:addthisclassprize,
       meta:{
         flag:true,
+        requireAuth:true,
       }
     },
     //添加奖品参数
@@ -253,6 +268,7 @@ export default new Router({
       component:addprizeattribute,
       meta:{
         flag:true,
+        requireAuth:true,
       }
     },
     {
@@ -260,7 +276,8 @@ export default new Router({
       name:"addactivitynews",
       component:addactivitynews,
       meta:{
-        flag:true
+        flag:true,
+        requireAuth:true,
       }
     },
     {
@@ -269,6 +286,7 @@ export default new Router({
       component:createactivity,
       meta:{
         flag:true,
+        requireAuth:true,
       },
 
     },
@@ -279,6 +297,7 @@ export default new Router({
       component:activitydetails,
       meta:{
         flag:true,
+        requireAuth:true,
       }
     },
     //出奖详情
@@ -288,6 +307,7 @@ export default new Router({
       component:awarddetails,
       meta:{
         flag:true,
+        requireAuth:true,
       }
     },
     {
@@ -296,6 +316,7 @@ export default new Router({
       component:Membershipmanagement,
       meta:{
         flag:true,
+        requireAuth:true,
       },
       redirect:"Membershipmanagement/userlist",
       children:[
@@ -305,6 +326,7 @@ export default new Router({
           component:userlist,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -313,6 +335,7 @@ export default new Router({
           component:dotlist,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -321,6 +344,7 @@ export default new Router({
           component:batchmaintenance,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -329,6 +353,7 @@ export default new Router({
           component:positionmanagement,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         }
       ]
@@ -340,6 +365,7 @@ export default new Router({
       component:userdetails,
       meta:{
         flag:true,
+        requireAuth:true,
       }
 
     },
@@ -351,6 +377,7 @@ export default new Router({
       props:true,
       meta:{
         flag:true,
+        requireAuth:true,
       },
     },
     {
@@ -360,6 +387,7 @@ export default new Router({
       props:true,
       meta:{
         flag:true,
+        requireAuth:true,
       },
     },
     {
@@ -368,6 +396,7 @@ export default new Router({
       component:adduser,
       meta:{
         flag:true,
+        requireAuth:true,
       },
     },
     {
@@ -376,6 +405,7 @@ export default new Router({
       component:modify,
       meta:{
         flag:true,
+        requireAuth:true,
       },
     },
     {
@@ -384,6 +414,7 @@ export default new Router({
       component:qrcodemanagement,
       meta:{
         flag:true,
+        requireAuth:true,
       },
       redirect:"qrcodemanagement/qrcodelist",
       children:[
@@ -393,6 +424,7 @@ export default new Router({
           component:qrcodelist,
           meta:{
             flag:true,
+            requireAuth:true,
           }
         }
       ]
@@ -403,7 +435,8 @@ export default new Router({
       name:"addqrcode",
       component:addqrcode,
       meta:{
-        flag:true
+        flag:true,
+        requireAuth:true,
       }
     },
     {
@@ -411,7 +444,8 @@ export default new Router({
       name:"singledetails",
       component:singledetails,
       meta:{
-        flag:true
+        flag:true,
+        requireAuth:true,
       }
     },
     {
@@ -419,7 +453,8 @@ export default new Router({
       name:"doubledetails",
       component:doubledetails,
       meta:{
-        flag:true
+        flag:true,
+        requireAuth:true,
       }
     },
     {
@@ -428,6 +463,7 @@ export default new Router({
       component:goodsmanagement,
       meta:{
         flag:true,
+        requireAuth:true,
       },
       redirect:"goodsmanagement/goodslist",
       children:[
@@ -437,6 +473,7 @@ export default new Router({
           component:goodslist,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -445,6 +482,7 @@ export default new Router({
           component:goodsclassmanagement,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         },
         {
@@ -453,6 +491,7 @@ export default new Router({
           component:goodsparametermanagement,
           meta:{
             flag:true,
+            requireAuth:true,
           },
         }
       ]
@@ -463,6 +502,7 @@ export default new Router({
       component:addgoods,
       meta:{
         flag:true,
+        requireAuth:true,
       },
     },
     {
@@ -471,6 +511,7 @@ export default new Router({
       component:statistics,
       meta:{
         flag:true,
+        requireAuth:true,
       },
     },
     {
@@ -479,6 +520,7 @@ export default new Router({
       component:systemmanagement,
       meta:{
         flag:true,
+        requireAuth:true,
       },
       redirect:"systemmanagement/yglist",
       children:[{
@@ -487,6 +529,7 @@ export default new Router({
         component:yglist,
         meta:{
           flag:true,
+          requireAuth:true,
         },
       },{
         path:"postmanagement",
@@ -494,6 +537,7 @@ export default new Router({
         component:postmanagement,
         meta:{
           flag:true,
+          requireAuth:true,
         },
       },{
         path:"departmentmanagement",
@@ -501,6 +545,7 @@ export default new Router({
         component:departmentmanagement,
         meta:{
           flag:true,
+          requireAuth:true,
         },
       },{
         path:"postpower",
@@ -508,6 +553,7 @@ export default new Router({
         component:postpower,
         meta:{
           flag:true,
+          requireAuth:true,
         },
       },{
         path:"pwdmanagement",
@@ -515,6 +561,7 @@ export default new Router({
         component:pwdmanagement,
         meta:{
           flag:true,
+          requireAuth:true,
         },
       },{
         path:"journal",
@@ -522,6 +569,7 @@ export default new Router({
         component:journal,
         meta:{
           flag:true,
+          requireAuth:true,
         },
       },]
     }

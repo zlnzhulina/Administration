@@ -16,12 +16,40 @@
         <textarea></textarea>
       </li>
       <li>
-          <span>资讯封面图：</span>
-          <div class="coverimg"></div>
+        <span style="float:left;margin-left:13px;">资讯封面图：</span>
+        <div class="coverimg">
+          <el-upload
+            class="avatar-uploader"
+            action="api/upload/uploadImage"
+            :show-file-list="false"
+            :on-success="handlenewcoverSuccess"
+          >
+            <img v-if="imagenewcoverUrl" :src="imagenewcoverUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </div>
       </li>
     </ul>
     <div class="title">
       <p>详细信息</p>
+    </div>
+    <div class="detailsinfo">
+      <div class="left">
+        <el-upload
+          class="avatar-uploader"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+        >
+          <img v-if="imageUrl" :src="imageUrl" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+  <img width="100%" :src="dialogImageUrl" alt="">
+</el-dialog>
+      </div>
+      <div class="right"></div>
     </div>
   </div>
 </template>
@@ -29,6 +57,16 @@
 <script>
 export default {
   //添加活动资讯
+  data() {
+    return {
+      imagenewcoverUrl: ""
+    };
+  },
+  methods: {
+    handlenewcoverSuccess(res, file) {
+      this.imagenewcoverUrl = URL.createObjectURL(file.raw);
+    }
+  }
 };
 </script>
 
@@ -52,7 +90,7 @@ export default {
     width: 910px;
     height: 27px;
     border-bottom: 1px solid #ccc;
-    margin: 0 auto;
+    margin: 15px auto;
 
     p {
       width: 100px;
@@ -92,18 +130,61 @@ export default {
         border: 1px solid #555;
         border-radius: 5px;
       }
-      textarea{
-          width: 320px;
-          height: 80px;
-          margin-right: 42px;
-          border: 1px solid #555;
-          border-radius: 5px;
+      textarea {
+        width: 320px;
+        height: 80px;
+        margin-right: 42px;
+        border: 1px solid #555;
+        border-radius: 5px;
+        display: block;
+        float: right;
+      }
+      .coverimg {
+        width: 128px;
+        height: 76px;
+        float: left;
+        margin-left: 48px;
+        background: #ccc;
+        .avatar-uploader .el-upload {
+          border: 1px dashed #d9d9d9;
+          border-radius: 6px;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+          border-color: #409eff;
+        }
+        .avatar-uploader-icon {
+          font-size: 28px;
+          color: #8c939d;
+          width: 128px;
+          height: 76px;
+          line-height: 76px;
+          text-align: center;
+        }
+        .avatar {
+          width: 128px;
+          height: 76px;
           display: block;
-          float: right;
+        }
       }
-      .coverimg{
-        
-      }
+    }
+  }
+  .detailsinfo {
+    width: 878px;
+    height: 333px;
+    margin: 0 auto;
+    background: #ccc;
+    .left {
+      width: 182px;
+      min-height: 216px;
+      float: left;
+    }
+    .right {
+      width: 672px;
+      height: 670px;
+      float: right;
     }
   }
 }

@@ -78,15 +78,25 @@
       <el-table-column prop="data" label="IMG"></el-table-column>
 <el-table-column prop="data" label="关联商品" width="142"></el-table-column>
       <el-table-column fixed="right" label="操作" >
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="edit(scope.row)">详情</el-button>
+       <template slot-scope="scope">
+          <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button>
+          <!-- <el-button type="text" size="small" @click="edit(scope.row)">详情</el-button>
           <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
           <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
           <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
-          <el-button type="text" size="small" @click="withdraw(scope.$index,scope.row)">撤回</el-button>
+          <el-button type="text" size="small" @click="withdraw(scope.$index,scope.row)">撤回</el-button> -->
         </template>
       </el-table-column>
     </el-table>
+    <div class="moreoperationscanvas" v-show="moreoperationscanvas">
+       <ul>
+        <li @click="details">详情</li>
+        <li @click="download">下载</li>
+        <li @click="relation">关联</li>
+        <li @click="del">删除</li>
+        <li @click="withdraw">撤回</li>
+      </ul>
+    </div>
 
 
 
@@ -143,6 +153,8 @@
 export default {
   data() {
     return {
+      //更多操作弹框
+      moreoperationscanvas:false,
         relationcanvas:false,
         tabledata: [
         {
@@ -192,11 +204,14 @@ export default {
     back() {
       this.$router.back();
     },
-     edit(){
+     moreoperations(row){
+      this.moreoperationscanvas=true;
+    },
+     details(){
       //查看详情
-    //   this.$router.push({
-    //     path:"/doubledetails"
-    //   })
+      // this.$router.push({
+      //   path:"/doubledetails"
+      // })
     },
     download(){
       //下载
@@ -340,6 +355,26 @@ export default {
           margin-left: 20px;
           margin-top: 13px;
         }
+      }
+    }
+  }
+  .moreoperationscanvas{
+    width: 124px;
+    height: 195px;
+    position: absolute;
+    left: 1434px;
+    top: 405px;
+    ul{
+      width: 100%;
+      height: 100%;
+      li{
+        width: 100%;
+        height: 29px;
+        line-height: 29px;
+        text-align: center;
+        font-size: 12px;
+        border: 1px solid #ccc;
+        list-style: none;
       }
     }
   }

@@ -108,6 +108,9 @@ export default {
     background: #7a8899;
     margin-bottom: 15px;
   }
+  .el-main{
+    overflow: visible;
+  }
   .content{
       padding-top: 0;
   }

@@ -45,16 +45,26 @@
       <el-table-column prop="consumeractivity" label="消费者活动"></el-table-column>
       <el-table-column prop="activity" label="渠道活动"></el-table-column>
 
-      <el-table-column fixed="right" label="操作" width="126px">
+      <el-table-column fixed="right" label="操作" width="75px">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="edit(scope.row)">详情</el-button>
+          <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button>
+          <!-- <el-button type="text" size="small" @click="edit(scope.row)">详情</el-button>
           <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
           <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
           <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
-          <el-button type="text" size="small" @click="withdraw(scope.$index,scope.row)">撤回</el-button>
+          <el-button type="text" size="small" @click="withdraw(scope.$index,scope.row)">撤回</el-button>-->
         </template>
       </el-table-column>
     </el-table>
+    <div class="moreoperationscanvas" v-show="moreoperationscanvas">
+      <ul>
+        <li @click="details">详情</li>
+        <li @click="download">下载</li>
+        <li @click="relation">关联</li>
+        <li @click="del">删除</li>
+        <li @click="withdraw">撤回</li>
+      </ul>
+    </div>
     <div class="relationcanvas" v-if="relationcanvas">
       <div class="scroll">
         <h3>
@@ -112,7 +122,9 @@
             <option></option>
           </select>
           <div style="width:152px;height:36px;margin:0px auto;clear:both;padding-top:45px;">
-            <span style="width:152px;height:50px;background:#1abc9c;text-align:center;line-height:50px;margin:30px auto;clear:both;">确定</span>
+            <span
+              style="width:152px;height:50px;background:#1abc9c;text-align:center;line-height:50px;margin:30px auto;clear:both;"
+            >确定</span>
           </div>
         </div>
       </div>
@@ -123,13 +135,17 @@
 <script>
 import Axios from "axios";
 export default {
-  created(){
-    this.qrcodelist()
+  created() {
+    this.qrcodelist();
   },
   data() {
     return {
+      //更多操作弹框
+      moreoperationscanvas: false,
       //关联码弹窗
       relationcanvas: false,
+      //操作当前行的数据
+      row:{},
       tabledata: [
         {
           batchname: "wefw",
@@ -175,28 +191,34 @@ export default {
     };
   },
   methods: {
-    qrcodelist(){
+    qrcodelist() {
       Axios({
         //url:"http://192.168.1.128:8101/codeManager/batchList",
-        url:"api/codeManager/batchList",
-        method:"get",
-        params:{
-          pageNo:"1",
-          batchCode:"",
-          type:""
+        url: "api/codeManager/batchList",
+        method: "get",
+        params: {
+          pageNo: "1",
+          batchCode: "",
+          type: ""
         }
-      }).then(data=>{
-        console.log(data)
-        this.tabledata=data.data.data.userPage.records;
-      })
+      }).then(data => {
+        console.log(data);
+        this.tabledata = data.data.data.userPage.records;
+      });
     },
     //创建批次
-    createbatch(){
+    createbatch() {
       this.$router.push({
-        path:"/addqrcode"
-      })
+        path: "/addqrcode"
+      });
     },
-    edit() {
+    //更多操作
+    moreoperations(row) {
+      console.log(row)
+      this.moreoperationscanvas = true;
+      //this.row=row;
+    },
+    details() {
       //查看详情
       // this.$router.push({
       //   path:"/doubledetails"
@@ -219,35 +241,35 @@ export default {
     withdraw() {
       //撤回
     },
-    exit(){
-      this.relationcanvas=false;
+    exit() {
+      this.relationcanvas = false;
     },
-    getTotal(param) {
-            const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-      if (index === 0) {
-      sums[index] = '合计关联数量';
-      return;
-      }
-      const values = data.map(item => Number(item[column.property]));
-      if (column.property === 'num') {
-      sums[index] = values.reduce((prev, curr) => {
-      const value = Number(curr);
-      if (!isNaN(value)) {
-      return prev + curr;
-      } else {
-      return prev;
-      }
-      }, 0);
-      sums[index];
-      } else {
-      sums[index] = '';
-      }
-      });
+    // getTotal(param) {
+    //   const { columns, data } = param;
+    //   const sums = [];
+    //   columns.forEach((column, index) => {
+    //     if (index === 0) {
+    //       sums[index] = "合计关联数量";
+    //       return;
+    //     }
+    //     const values = data.map(item => Number(item[column.property]));
+    //     if (column.property === "num") {
+    //       sums[index] = values.reduce((prev, curr) => {
+    //         const value = Number(curr);
+    //         if (!isNaN(value)) {
+    //           return prev + curr;
+    //         } else {
+    //           return prev;
+    //         }
+    //       }, 0);
+    //       sums[index];
+    //     } else {
+    //       sums[index] = "";
+    //     }
+    //   });
 
-      return sums;
-    }
+    //   return sums;
+    // }
   }
 };
 //二维码列表
@@ -258,15 +280,15 @@ export default {
   width: 960px;
   height: 622px;
   position: relative;
-  .createbatch{
+  .createbatch {
     width: 80px;
-      height: 24px;
-     
-      font-size: 12px;
-      text-align: center;
-      border: 1px solid #797979;
-      line-height: 24px;
-      border-radius: 6px; 
+    height: 24px;
+
+    font-size: 12px;
+    text-align: center;
+    border: 1px solid #797979;
+    line-height: 24px;
+    border-radius: 6px;
   }
   .search {
     width: 100%;
@@ -353,7 +375,7 @@ export default {
           margin-top: 16px;
           font-weight: bold;
         }
-        
+
         select {
           width: 404px;
           height: 38px;
@@ -365,7 +387,29 @@ export default {
     }
   }
   .el-table {
-          font-size: 12px;
-        }
+    font-size: 12px;
+  }
+  .moreoperationscanvas {
+    width: 124px;
+    height: 195px;
+    position: absolute;
+    left: 960px;
+    top: 152px;
+    
+    z-index: 999;
+    ul{
+      width: 100%;
+      height: 100%;
+      li{
+        width: 100%;
+        height: 29px;
+        line-height: 29px;
+        text-align: center;
+        font-size: 12px;
+        border: 1px solid #ccc;
+        list-style: none;
+      }
+    }
+  }
 }
 </style>

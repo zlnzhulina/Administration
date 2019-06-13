@@ -11,24 +11,116 @@
     <div class="main">
       <!-- 预览区 -->
       <div class="preview">
-        <div class="one">
+        <div class="one" v-show="one">
           <div class="bgimg">
             <el-upload
-              
+              class="avatar-uploader"
               action="https://jsonplaceholder.typicode.com/posts/"
               :show-file-list="false"
-              :on-success="handleAvatarSuccess"
+              :on-success="handlebgimgSuccess"
             >
               <img v-if="imagebgUrl" :src="imagebgUrl" class="avatar">
-              <i v-else>编辑</i>
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+          <div class="titleimg">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handletitleimgSuccess"
+            >
+              <img v-if="imagetitleUrl" :src="imagetitleUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+
+          <div class="codebtn">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handlecodebtnSuccess"
+            >
+              <img v-if="imagecodebtnUrl" :src="imagecodebtnUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+
+          <div class="bonus">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handlebonusSuccess"
+            >
+              <img v-if="imagebonusUrl" :src="imagebonusUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
         </div>
-        <div class="two"></div>
-        <div class="three"></div>
+        <div class="two" v-show="two">
+          <div class="bgimg">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handlereceivebgimgSuccess"
+            >
+              <img v-if="imagereceivebgUrl" :src="imagereceivebgUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+          <div class="titleimg">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handlereceivetitleimgSuccess"
+            >
+              <img v-if="imagereceivetitleUrl" :src="imagereceivetitleUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+          <div class="amount">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handlereceiveamountimgSuccess"
+            >
+              <img v-if="imagereceiveamountUrl" :src="imagereceiveamountUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+          <div class="draw">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handlereceivedrawimgSuccess"
+            >
+              <img v-if="imagereceivedrawUrl" :src="imagereceivedrawUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+        </div>
+        <div class="three" v-show="three">
+          <div class="title">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleactivitytitleSuccess"
+            >
+              <img v-if="imageactivitytitleUrl" :src="imageactivitytitleUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+        </div>
       </div>
       <div class="right">
-        <el-tabs v-model="activeName">
+        <el-tabs v-model="activeName" @tab-click="check">
           <el-tab-pane label="基本设置" name="first">
             <div class="basic">
               <el-form ref="form" :model="form" label-width="80px">
@@ -314,6 +406,35 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <div class="createsuccesscanvas" v-if="createsuccesscanvas">
+        <h3>
+          <span>√</span>活动创建成功
+        </h3>
+        <ul>
+          <li>
+            <span>活动名称：</span>dgagaggggggaaaaaaaaaaaaaaaaaaaaaa
+          </li>
+          <li>
+            <span>活动时效：</span>
+          </li>
+        </ul>
+
+        <el-table
+          :header-cell-style="{background:'#eee',height:'32'}"
+          ref="multipleTable"
+          :data="tabledata"
+          tooltip-effect="dark"
+          style="width: 540px"
+        >
+          <!-- stripe="true" -->
+
+          <el-table-column prop="goodsid" label="奖品名称" width="335px"></el-table-column>
+          <el-table-column prop="goodsname" label="奖品分类"></el-table-column>
+        </el-table>
+        <div class="btn">
+          <span @click="exit">暂不关联</span><span style="background:#1abc9c;color:#fff;" @click="code">关联相关码</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -322,9 +443,29 @@
 export default {
   data() {
     return {
+      one: true,
+      two: false,
+      three: false,
+      //背景图路径
       imagebgUrl: "",
+      //标题图路径
+      imagetitleUrl: "",
+      //扫码按钮图片
+      imagecodebtnUrl: "",
+      //奖金图片
+      imagebonusUrl: "",
+      //领奖背景
+      imagereceivebgUrl: "",
+      //领奖标题
+      imagereceivetitleUrl: "",
+      //领取金额
+      imagereceiveamountUrl: "",
+      //抽取按钮
+      imagereceivedrawUrl: "",
+      //领奖活动标题
+      imageactivitytitleUrl: "",
       selectgoods: false,
-      active: "0",
+      active: 0,
       // addgoods: "/addgoods",
       addprize: "/addprize",
       creatcar: "1", //是否添加车辆
@@ -362,7 +503,9 @@ export default {
           setprize: "",
           Tips: ""
         }
-      ]
+      ],
+      //创建成功弹窗
+      createsuccesscanvas: false,
     };
   },
   methods: {
@@ -370,21 +513,99 @@ export default {
       alert("button click");
     },
     next() {
-      if (this.active++ > 3) this.active = 0;
-      this.activeName = "second";
+      if (this.active == 0) {
+        this.active = 1;
+        this.activeName = "second";
+        this.one = false;
+        this.two = true;
+        this.three = false;
+      } else {
+        this.active = this.active;
+        this.activeName = "second";
+        this.one = false;
+        this.two = true;
+        this.three = false;
+      }
     },
     nexttwo() {
-      if (this.active++ > 3) this.active = 0;
-      this.activeName = "third";
+      if (this.active == 1) {
+        this.active = 2;
+        this.activeName = "third";
+        this.one = false;
+        this.two = false;
+        this.three = true;
+      } else {
+        this.active = this.active;
+        this.activeName = "third";
+        this.one = false;
+        this.two = false;
+        this.three = true;
+      }
     },
     addgoods() {
       this.selectgoods = true;
     },
-
-    handleAvatarSuccess(res, file) {
-      console.log(file);
+    check(value) {
+      if (value.name == "first") {
+        this.one = true;
+        this.two = false;
+        this.three = false;
+      } else if (value.name == "second") {
+        this.one = false;
+        this.two = true;
+        this.three = false;
+      } else if (value.name == "third") {
+        this.one = false;
+        this.two = false;
+        this.three = true;
+      }
+    },
+    //背景图片上传成功
+    handlebgimgSuccess(res, file) {
       this.imagebgUrl = URL.createObjectURL(file.raw);
     },
+    //标题图片上传成功
+    handletitleimgSuccess(res, file) {
+      this.imagetitleUrl = URL.createObjectURL(file.raw);
+    },
+    //扫码按钮图片上传成功
+    handlecodebtnSuccess(res, file) {
+      this.imagecodebtnUrl = URL.createObjectURL(file.raw);
+    },
+    //奖励图片
+    handlebonusSuccess(res, file) {
+      this.imagebonusUrl = URL.createObjectURL(file.raw);
+    },
+    //领取奖励背景图
+    handlereceivebgimgSuccess(res, file) {
+      this.imagereceivebgUrl = URL.createObjectURL(file.raw);
+    },
+    //领取奖励标题图
+    handlereceivetitleimgSuccess(res, file) {
+      this.imagereceivetitleUrl = URL.createObjectURL(file.raw);
+    },
+    //领取金额图
+    handlereceiveamountimgSuccess(res, file) {
+      this.imagereceiveamountUrl = URL.createObjectURL(file.raw);
+    },
+    //抽奖按钮
+    handlereceivedrawimgSuccess(res, file) {
+      this.imagereceivedrawUrl = URL.createObjectURL(file.raw);
+    },
+    //领取奖励活动title
+    handleactivitytitleSuccess(res, file) {
+      this.imageactivitytitleUrl = URL.createObjectURL(file.raw);
+    },
+    exit(){
+      this.$router.push("/operatemanagement")
+    },
+    code(){
+      this.$router.push("/qrcodemanagement")
+    }
+
+  },
+  watch: {
+    active(value) {}
   }
 };
 </script>
@@ -423,33 +644,135 @@ export default {
         height: 100%;
         left: 0;
         top: 0;
+
         .bgimg {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          .avatar-uploader .el-upload{
-             width: 338px;height: 600px;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 338px;
+            height: 600px;
+            line-height: 178px;
+            text-align: center;
           }
           .avatar {
             width: 338px;
             height: 600px;
             display: block;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: 11px;
           }
-          // div{
-          //   width: 338px;height: 600px;
-          //   .el-upload{
-          //   width: 338px;height: 600px;
-          //   display: block;
-          // }
-          // }
-          
-          
+        }
+        .titleimg {
+          width: 270px;
+          height: 107px;
+          position: absolute;
+          background: #ccc;
+
+          left: 50%;
+          top: 58px;
+          margin-left: -135px;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 270px;
+            height: 107px;
+            line-height: 107px;
+            text-align: center;
+          }
+          .avatar {
+            width: 270px;
+            height: 107px;
+            display: block;
+          }
+        }
+        .codebtn {
+          width: 124px;
+          height: 36px;
+          border-radius: 4px;
+          overflow: hidden;
+          position: absolute;
+          left: 50%;
+          background: #409eff;
+          top: 333px;
+          margin-left: -62px;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 124px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+          }
+          .avatar {
+            width: 124px;
+            height: 36px;
+            display: block;
+          }
+        }
+        .bonus {
+          width: 62px;
+          height: 56px;
+          position: absolute;
+          left: 50%;
+          top: 430px;
+          background: rebeccapurple;
+          margin-left: -31px;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 62px;
+            height: 56px;
+            line-height: 56px;
+            text-align: center;
+          }
+          .avatar {
+            width: 62px;
+            height: 56px;
+            display: block;
+          }
         }
       }
       .two {
@@ -458,7 +781,143 @@ export default {
         height: 100%;
         left: 0;
         top: 0;
-        display: none;
+        background: #555;
+
+        .bgimg {
+          width: 244px;
+          height: 481px;
+          position: absolute;
+          z-index: 11;
+          left: 50%;
+          top: 34px;
+          margin-left: -122px;
+          background: #eee;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 244px;
+            height: 481px;
+            line-height: 81px;
+            text-align: center;
+          }
+          .avatar {
+            width: 244px;
+            height: 481px;
+            display: block;
+          }
+        }
+        .titleimg {
+          width: 204px;
+          height: 78px;
+          position: absolute;
+          left: 50%;
+          top: 138px;
+          margin-left: -102px;
+          z-index: 22;
+          background: #169bd5;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 204px;
+            height: 78px;
+            line-height: 78px;
+            text-align: center;
+          }
+          .avatar {
+            width: 204px;
+            height: 78px;
+            display: block;
+          }
+        }
+        .amount {
+          width: 86px;
+          height: 38px;
+          position: absolute;
+          left: 50%;
+          top: 267px;
+          margin-left: -43px;
+          z-index: 22;
+          background: #169bd5;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 86px;
+            height: 38px;
+            line-height: 38px;
+            text-align: center;
+          }
+          .avatar {
+            width: 86px;
+            height: 38px;
+            display: block;
+          }
+        }
+        .draw {
+          width: 72px;
+          height: 72px;
+          position: absolute;
+          left: 50%;
+          top: 382px;
+          z-index: 22;
+          margin-left: -36px;
+          background: firebrick;
+          border-radius: 50%;
+          overflow: hidden;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 72px;
+            height: 72px;
+            line-height: 72px;
+            text-align: center;
+          }
+          .avatar {
+            width: 72px;
+            height: 72px;
+            display: block;
+          }
+        }
+        //display: none;
       }
       .three {
         position: absolute;
@@ -466,7 +925,39 @@ export default {
         height: 100%;
         left: 0;
         top: 0;
-        display: none;
+        .title {
+          width: 260px;
+          height: 24px;
+          position: absolute;
+          left: 50%;
+          top: 114px;
+          margin-left: -130px;
+          background: #ccc;
+          .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+          }
+          .avatar-uploader .el-upload:hover {
+            border-color: #409eff;
+          }
+          .avatar-uploader-icon {
+            font-size: 20px;
+            color: #8c939d;
+            width: 260px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+          }
+          .avatar {
+            width: 260px;
+            height: 24px;
+            display: block;
+          }
+        }
+        //display: none;
       }
     }
     .right {
@@ -613,6 +1104,67 @@ export default {
             margin: 20px auto;
             border-radius: 6px;
           }
+        }
+      }
+    }
+    // 创建成功弹窗
+    .createsuccesscanvas {
+      width: 100%;
+      height: 1050px;
+      position: absolute;
+      z-index: 111;
+      left: 0;
+      top: 0;
+      background: #fff;
+      h3 {
+        width: 100%;
+        height: 54px;
+        text-align: center;
+        line-height: 54px;
+        font-size: 34px;
+        margin-top: 33px;
+        color: #aaa;
+        span {
+          display: inline-block;
+          width: 45px;
+          height: 45px;
+          background: #1abc9c;
+          color: #fff;
+          margin-right: 13px;
+          border-radius: 50%;
+        }
+      }
+      ul {
+        width: 100%;
+        height: auto;
+        li {
+          margin-left: 435px;
+          list-style: none;
+          font-size: 14px;
+          height: 73px;
+          line-height: 73px;
+          span {
+            font-size: 15px;
+          }
+        }
+      }
+      .el-table {
+        margin: 13px auto;
+      }
+      .btn{
+        width: 410px;
+        height: 38px;
+        margin: 40px auto;
+        display: flex;
+        justify-content: space-between;
+        span{
+          display: block;
+          width: 164px;
+          height: 36px;
+          text-align: center;
+          line-height: 38px;
+          font-size: 12px;
+          border: 1px solid #ddd;
         }
       }
     }

@@ -305,6 +305,7 @@ ok(){
           height: 58px;
           line-height: 58px;
           list-style: none;
+          border: none;
           span {
             display: inline-block;
             width: 75px;
@@ -313,17 +314,18 @@ ok(){
             font-size: 12px;
             font-weight: bold;
             color: #555;
+            margin-left: 13px;
           }
-          .department {
-            width: 252px;
-            height: 38px;
-            background: #eff1f5;
-            font-size: 12px;
-            color: #555;
-            margin-left: 17px;
-            text-align: center;
-            border: none;
-          }
+          // .department {
+          //   width: 252px;
+          //   height: 38px;
+          //   background: #eff1f5;
+          //   font-size: 12px;
+          //   color: #555;
+          //   margin-left: 17px;
+          //   text-align: center;
+          //   border: none;
+          // }
           input {
             width: 252px;
             height: 38px;

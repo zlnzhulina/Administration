@@ -6,7 +6,7 @@
         <label>
           <img src="@/assets/zhanghao.png">
           账号：
-          <input type="text" pattern="请输入账号" v-model="username">
+          <input type="tel" pattern="请输入账号" v-model="username">
         </label>
         <label>
           <img src="@/assets/mima.png">
@@ -28,36 +28,75 @@ export default {
     };
   },
   methods: {
+    testtel(){
+      var regtel=/^[1][3,4,5,7,8][0-9]{9}$/;
+      if(this.username==""){
+         this.$message.error('账号不能为空，请重新填写');
+        return false;
+      }else if(!regtel.test(this.username)){
+       
+        this.$message.error('账号填写有误，请重新填写');
+        return false;
+      } else{
+        return true;
+      }
+    },
+    testpwd(){
+      if(this.userpwd==""){
+        this.$message.error('密码不能为空，请重新填写');
+        return false;
+      }else{
+        return true;
+      }
+    },
     login() {
-      Axios({
+      
+      if(this.testtel()&& this.testpwd()){
+        Axios({
         method: "post",
         url: "api/loginManager/userLogin",
         data: {
           adminUserName: this.username,
           adminPassword: this.userpwd
         }
-      }).then(data => {
-        console.log(data)
-        if(data.data.code==0){
-          console.log(1);
-          localStorage.setItem("ADMINLOGINTOKEN",data.data.data.ADMINLOGINTOKEN);
-          localStorage.setItem("name",data.data.data.userInfo.nickName);
-          Axios({
-            url:"api/loginManager/info",
-            method:"get",
-            headers:{
-              "ADMINLOGINTOKEN":data.data.data.ADMINLOGINTOKEN
-            }
-          }).then(data=>{
-            console.log(data)
-            this.$router.push("/index")
-          })
-          // this.$router.push("/index")
-        }
-      }).catch(err=>{
-        console.log(err)
-      });
-    }
+      })
+        .then(data => {
+          console.log(data);
+          if (data.data.code == 0) {
+            console.log(1);
+            // this.set("ADMINLOGINTOKEN",data.data.data.userInfo.nickName,1)
+            localStorage.setItem("ADMINLOGINTOKEN",data.data.data.ADMINLOGINTOKEN);
+            localStorage.setItem("name",data.data.data.userInfo.nickName);
+            Axios({
+              url: "api/loginManager/info",
+              method: "get",
+              headers: {
+                ADMINLOGINTOKEN: data.data.data.ADMINLOGINTOKEN
+              }
+            }).then(data => {
+              console.log(data);
+              this.$router.push("/index");
+            });
+            // this.$router.push("/index")
+          }else{
+            this.$message.error('账号和密码不匹配，请重新填写！');
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+      
+    },
+    // set(key, value, expired) {
+    //   let source = this.source;
+    //   source[key] = JSON.stringify(value);
+    //   if (expired) {
+    //     source[`${key}__expires__`] = Date.now() + 1000 * 60 * expired;
+    //   }
+    //   return value;
+    // },
+    
   }
 };
 </script>

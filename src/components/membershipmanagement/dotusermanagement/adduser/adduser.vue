@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <h3>
-      <span>用户维护>添加用户</span>
+      <span>用户维护>{{flag?"编辑用户":"添加用户"}}</span>
     </h3>
     <ul>
       <li>
@@ -54,6 +54,7 @@ export default {
     return {
       initUserCat:[],
       initNetwork:[],
+      flag:false,
       user:{
         userId:'',
         phoneNumber:'',
@@ -65,12 +66,50 @@ export default {
   },
   created:function(){
     this.initData();
+    this.init();
   },
   methods:{
-
+    init(){
+      console.log(this.$route.query);
+      if(this.$route.query.flag==1){
+        this.flag=true;
+        this.user.userCatId=this.$route.query.networkParm.userCatId;
+        this.user.networkId=this.$route.query.networkParm.networkId;
+        this.user.name=this.$route.query.networkParm.name;
+        this.user.phoneNumber=this.$route.query.networkParm.phoneNumber;
+        this.user.userId=this.$route.query.networkParm.userId;
+      }
+    },
     addUser:function(){
       console.log(this.user)
-      Axios(
+      if(this.flag){
+        //更改员工信息
+        Axios(
+        {
+          method: "post",
+          url: "api/networkUserManager/editUser",
+          data:JSON.stringify(this.user),
+          headers:{
+            "Content-Type":"application/json"
+          }
+        }
+      ).then(data => {
+        if(data.data.code == '0'){
+              this.$message({
+                  message: data.data.msg,
+                  type: 'success'
+              });
+              this.$router.back();
+          }
+          if(data.data.code == '-1'){
+              this.$message({
+                  message: data.data.msg,
+                  type: 'error'
+              });
+          }
+      })
+      }else{
+        Axios(
         {
           method: "post",
           url: "api/networkUserManager/addUser",
@@ -94,6 +133,8 @@ export default {
               });
           }
       })
+      }
+      
     },
     initData:function(){
       Axios(
@@ -158,8 +199,12 @@ export default {
         text-align: center;
         border: none;
       }
+      .el-select{
+        width: 258px;
+        // height: 38px;
+      }
       input {
-        width: 320px;
+        width: 258px;
         height: 38px;
         font-size: 12px;
         color: #555;
@@ -187,6 +232,7 @@ export default {
         text-align: center;
         line-height: 50px;
         margin: 0 auto;
+        border-radius: 6px;
     }
   }
 }
