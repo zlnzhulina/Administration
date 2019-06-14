@@ -1,36 +1,34 @@
 <template>
   <div class="container">
-    <!-- <div class="header">
-      <span class="add" @click="addgoods">添加商品</span>
-      <span class="add" @click="deleteall">批量删除</span>
-      <input type="text" placeholder="账号"><img src="@/assets/sousuo.png"/>
-    </div> -->
+      
 
     <div class="search">
         <span>
         商品库
         </span>
-      <select name="userclass">
-        <option>润滑油</option>
-        <option>机修工</option>
-        <option>SA</option>
+      <select name="userclass" v-model="firstlist">
+        <option>请选择商品库</option>
+        <option v-for="(firstlist,index) in goodsclasslist" :value="firstlist">{{firstlist.productCatName}}</option>
+        
       </select>
       <span>
       商品类型
       </span>
-      <select name="userclass">
+      <select name="userclass" v-model="secodslist">
         <option>商品类型</option>
-        <option>机修工</option>
-        <option>SA</option>
+        
+        <option v-for="(secodslist,index) in firstlist.productCatList" :value="secodslist">{{secodslist.productCatName}}</option>
       </select>
       <span>
       商品品牌
       </span>
-      <select name="userclass">
+      <select name="userclass" v-model="threelist">
         <option>商品品牌</option>
-        <option>机修工</option>
-        <option>SA</option>
+        
+        <option v-for="(threelist,index) in secodslist.productCatList" :value="threelist" @click="selectok">{{threelist.productCatName}}</option>
       </select>
+      <span class="add" @click="addparameter">添加参数</span>
+
     </div>
     <el-table
       :header-cell-style="{background:'#9decff',height:'32'}"
@@ -50,19 +48,20 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作">
         <el-button type="text" size="small" @click="edit(rowdata)">编辑</el-button>
-        <el-button type="text" size="small">删除</el-button>
+        <el-button type="text" size="small" @click="del">删除</el-button>
       </el-table-column>
     </el-table>
-    <div class="delcanvas" v-if="delcanvas">
-      <h3>温馨提示</h3>
-      <p>删除账号后不可恢复，确认删除？</p>
+    <div class="addparametercanvas" v-if="addparametercanvas">
+      <h3>添加参数</h3>
+      <p>参数名称：<input type="text" v-model="parametername"></p>
       <span style="background:#fff" @click="exit">取消</span>
-      <span style="background:#169bd5" @click="del">确认</span>
+      <span style="background:#169bd5" @click="add">确认</span>
     </div>
   </div>
 </template>
 
 <script>
+import Axios from 'axios';
 export default {
   //商品列表
   data() {
@@ -70,6 +69,24 @@ export default {
         dui: require('@/assets/yes.png'),
         cuo: require('@/assets/no.png'),
       delcanvas: false,
+      addparametercanvas:false,
+      //要添加参数的名称
+      parametername:"",
+      //选中的商品库列表
+      firstlist:[
+      ],
+      //选中的商品分类列表
+      secodslist:[
+        {
+          productCatList:"",
+        }
+      ],
+      //选中的商品品牌列表
+      threelist:[
+        
+      ],
+      //商品分类列表
+      goodsclasslist:[],
       tabledata: [
         {
           parametername: "12543245543",
@@ -87,7 +104,35 @@ export default {
       ]
     };
   },
+  created(){
+    this.goodclasslist();
+    this.goodsparameterlist()
+  },
   methods: {
+    //商品分类列表
+    goodclasslist(){
+      Axios({
+        url:"api/productsManager/productCatList",
+        methods:"get",
+
+      }).then(data=>{
+        console.log(data);
+        this.goodsclasslist=data.data.data.firstCatList;
+      })
+    },
+    //商品参数列表
+    goodsparameterlist(){
+      Axios({
+        url:"api/productsManager/productParamValueList",
+        methods:"get"
+      }).then(data=>{
+        console.log(data)
+      })
+    },
+    //选中商品品牌   
+    selectok(){
+      
+    },
     //编辑
      editrow(row){
         this.rowdata=row;
@@ -99,11 +144,26 @@ export default {
         this.cl=true;
         console.log(val);
     },
-    //添加
-    addgoods() {
-      this.$router.push({
-        path: "/addgoods"
-      });
+    //添加参数
+    addparameter() {
+      this.addparametercanvas=true;
+    },
+    add(){
+      //确定添加参数
+      // Axios({
+      //   url:"api/productsManager/addProductParamSet",
+      //   methods:"post",
+      //   data:{
+      //     productParamSetId:"",
+      //     productParamSetName:"",
+      //     isEdit:"",
+      //     isUse:"",
+      //     productCatId:"",
+      //   }
+      // }).then(data=>{
+      //   console.log(data)
+      // })
+
     },
     //编辑
     deleteall() {
@@ -111,10 +171,21 @@ export default {
     },
     exit() {
       this.delcanvas = false;
+       this.addparametercanvas = false;
     },
 
     del() {
-      this.delcanvas = false;
+      
+    }
+  },
+  watch:{
+    firstlist(val){
+      console.log(val);
+      this.secodslist=val;
+    },
+    secodslist(val){
+      console.log(val)
+      this.threelist=val;
     }
   }
 };
@@ -125,42 +196,21 @@ export default {
   width: 960px;
   height: 622px;
   position: relative;
-//   .header {
-//       width: 100%;
-//       height: 60px;
-//     .add {
-//       display: block;
-//       width: 122px;
-//       height: 36px;
-//       margin-top: 10px;
+  .add {
+      display: block;
+      width: 122px;
+      height: 36px;
+     float: right;
+     margin-top: 15px;
+      border: 1px solid #555;
+      color: #7f7f7f;
+      text-align: center;
+      line-height: 36px;
+      font-size: 12px;
+      border-radius: 5px;
       
-//       border: 1px solid #555;
-//       color: #7f7f7f;
-//       text-align: center;
-//       line-height: 36px;
-//       font-size: 12px;
-//       border-radius: 5px;
-//       float: left;
-//       margin-right: 8px;
-//     }
-//     input{
-//         width:216px;
-//         height:34px;
-//         margin-top: 10px;
-//         border-radius: 15px;
-//         float: right;
-//         border: 1px solid #ddd;
-//         padding-left: 8px;
-//         outline:none;
-//     }
-//     img{
-//         width: 20px;
-//         height: 20px;
-//         position: absolute;
-//         left: 932px;
-//         top: 18px;
-//     }
-//   }
+      margin-right: 8px;
+    }
 
   .search {
     width: 100%;
@@ -190,7 +240,7 @@ export default {
   .el-table {
     margin-top: 13px;
   }
-  .delcanvas {
+  .addparametercanvas {
     width: 360px;
     height: 240px;
     position: absolute;
@@ -215,6 +265,11 @@ export default {
       margin-top: 16px;
       text-align: center;
       font-size: 12px;
+      input{
+        width: 200px;
+        height: 30px;
+
+      }
     }
     span {
       display: block;

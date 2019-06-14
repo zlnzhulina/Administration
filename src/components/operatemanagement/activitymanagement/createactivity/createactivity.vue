@@ -15,7 +15,7 @@
           <div class="bgimg">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handlebgimgSuccess"
             >
@@ -26,7 +26,7 @@
           <div class="titleimg">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handletitleimgSuccess"
             >
@@ -38,7 +38,7 @@
           <div class="codebtn">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handlecodebtnSuccess"
             >
@@ -50,7 +50,7 @@
           <div class="bonus">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handlebonusSuccess"
             >
@@ -63,7 +63,7 @@
           <div class="bgimg">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handlereceivebgimgSuccess"
             >
@@ -74,7 +74,7 @@
           <div class="titleimg">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handlereceivetitleimgSuccess"
             >
@@ -85,7 +85,7 @@
           <div class="amount">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handlereceiveamountimgSuccess"
             >
@@ -96,7 +96,7 @@
           <div class="draw">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handlereceivedrawimgSuccess"
             >
@@ -109,7 +109,7 @@
           <div class="title">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="api/upload/uploadImage"
               :show-file-list="false"
               :on-success="handleactivitytitleSuccess"
             >
@@ -123,105 +123,117 @@
         <el-tabs v-model="activeName" @tab-click="check">
           <el-tab-pane label="基本设置" name="first">
             <div class="basic">
-              <el-form ref="form" :model="form" label-width="80px">
+              <el-form ref="form" :model="activity" label-width="80px">
                 <el-form-item label="活动类型">
-                  <el-button>扫码领红包</el-button>
-                  <el-button>滚动抽奖</el-button>
+                  <span
+                    @click="redpacket"
+                    :class="type==1?'selection':''"
+                    style="width:111px;height:39px;display:inline-block;border:1px solid #ccc;text-align:center;"
+                  >扫码领红包</span>
+                  <span
+                    @click="rollingdraw"
+                    :class="type==2?'selection':''"
+                    style="width:111px;height:39px;display:inline-block;border:1px solid #ccc;text-align:center;"
+                  >滚动抽奖</span>
                 </el-form-item>
                 <el-form-item label="活动名称">
-                  <el-input v-model="form.name"></el-input>
+                  <el-input v-model="activity.activityName"></el-input>
                 </el-form-item>
                 <el-form-item label="活动时间">
                   <el-col :span="11">
                     <el-date-picker
                       type="date"
                       placeholder="选择日期"
-                      v-model="form.date1"
+                      v-model="activity.startTime"
                       style="width: 100%;"
                     ></el-date-picker>
                   </el-col>
                   <el-col class="line" :span="2">-</el-col>
                   <el-col :span="11">
-                    <el-time-picker placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
+                    <el-date-picker
+                      type="date"
+                      placeholder="选择日期"
+                      v-model="activity.endTime"
+                      style="width: 100%;"
+                    ></el-date-picker>
                   </el-col>
                 </el-form-item>
                 <p></p>
                 <!-- 展示图 -->
               </el-form>
-              <el-form :model="form" label-width="100px">
-                <el-form-item label="是否首页推广">
-                  <el-radio-group v-model="form.resource">
-                    <el-radio label="否"></el-radio>
-                    <el-radio label="是"></el-radio>
-                  </el-radio-group>
-                </el-form-item>
+
+              <el-form label-width="100px">
+                <!-- 占位 -->
+                <el-form-item></el-form-item>
                 <el-form-item label="页面链接">
-                  <el-input v-model="form.alink"></el-input>
-                </el-form-item>
-                <el-form-item label="活动说明">
-                  <el-input type="textarea" v-model="form.describe"></el-input>
+                  <el-input v-model="activity.page"></el-input>
                 </el-form-item>
               </el-form>
-              <el-form :model="form" label-width="130px">
+              <el-form :model="activity" label-width="130px">
                 <el-form-item label="消费者码状态条件">
-                  <el-radio-group v-model="form.customerstate">
-                    <el-radio label="否"></el-radio>
-                    <el-radio label="是"></el-radio>
+                  <el-radio-group v-model="usercodetype">
+                    <el-radio value="-1" label="-1">否</el-radio>
+                    <el-radio value="1" label="1">是</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item>
-                  <el-select v-model="form.region" placeholder="请选择消费者码状态条件">
-                    <el-option label="已关联" value="shanghai"></el-option>
-                    <el-option label="已查询(防伪查询)" value="shanghai"></el-option>
-                    <el-option label="已激活" value="beijing"></el-option>
+                <el-form-item v-show="usercodetype == -1 ? false:true">
+                  <el-select v-model="activity.isQrcodeStatus" placeholder="请选择消费者码状态条件">
+                    <el-option label="已关联" value="已关联"></el-option>
+                    <el-option label="已查询(防伪查询)" value="已查询"></el-option>
+                    <el-option label="已激活" value="已激活"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="消费者延时扫码">
-                  <el-radio-group v-model="form.delay">
-                    <el-radio label="否"></el-radio>
-                    <el-radio label="是"></el-radio>
+                  <el-radio-group v-model="userdelayed">
+                    <el-radio value="0" label="0">否</el-radio>
+                    <el-radio value="1" label="1">是</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item>
-                  <el-input style="width:240px;" placeholder="只能输入整数"></el-input>
-                  <el-select v-model="form.time" placeholder="单位" style="width:100px;">
+                <el-form-item v-show="userdelayed==0?false:true">
+                  <el-input style="width:240px;" placeholder="只能输入整数" v-model="activity.scanTime"></el-input>
+                  <el-select placeholder="单位" style="width:100px;">
                     <el-option label="小时" value="hour"></el-option>
-                    <el-option label="分钟" value="Minute"></el-option>
-                    <el-option label="秒" value="second"></el-option>
+                    <!-- <el-option label="分钟" value="Minute"></el-option>
+                    <el-option label="秒" value="second"></el-option>-->
                   </el-select>
                 </el-form-item>
                 <el-form-item label="白名单">
-                  <el-radio-group v-model="form.white">
-                    <el-radio label="否"></el-radio>
-                    <el-radio label="是"></el-radio>
+                  <el-radio-group v-model="activity.isWhiteList">
+                    <el-radio value="0" label="0">否</el-radio>
+                    <el-radio value="1" label="1">是</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="条码占用期">
-                  <el-radio-group v-model="form.occupy">
-                    <el-radio label="否"></el-radio>
-                    <el-radio label="是"></el-radio>
+                  <el-radio-group v-model="isbarTakeUpTime">
+                    <el-radio label="0">否</el-radio>
+                    <el-radio label="1">是</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item>
-                  <el-input style="width:240px;" placeholder="只能输入整数"></el-input>
-                  <el-select v-model="form.occupytime" placeholder="单位" style="width:100px;">
+                <el-form-item v-show="isbarTakeUpTime==0?false:true">
+                  <el-input
+                    style="width:240px;"
+                    placeholder="只能输入整数"
+                    v-model="activity.barTakeUpTime"
+                  ></el-input>
+                  <el-select placeholder="单位" style="width:100px;">
                     <el-option label="小时" value="hour"></el-option>
-                    <el-option label="分钟" value="Minute"></el-option>
-                    <el-option label="秒" value="second"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="条码保护期">
-                  <el-radio-group v-model="form.protect">
-                    <el-radio label="否"></el-radio>
-                    <el-radio label="是"></el-radio>
+                  <el-radio-group v-model="isbarProtectTime">
+                    <el-radio label="0">否</el-radio>
+                    <el-radio label="1">是</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item>
-                  <el-input style="width:240px;" placeholder="只能输入整数"></el-input>
-                  <el-select v-model="form.protecttime" placeholder="单位" style="width:100px;">
+                <el-form-item v-show="isbarProtectTime==0?false:true">
+                  <el-input
+                    type="number"
+                    style="width:240px;"
+                    placeholder="只能输入整数"
+                    v-model="activity.barProtectTime"
+                  ></el-input>
+                  <el-select placeholder="单位" style="width:100px;">
                     <el-option label="小时" value="hour"></el-option>
-                    <el-option label="分钟" value="Minute"></el-option>
-                    <el-option label="秒" value="second"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -244,6 +256,7 @@
                     type="number"
                     placeholder="设置数量"
                     style="width:98px;height:24px;border:1px solid #ccc"
+                    v-model="activity.personCount"
                   >个
                 </p>
                 <p style="height:52px;line-height:52px;">
@@ -253,6 +266,7 @@
                     type="number"
                     placeholder="设置数量"
                     style="width:98px;height:24px;border:1px solid #ccc"
+                    v-model="activity.personDayCount"
                   >个
                 </p>
                 <p style="height:52px;line-height:52px;">
@@ -262,6 +276,7 @@
                     type="number"
                     placeholder="设置数量"
                     style="width:98px;height:24px;border:1px solid #ccc"
+                    v-model="activity.catCount"
                   >个
                 </p>
               </div>
@@ -271,18 +286,13 @@
               <div class="receive" style="width:97%;">
                 <p>
                   <span style="font-weight:bold;text-align:right">1.是否需要添加车辆</span>
-                  <el-radio v-model="creatcar" label="1">是</el-radio>
-                  <el-radio v-model="creatcar" label="2">否</el-radio>
+                  <el-radio v-model="activity.needCar" label="1">是</el-radio>
+                  <el-radio v-model="activity.needCar" label="0">否</el-radio>
                 </p>
                 <p>
                   <span style="text-align:right">是否需认证</span>
-                  <el-radio v-model="Authentication" label="1">是</el-radio>
-                  <el-radio v-model="Authentication" label="2">否</el-radio>
-                </p>
-                <p>
-                  <span style="text-align:right">车辆信息</span>
-                  <el-radio v-model="Authentication" label="1">是</el-radio>
-                  <el-radio v-model="Authentication" label="2">否</el-radio>
+                  <el-radio v-model="activity.needAuthentication" label="1">是</el-radio>
+                  <el-radio v-model="activity.needAuthentication" label="0">否</el-radio>
                 </p>
                 <p
                   style="width:350px;height:80px;border:2px dashed #ccc;margin:10px 0 0 80px;"
@@ -291,13 +301,8 @@
               <div class="receive" style="width:97%;">
                 <p>
                   <span style="font-weight:bold;text-align:right">1.是否需要实名认证</span>
-                  <el-radio v-model="Authenticationpeople" label="1">是</el-radio>
-                  <el-radio v-model="Authenticationpeople" label="2">否</el-radio>
-                </p>
-                <p>
-                  <span style="text-align:right">是否分享</span>
-                  <el-radio v-model="identity" label="1">是</el-radio>
-                  <el-radio v-model="identity" label="2">否</el-radio>
+                  <el-radio v-model="activity.isRealName" label="1">是</el-radio>
+                  <el-radio v-model="activity.isRealName" label="0">否</el-radio>
                 </p>
               </div>
             </div>
@@ -321,75 +326,101 @@
                   <a>添加商品</a>
                 </p>
                 <p>
-                  <el-dropdown>
-                    <el-button type="primary">
-                      选择商品库
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>选择商品库</el-dropdown-item>
-                      <el-dropdown-item>润滑油</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                  <el-dropdown>
-                    <el-button type="primary">
-                      选择商品类型
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>选择商品类型</el-dropdown-item>
-                      <el-dropdown-item>发动机油</el-dropdown-item>
-                      <el-dropdown-item>齿轮油</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                  <el-dropdown>
-                    <el-button type="primary">
-                      选择商品品牌
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>选择商品品牌</el-dropdown-item>
-                      <el-dropdown-item>壳牌</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                  <el-dropdown>
-                    <el-button type="primary">
-                      选择商品系列
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>选择商品系列</el-dropdown-item>
-                      <el-dropdown-item>解放专用</el-dropdown-item>
-                      <el-dropdown-item>喜力</el-dropdown-item>
-                      <el-dropdown-item>劲霸</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                  <el-dropdown>
-                    <el-button type="primary">
-                      选择商品
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item>黄金糕</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                  <select>
+                    <option>选择商品库</option>
+                    <option
+                          v-for="(firstclass,index) in goodsclasslist"
+                          value="firstclass.productCatId"
+                        >{{firstclass.productCatName}}</option>
+                  </select>
+                  <select>
+                    <option>选择商品类型</option>
+                    <option
+                          v-for="(firstclass,index) in goodsclasslist"
+                          value="firstclass.productCatId"
+                        >{{firstclass.productCatName}}</option>
+                  </select>
+                  <select >
+                    <option>选择商品品牌</option>
+                    <option
+                          v-for="(firstclass,index) in goodsclasslist"
+                          value="firstclass.productCatId"
+                        >{{firstclass.productCatName}}</option>
+                  </select>
+                  <select>
+                    <option>选择商品系列</option>
+                    <option
+                          v-for="(firstclass,index) in goodsclasslist"
+                          value="firstclass.productCatId"
+                        >{{firstclass.productCatName}}</option>
+                  </select>
+                  <select>
+                    <option>选择商品</option>
+                    <option
+                          v-for="(firstclass,index) in goodsclasslist"
+                          value="firstclass.productCatId"
+                        >{{firstclass.productCatName}}</option>
+                  </select>
+
                 </p>
+                 
+                  
+                  
+            
+                  
+               
+                
               </div>
               <div class="setprize">
                 <p style="height:40px;">
                   <span>设置奖项</span>
-                  <router-link :to="addprize">添加奖项</router-link>
+                  <span
+                    @click="addprize"
+                    style="height:30px;margin-top:5px;margin-right:10px;line-height:30px;background:#1abc9c;color:#fff;float:right; border-radius:5px;"
+                  >添加奖项</span>
                 </p>
                 <div class="tab">
-                  <el-table :data="prizedata" stripe style="width: 100%">
+                  <el-table :data="prizedata" stripe style="width: 100%;font-size:12px;">
                     <el-table-column prop="priority" label="优先级" width="68"></el-table-column>
                     <el-table-column prop="prize" label="奖品" width="100"></el-table-column>
-                    <el-table-column prop="prizename" label="奖品名称" width="100"></el-table-column>
-                    <el-table-column prop="Amount " label="金额" width="68"></el-table-column>
-                    <el-table-column prop="prizenum" label="奖品数量" width="100"></el-table-column>
+                    <el-table-column prop="prizename" label="奖品名称" width="100">
+                      <template>
+                        <input
+                          type="text"
+                          style="width:100%;height:26px;outline:none;font-size:12px;"
+                          v-model="prizedata.prizename"
+                        >
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="Amount " label="金额" width="68">
+                      <template>
+                        <input
+                          type="text"
+                          style="width:100%;height:26px;outline:none;font-size:12px;"
+                          v-model="prizedata.Amount"
+                        >
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="prizenum" label="奖品数量" width="100">
+                      <template>
+                        <input
+                          type="text"
+                          style="width:100%;height:26px;outline:none;font-size:12px;"
+                          v-model="prizedata.prizenum"
+                        >
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="setprize" label="出奖设置" width="78"></el-table-column>
-                    <el-table-column prop="Tips" label="提示信息" width="188"></el-table-column>
-                    <el-table-column fixed="right" label="操作" width="48">
+                    <el-table-column prop="Tips" label="提示信息" width="188">
+                      <template>
+                        <input
+                          type="text"
+                          style="width:68%;height:26px;outline:none;font-size:12px;"
+                          v-model="prizedata.Tips"
+                        >现金红包
+                      </template>
+                    </el-table-column>
+                    <el-table-column fixed="right" label="操作" width="50">
                       <template slot-scope="scope">
                         <el-button
                           @click.native.prevent="deleteRow(scope.$index, tableData4)"
@@ -432,7 +463,8 @@
           <el-table-column prop="goodsname" label="奖品分类"></el-table-column>
         </el-table>
         <div class="btn">
-          <span @click="exit">暂不关联</span><span style="background:#1abc9c;color:#fff;" @click="code">关联相关码</span>
+          <span @click="exit">暂不关联</span>
+          <span style="background:#1abc9c;color:#fff;" @click="code">关联相关码</span>
         </div>
       </div>
     </div>
@@ -440,7 +472,11 @@
 </template>
 
 <script>
+import Axios from "axios";
 export default {
+  created() {
+    this.goodclasslist();
+  },
   data() {
     return {
       one: true,
@@ -464,10 +500,17 @@ export default {
       imagereceivedrawUrl: "",
       //领奖活动标题
       imageactivitytitleUrl: "",
+      //消费者码状态
+      usercodetype: "",
+      //消费者延迟扫码
+      userdelayed: "1",
+      isbarTakeUpTime: "1",
+      isbarProtectTime: "1",
       selectgoods: false,
       active: 0,
+      type: "",
       // addgoods: "/addgoods",
-      addprize: "/addprize",
+      // addprize: "/addprize",
       creatcar: "1", //是否添加车辆
       Authentication: "1", //是否认证
       Authenticationpeople: "1", //是否需要实名认证
@@ -483,20 +526,77 @@ export default {
       enginenmb: false, //发动机号
       enginecode: false, //发动机型号
       relationgoods: ["关联商品1", "关联商品2"],
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
+      //商品分类列表
+      goodsclasslist: [],
+      activity: {
+        //活动名称ok
+        activityName: "",
+        //起始时间ok
+        startTime: "",
+        //结束时间ok
+        endTime: "",
+        //每人可领ok
+        personCount: "",
+        //每人每天可领ok
+        personDayCount: "",
+        //每辆车可领ok
+        catCount: "",
+        //是否需要车
+        needCar: "",
+        //是否需要认证
+        needAuthentication: "",
+        //身份认证
+        isRealName: "",
+        //活动类型ok
+        activityType: "",
+        //页面路径ok
+        page: "",
+        //消费者扫码状态ok
+        isQrcodeStatus: "",
+        //是否开启白名单ok
+        isWhiteList: "",
+        //扫码延迟时间ok
+        scanTime: "",
+        //条码占用时间ok
+        barTakeUpTime: "",
+        //条码保护时间ok
+        barProtectTime: "",
+        //背景图
+        backgroundUrl: "",
+        //标题图
+        titleUrl: "",
+        //按钮图
+        buttonUrl: "",
+        //奖励背景图
+        prizeUrl: ""
       },
+      list: {
+        activityPrizeList: {
+          //活动奖品名称
+          activityPrizeName: [],
+          //数量
+          activityPrizeCount: "",
+          //提示信息
+          activityPrizeInfo: "",
+          //概率
+          probability: "",
+          //商品id
+          productsId: ""
+        },
+        prizeList: {
+          //奖品名
+          prizeName: "",
+          //数量
+          count: "",
+          //价格
+          price: ""
+        }
+      },
+      //奖项列表
       prizedata: [
         {
           priority: "",
-          prize: "",
+          prize: "微信红包",
           prizename: "",
           Amount: "",
           prizenum: "",
@@ -505,12 +605,32 @@ export default {
         }
       ],
       //创建成功弹窗
-      createsuccesscanvas: false,
+      createsuccesscanvas: false
     };
   },
+
   methods: {
+    goodclasslist() {
+      Axios({
+        url: "api/productsManager/productCatList",
+        methods: "get"
+      }).then(data => {
+        console.log(data);
+        this.goodsclasslist = data.data.data.firstCatList;
+      });
+    },
     handleClick() {
       alert("button click");
+    },
+    //活动类型为扫码领红包
+    redpacket() {
+      this.activity.activityType = "扫码领红包";
+      this.type = 1;
+    },
+    //扫码类型为滚动抽奖
+    rollingdraw() {
+      this.activity.activityType = "滚动抽奖";
+      this.type = 2;
     },
     next() {
       if (this.active == 0) {
@@ -526,8 +646,10 @@ export default {
         this.two = true;
         this.three = false;
       }
+      console.log(this.activity);
     },
     nexttwo() {
+      console.log(this.activity);
       if (this.active == 1) {
         this.active = 2;
         this.activeName = "third";
@@ -544,6 +666,18 @@ export default {
     },
     addgoods() {
       this.selectgoods = true;
+    },
+    //添加奖项
+    addprize() {
+      this.prizedata.push({
+        priority: "",
+        prize: "微信红包",
+        prizename: "",
+        Amount: "",
+        prizenum: "",
+        setprize: "",
+        Tips: ""
+      });
     },
     check(value) {
       if (value.name == "first") {
@@ -562,23 +696,35 @@ export default {
     },
     //背景图片上传成功
     handlebgimgSuccess(res, file) {
-      this.imagebgUrl = URL.createObjectURL(file.raw);
+      if (file.response.code == 0) {
+        this.imagebgUrl = URL.createObjectURL(file.raw);
+        console.log(file);
+        this.activity.backgroundUrl = file.response.data.fileUrl;
+      } else {
+        this.$message({
+          message: "网络延迟请稍后再试！",
+          type: "warning"
+        });
+      }
     },
     //标题图片上传成功
     handletitleimgSuccess(res, file) {
       this.imagetitleUrl = URL.createObjectURL(file.raw);
+      this.activity.titleUrl = file.response.data.fileUrl;
     },
     //扫码按钮图片上传成功
     handlecodebtnSuccess(res, file) {
       this.imagecodebtnUrl = URL.createObjectURL(file.raw);
+      this.activity.buttonUrl = file.response.data.fileUrl;
     },
     //奖励图片
     handlebonusSuccess(res, file) {
       this.imagebonusUrl = URL.createObjectURL(file.raw);
     },
-    //领取奖励背景图
+    //领取奖励背景图prizeUrl
     handlereceivebgimgSuccess(res, file) {
       this.imagereceivebgUrl = URL.createObjectURL(file.raw);
+      this.activity.prizeUrl = file.response.data.fileUrl;
     },
     //领取奖励标题图
     handlereceivetitleimgSuccess(res, file) {
@@ -596,21 +742,52 @@ export default {
     handleactivitytitleSuccess(res, file) {
       this.imageactivitytitleUrl = URL.createObjectURL(file.raw);
     },
-    exit(){
-      this.$router.push("/operatemanagement")
+    exit() {
+      this.$router.push("/operatemanagement");
     },
-    code(){
-      this.$router.push("/qrcodemanagement")
+    code() {
+      this.$router.push("/qrcodemanagement");
     }
-
   },
   watch: {
-    active(value) {}
+    // active(value) {},
+    usercodetype(val) {
+      if (val == -1) {
+        this.activity.isQrcodeStatus = "-1";
+      } else {
+        this.activity.isQrcodeStatus = "";
+      }
+    },
+    userdelayed(val) {
+      if (val == 0) {
+        this.activity.scanTime = "0";
+      } else {
+        this.activity.scanTime = "";
+      }
+    },
+    isbarTakeUpTime(val) {
+      if (val == 0) {
+        this.activity.barTakeUpTime = "0";
+      } else {
+        this.activity.barTakeUpTime = "";
+      }
+    },
+    isbarProtectTime(val) {
+      if (val == 0) {
+        this.activity.barProtectTime = "0";
+      } else {
+        this.activity.barProtectTime = "";
+      }
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.selection {
+  background: #1abc9c;
+  color: #fff;
+}
 .container {
   width: 1120px;
   margin: 0 auto;
@@ -1030,19 +1207,9 @@ export default {
           height: 80px;
           p {
             width: 100%;
-            .el-dropdown {
-              vertical-align: top;
-              .el-button {
-                background: #fff;
-                border: 1px solid #ccc;
-                color: #555;
-                padding: 12px 10px;
-              }
-            }
-            .el-dropdown + .el-dropdown {
-              margin-left: 15px;
-            }
-            .el-icon-arrow-down {
+            select{
+              width:125px;
+              height: 30px;
               font-size: 12px;
             }
             span {
@@ -1151,13 +1318,13 @@ export default {
       .el-table {
         margin: 13px auto;
       }
-      .btn{
+      .btn {
         width: 410px;
         height: 38px;
         margin: 40px auto;
         display: flex;
         justify-content: space-between;
-        span{
+        span {
           display: block;
           width: 164px;
           height: 36px;

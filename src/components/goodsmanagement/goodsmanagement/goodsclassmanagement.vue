@@ -28,29 +28,29 @@
       <span style="display:block;height:32px;line-height:32px;float:right;margin-right:124px;">操作</span>
     </div>
     <div class="tabbody">
-      <el-collapse :v-model="firstitem.id" accordion v-for="(firstitem,index) in classlist">
+      <el-collapse :v-model="firstitem.productCatId" accordion v-for="(firstitem,index) in classlist" @expand-on-click-node=false>
         <el-collapse-item>
           <template slot="title">
-            {{firstitem.title}}
-            <span style="right:100px">添加下级分类</span>
+            {{firstitem.productCatName}}
+            <span style="right:100px" @click="addnextclass(firstitem.productCatId,$event)">添加下级分类</span>
             <span style="right:50px">编辑</span>
-            <span style="right:6px;">删除</span>
+            <span style="right:6px;" @click="deleteclass(firstitem.productCatId)">删除</span>
           </template>
           <div>
-            <el-collapse v-model="seconditem.id" v-for="(seconditem,index) in firstitem.children">
+            <el-collapse v-model="seconditem.productCatId" v-for="(seconditem,index) in firstitem.productCatList">
               <el-collapse-item>
                 <template slot="title">
-                  {{firstitem.title}}
-                  <span style="right:100px">添加下级分类</span>
+                  {{seconditem.productCatName}}
+                  <span style="right:100px" @click="addnextclass(seconditem.productCatId,$event)">添加下级分类</span>
                   <span style="right:50px">编辑</span>
-                  <span style="right:6px;">删除</span>
+                  <span style="right:6px;" @click="deleteclass(seconditem.productCatId)">删除</span>
                 </template>
-                <div v-for="(threeitem,index) in seconditem.children">
-                  <b style="font-weight: normal;">{{threeitem.title}}</b>
+                <div v-for="(threeitem,index) in seconditem.productCatList">
+                  <b style="font-weight: normal;margin-left:30px;">{{threeitem.productCatName}}</b>
                   <span
                     style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:50px"
                   >编辑</span>
-                  <span style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:6px;">删除</span>
+                  <span @click="deleteclass(threeitem.productCatId)" style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:6px;">删除</span>
                 </div>
               </el-collapse-item>
             </el-collapse>
@@ -130,7 +130,8 @@ export default {
           goodsclass: "afsefw",
           data: "2019-3-4"
         }
-      ]
+      ],
+      superior:"",
     };
   },
   created() {
@@ -143,6 +144,7 @@ export default {
         methods: "get"
       }).then(data => {
         console.log(data);
+        this.classlist=data.data.data.firstCatList;
       });
     },
 
@@ -157,9 +159,50 @@ export default {
     addgoodsbank() {
       this.addcanvas = true;
     },
+    addnextclass(val,e){
+      console.log(val);
+      console.log(e);
+      e.stopPropagation ? e.stopPropagation(): e.cancelBubble = true;
+      this.superior=val;
+      this.addcanvas = true;
+    },
     //编辑
     deleteall() {
       this.addcanvas = true;
+    },
+    //删除
+    deleteclass(val){
+      console.log(val)
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           Axios({
+        url:"api/productsManager/delProductCat",
+        methods:"get",
+        params:{
+          productCatIds:val,
+        }
+      }).then(data=>{
+        console.log(data)
+        if(data.data.code==0){
+          this.goodsclasslist();
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }
+      })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+     
+
     },
     exit() {
       
@@ -167,16 +210,26 @@ export default {
     },
 
     ok() {
+      console.log(this.classname)
       Axios({
         url:"api/productsManager/addProductCat",
         method:"post",
         data:{
-          productCatId:"153267445",
+          productCatId:"",
           productCatName:this.classname,
-          superCatId:""
+          superCatId:this.superior,
         }
       }).then(data=>{
+        this.classname=""
+        this.superior="";
         console.log(data);
+        if(data.data.code==0){
+          this.goodsclasslist();
+          this.$message({
+            type: 'success',
+            message: '添加成功!'
+          });
+        }
       })
       this.addcanvas = false;
     }

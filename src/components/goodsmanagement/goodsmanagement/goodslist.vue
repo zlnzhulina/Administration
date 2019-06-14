@@ -102,13 +102,13 @@ export default {
   },
   methods: {
     goodslist(){
-      // Axios({
-      //   url:"api/",
-      //   method:"get"
-      // }).then(data=>{
-      //   console.log(data)
-      //   this.tabledata=data.data.data;
-      // })
+      Axios({
+        url:"api/productsManager/productCatList",
+        method:"get"
+      }).then(data=>{
+        console.log(data)
+        this.tabledata=data.data.data;
+      })
     },
     //查看
     seedetails(row) {
