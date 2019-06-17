@@ -50,14 +50,13 @@
               style="outline:none;background:#f2f2f2;text-align:center; color:#7f7f7f;"
             >
           </li>
-
           <li v-for="(goodsparameter,index) in selectlist">
             <span>{{goodsparameter.name}}</span>
-            <select @change="selectparameter(index,goodsparameter.children[i])">
+            <select v-model="goodsparameter.selectedI" @change="selectparameter(index,productCatList)">
               <option>请选择</option>
-              <option
+              <option @click="cccc()"
                 v-for="(valitem,i) in goodsparameter.children"
-                :value="i"
+                :value="valitem"
               >{{valitem.productParamValueVal}}</option>
             </select>
           </li>
@@ -94,6 +93,7 @@ import Axios from "axios";
 export default {
   data() {
     return {
+      productCatList:[],
       i:"",
       selectitemlist:[],
       productS: {
@@ -125,6 +125,9 @@ export default {
     this.goodclasslist();
   },
   methods: {
+    cccc(){
+      console.log(333)
+    },
     //商品分类列表
     goodclasslist() {
       Axios({
@@ -150,6 +153,7 @@ export default {
         }
       }).then(data => {
         this.tabledata = data.data.data.productParamSetList;
+        this.productCatList = new Array(this.tabledata.length);
         var obj = {};
         var arr = [];
         for (let i = 0; i < this.tabledata.length; i++) {
@@ -161,6 +165,7 @@ export default {
             }
           }).then(data => {
             var paramobj = {};
+            paramobj["selectedI"] = 0;
             paramobj["name"] = this.tabledata[i].productParamSetName;
             paramobj["children"] = data.data.data.productParamValueList;
             obj[this.tabledata[i].productParamSetId] = paramobj;
@@ -176,10 +181,18 @@ export default {
     // productParamSetId  参数id
     //选择参数
     selectparameter(i,val){
-      console.log(i)
+       console.log(i)
+      
       console.log(val)
-      this.selectitemlist.push(val)
-      console.log(this.selectitemlist)
+       this.selectitemlist.push(val)
+       console.log(this.selectlist);
+       console.log("iiii",this.selectlist[i]["selectedI"]);
+      //  console.log("iiii",this.selectlist[i].selectedI);
+    //   console.log("productCatList",this.productCatList[0]);
+	  // console.log("productCatList",this.productCatList[1]);
+	  // console.log("productCatList",this.productCatList[2]);
+	  // console.log("productCatList",this.productCatList[3]);
+      // console.log(this.selectitemlist)
     },
     //添加商品
     addgoods() {
