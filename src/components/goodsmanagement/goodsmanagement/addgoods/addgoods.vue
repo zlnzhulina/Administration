@@ -9,19 +9,34 @@
         <ul>
           <li>
             <span>商品名称:</span>
-            <input type="text" v-model="goodsname">
+            <input type="text" v-model="productS.productSName">
           </li>
           <li>
             <span>商品库:</span>
-            <select v-model="goodslibrary"></select>
+            <select v-model="firstlist">
+              <option
+                v-for="(firstlist,index) in goodsclasslist"
+                :value="firstlist"
+              >{{firstlist.productCatName}}</option>
+            </select>
           </li>
           <li>
             <span>类型:</span>
-            <select v-model="goodstype"></select>
+            <select v-model="secondlist">
+              <option
+                v-for="(secondlist,index) in firstlist.productCatList"
+                :value="secondlist"
+              >{{secondlist.productCatName}}</option>
+            </select>
           </li>
           <li>
             <span>品牌:</span>
-            <select v-model="goodsbrand"></select>
+            <select v-model="threelist" @change="selectthree">
+              <option
+                v-for="(threelist,index) in secondlist.productCatList"
+                :value="threelist"
+              >{{threelist.productCatName}}</option>
+            </select>
           </li>
         </ul>
         <p>商品参数</p>
@@ -35,21 +50,16 @@
               style="outline:none;background:#f2f2f2;text-align:center; color:#7f7f7f;"
             >
           </li>
-          <li>
-            <span>系列:</span>
-            <select v-model="goodsseries"></select>
-          </li>
-          <li>
-            <span>规格:</span>
-            <select v-model="goodspecifications"></select>
-          </li>
-          <li>
-            <span>粘度:</span>
-            <select v-model="goodsviscosity"></select>
-          </li>
-          <li>
-            <span>价格:</span>
-            <input type="text" v-model="goodsprize">
+
+          <li v-for="(goodsparameter,index) in selectlist">
+            <span>{{goodsparameter.name}}</span>
+            <select @change="selectparameter(index,goodsparameter.children[i])">
+              <option>请选择</option>
+              <option
+                v-for="(valitem,i) in goodsparameter.children"
+                :value="i"
+              >{{valitem.productParamValueVal}}</option>
+            </select>
           </li>
         </ul>
       </div>
@@ -73,53 +83,142 @@
       </div>
     </div>
     <div class="btn">
-      <span style="background:#169bd5;border:1px solid #169bd5;color:#fff;">保存</span>
+      <span style="background:#169bd5;border:1px solid #169bd5;color:#fff;" @click="addgoods">保存</span>
       <span>取消</span>
     </div>
   </div>
 </template>
 
 <script>
+import Axios from "axios";
 export default {
   data() {
     return {
-      goodsname: "",
-      //商品库
-      goodslibrary: "",
-      //商品类型
-      goodstype: "",
-      //商品品牌
-      goodsbrand: "",
-      //商品系列
-      goodsseries: "",
-      //商品规格
-      goodspecifications: "",
-      //商品粘度
-      goodsviscosity: "",
-      //商品价格
-      goodsprize: "",
+      i:"",
+      selectitemlist:[],
+      productS: {
+        productSName: "",
+        status: "",
+        cityName: "",
+        productCatId: "",
+        productImgUrl: ""
+      },
+      productParamSetSelectList: {},
+      //商品类列表
+      goodsclasslist: [],
+      //一级分类列表
+      firstlist: [],
+      //二级分类列表
+      secondlist: [],
+      threelist: [],
+      //商品参数列表
+      tabledata: [],
+      selectlist: [],
 
       dialogImageUrl: "",
       dialogVisible: false,
       //商品图片集合
-      goodsimg:[]
+      goodsimg: []
     };
   },
+  created() {
+    this.goodclasslist();
+  },
   methods: {
+    //商品分类列表
+    goodclasslist() {
+      Axios({
+        url: "api/productsManager/productCatList",
+        method: "get"
+      }).then(data => {
+        this.goodsclasslist = data.data.data.firstCatList;
+      });
+    },
+    //商品参数列表加载
+    selectthree() {
+      this.goodsparameterlist();
+    },
+    //商品参数列表
+    goodsparameterlist() {
+      console.log(this.threelist);
+      Axios({
+        url: "api/productsManager/productParamSetList",
+        method: "get",
+        params: {
+          // productParamSetId:"1139513859602653185",
+          productCatId: this.threelist.productCatId
+        }
+      }).then(data => {
+        this.tabledata = data.data.data.productParamSetList;
+        var obj = {};
+        var arr = [];
+        for (let i = 0; i < this.tabledata.length; i++) {
+          Axios({
+            url: "api/productsManager/productParamValueList",
+            method: "get",
+            params: {
+              productParamSetId: this.tabledata[i].productParamSetId
+            }
+          }).then(data => {
+            var paramobj = {};
+            paramobj["name"] = this.tabledata[i].productParamSetName;
+            paramobj["children"] = data.data.data.productParamValueList;
+            obj[this.tabledata[i].productParamSetId] = paramobj;
+            // this.tabledata[i].productParamValueList=data.data.data.productParamValueList
+            // console.log(paramobj)
+            arr.push(paramobj);
+            this.selectlist = arr;
+            console.log(this.selectlist)
+          });
+        }
+      });
+    },
+    // productParamSetId  参数id
+    //选择参数
+    selectparameter(i,val){
+      console.log(i)
+      console.log(val)
+      this.selectitemlist.push(val)
+      console.log(this.selectitemlist)
+    },
+    //添加商品
+    addgoods() {
+      Axios({
+        url: "api/productManager/addProductS",
+        method: "post",
+        data: {
+          productS: {
+            productSName: this.productS.productSName,
+            status: "",
+            cityName: "",
+            productSName: this.productSName,
+            productImgUrl: this.goodsimg
+          },
+          productParamSetSelectList: [
+            {
+              productParamValueId: "",
+              productParamValueVal: "",
+              productParamSetId: "",
+              isEdit: ""
+            }
+          ]
+        }
+      });
+    },
+
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
     handlePictureCardPreview(file) {
-        console.log(file)
+      console.log(file);
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
-    updatesuccess(res,file){
-        if(res.code==0){
-            this.goodsimg.push(file.response.data.fileUrl);
-            console.log(this.goodsimg);
-        }
-        
+    updatesuccess(res, file) {
+      if (res.code == 0) {
+        this.goodsimg.push(file.response.data.fileUrl);
+        console.log(this.goodsimg);
+      }
     }
   }
 };

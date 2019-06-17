@@ -76,16 +76,30 @@
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px;"></el-table-column>
-      <el-table-column prop="goodsid" label="ID" width="104px"></el-table-column>
-      <el-table-column prop="goodsname" label="批次名称" width="156"></el-table-column>
-      <el-table-column prop="goodsclass" label="批次类型" width="76"></el-table-column>
-      <el-table-column prop="data" label="消费者活动" width="146"></el-table-column>
-      <el-table-column prop="data" label="消费者状态" width="90"></el-table-column>
-      <el-table-column prop="data" label="IMG"></el-table-column>
-      <el-table-column prop="data" label="渠道活动" width="146"></el-table-column>
-<el-table-column prop="data" label="渠道状态" width="90"></el-table-column>
-<el-table-column prop="data" label="IMG"></el-table-column>
-<el-table-column prop="data" label="关联商品" width="142"></el-table-column>
+      <el-table-column prop="qrId" label="ID" width="104px"></el-table-column>
+      <el-table-column prop="goodsname" label="批次名称" width="156">
+         <template>
+          {{batchName}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="type" label="批次类型" width="76">
+       
+      </el-table-column>
+      <el-table-column prop="barActivityName" label="消费者活动" width="146"></el-table-column>
+      <el-table-column prop="qrStatus" label="消费者状态" width="90"></el-table-column>
+      <el-table-column prop="qrCodeUrl" label="IMG">
+        <template slot-scoped="scoped">
+          <img src="scoped.row.qrCodeUrl"/>
+        </template>
+      </el-table-column>
+      <el-table-column prop="barActivityName" label="渠道活动" width="146"></el-table-column>
+<el-table-column prop="barStatus" label="渠道状态" width="90"></el-table-column>
+<el-table-column prop="barCodeUrl" label="IMG">
+   <template slot-scoped="scoped">
+          <img src="scoped.row.barCodeUrl"/>
+        </template>
+</el-table-column>
+<el-table-column prop="productsName" label="关联商品" width="142"></el-table-column>
       <el-table-column fixed="right" label="操作" >
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button>
@@ -157,58 +171,48 @@
 </template>
 
 <script>
+import Axios from 'axios';
 //双码详情
+
 export default {
   data() {
     return {
+      batchId:"",
       //更多操作弹框
       moreoperationscanvas:false,
         relationcanvas:false,
         tabledata: [
-        {
-          batchname: "wefw",
-          batchid: "834576356",
-          batchclass: "adf",
-          batchnum: "2361",
-          Occupy: "8068",
-          Unoccupied: "5454",
-          consumeractivity: "扫码领红包",
-          activity: "扫码领红包"
-        },
-        {
-          batchname: "wefw",
-          batchid: "834576356",
-          batchclass: "adf",
-          batchnum: "2361",
-          Occupy: "8068",
-          Unoccupied: "5454",
-          consumeractivity: "扫码领红包",
-          activity: "扫码领红包"
-        },
-        {
-          batchname: "wefw",
-          batchid: "834576356",
-          batchclass: "adf",
-          batchnum: "2361",
-          Occupy: "8068",
-          Unoccupied: "5454",
-          consumeractivity: "扫码领红包",
-          activity: "扫码领红包"
-        },
-        {
-          batchname: "wefw",
-          batchid: "834576356",
-          batchclass: "adf",
-          batchnum: "2361",
-          Occupy: "8068",
-          Unoccupied: "5454",
-          consumeractivity: "扫码领红包",
-          activity: "扫码领红包"
-        }
+        // 
       ]
     };
   },
+  created(){
+    console.log(this.$route.query);
+    this.batchId=this.$route.query.data.batchId;
+    this.batchName=this.$route.query.data.batchName;
+    this.detailslist();
+  },
   methods: {
+    //详情列表
+    detailslist(){
+      Axios({
+        url:"api/codeManager/batchDetail",
+        method:"get",
+        params:{
+          batchId:this.batchId,
+          pageNo:"1",
+          barActivityId:"",
+          qrStatus:"",
+          barStatus:"",
+          qrId:"",
+          productSId:"",
+
+        }
+      }).then(data=>{
+        console.log(data)
+        this.tabledata=data.data.data.codePage.records;
+      })
+    },
     back() {
       this.$router.back();
     },

@@ -38,7 +38,11 @@
       <el-table-column type="selection" width="55px"></el-table-column>
       <el-table-column prop="batchId" label="批次编号" width="148px"></el-table-column>
       <el-table-column prop="batchName" label="批次名称" width="158px"></el-table-column>
-      <el-table-column prop="type" label="批次类型" width="120px"></el-table-column>
+      <el-table-column prop="type" label="批次类型" width="120px">
+        <template slot-scope="scope">
+          {{scope.row.type==2?"双码":"单码"}}
+        </template>
+      </el-table-column>
       <el-table-column prop="count" label="批次数量"></el-table-column>
       <el-table-column prop="Occupy" label="占用"></el-table-column>
       <el-table-column prop="residueCount" label="未占用"></el-table-column>
@@ -147,46 +151,7 @@ export default {
       //操作当前行的数据
       row:{},
       tabledata: [
-        {
-          batchname: "wefw",
-          batchid: "834576356",
-          batchclass: "adf",
-          batchnum: "2361",
-          Occupy: "8068",
-          Unoccupied: "5454",
-          consumeractivity: "扫码领红包",
-          activity: "扫码领红包"
-        },
-        {
-          batchname: "wefw",
-          batchid: "834576356",
-          batchclass: "adf",
-          batchnum: "2361",
-          Occupy: "8068",
-          Unoccupied: "5454",
-          consumeractivity: "扫码领红包",
-          activity: "扫码领红包"
-        },
-        {
-          batchname: "wefw",
-          batchid: "834576356",
-          batchclass: "adf",
-          batchnum: "2361",
-          Occupy: "8068",
-          Unoccupied: "5454",
-          consumeractivity: "扫码领红包",
-          activity: "扫码领红包"
-        },
-        {
-          batchname: "wefw",
-          batchid: "834576356",
-          batchclass: "adf",
-          batchnum: "2361",
-          Occupy: "8068",
-          Unoccupied: "5454",
-          consumeractivity: "扫码领红包",
-          activity: "扫码领红包"
-        }
+       
       ]
     };
   },
@@ -202,8 +167,8 @@ export default {
           type: ""
         }
       }).then(data => {
-        console.log(data);
-        this.tabledata = data.data.data.userPage.records;
+        // console.log(data);
+        this.tabledata = data.data.data.batchPage.records;
       });
     },
     //创建批次
@@ -214,19 +179,27 @@ export default {
     },
     //更多操作
     moreoperations(row) {
-      console.log(row)
+      // console.log(row)
       this.moreoperationscanvas = true;
-      //this.row=row;
+      this.row=row;
     },
     details() {
-      //查看详情
-      // this.$router.push({
-      //   path:"/doubledetails"
-      // })
-      //单码
+      // console.log(1)
+      if(this.row.type==2){
+        //查看详情
       this.$router.push({
-        path: "/singledetails"
+        path:"/doubledetails",
+        query:{flag:'2',data:this.row}
+      })
+      }else{
+        //单码
+      this.$router.push({
+        path: "/singledetails",
+        query:{flag:'2',data:this.row}
       });
+      }
+      
+      
     },
     download() {
       //下载

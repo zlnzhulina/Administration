@@ -443,7 +443,7 @@
         </h3>
         <ul>
           <li>
-            <span>活动名称：</span>dgagaggggggaaaaaaaaaaaaaaaaaaaaaa
+            <span>活动名称：</span>
           </li>
           <li>
             <span>活动时效：</span>

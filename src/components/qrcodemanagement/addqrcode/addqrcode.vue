@@ -52,14 +52,21 @@ export default {
       this.$router.back();
     },
     create(){
+      console.log(1)
         Axios({
             url:"api/codeManager/createQrCode",
             method:"post",
             data:{
                 batchName:this.batchname,
                 count:this.batchnum,
-                type:"",
+                type:"2",
             }
+
+        }).then(data=>{
+          console.log(data)
+          if(data.data.code==0){
+            this.$router.push("/qrcodemanagement")
+          }
 
         })
     }
