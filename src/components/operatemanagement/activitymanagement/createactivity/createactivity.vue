@@ -163,7 +163,7 @@
               </el-form>
 
               <el-form label-width="100px">
-                <!-- 占位 -->
+                <!--占位 -->
                 <el-form-item></el-form-item>
                 <el-form-item label="页面链接">
                   <el-input v-model="activity.page"></el-input>
@@ -191,11 +191,9 @@
                 </el-form-item>
                 <el-form-item v-show="userdelayed==0?false:true">
                   <el-input style="width:240px;" placeholder="只能输入整数" v-model="activity.scanTime"></el-input>
-                  <el-select placeholder="单位" style="width:100px;">
-                    <el-option label="小时" value="hour"></el-option>
-                    <!-- <el-option label="分钟" value="Minute"></el-option>
-                    <el-option label="秒" value="second"></el-option>-->
-                  </el-select>
+                  <template>
+                    <span>小时</span>
+                  </template>
                 </el-form-item>
                 <el-form-item label="白名单">
                   <el-radio-group v-model="activity.isWhiteList">
@@ -215,9 +213,9 @@
                     placeholder="只能输入整数"
                     v-model="activity.barTakeUpTime"
                   ></el-input>
-                  <el-select placeholder="单位" style="width:100px;">
-                    <el-option label="小时" value="hour"></el-option>
-                  </el-select>
+                  <template>
+                    <span>小时</span>
+                  </template>
                 </el-form-item>
                 <el-form-item label="条码保护期">
                   <el-radio-group v-model="isbarProtectTime">
@@ -232,9 +230,9 @@
                     placeholder="只能输入整数"
                     v-model="activity.barProtectTime"
                   ></el-input>
-                  <el-select placeholder="单位" style="width:100px;">
-                    <el-option label="小时" value="hour"></el-option>
-                  </el-select>
+                  <template>
+                    <span>小时</span>
+                  </template>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="next">下一步</el-button>
@@ -260,7 +258,7 @@
                   >个
                 </p>
                 <p style="height:52px;line-height:52px;">
-                  <sapn style="display:inline-block;width:86px;font-weight:bold;">每人每天可领</sapn>
+                  <span style="display:inline-block;width:86px;font-weight:bold;">每人每天可领</span>
                   <el-checkbox>不限</el-checkbox>
                   <input
                     type="number"
@@ -270,7 +268,7 @@
                   >个
                 </p>
                 <p style="height:52px;line-height:52px;">
-                  <sapn style="display:inline-block;width:86px;font-weight:bold;">每辆车可领</sapn>
+                  <span style="display:inline-block;width:86px;font-weight:bold;">每辆车可领</span>
                   <el-checkbox>不限</el-checkbox>
                   <input
                     type="number"
@@ -286,13 +284,13 @@
               <div class="receive" style="width:97%;">
                 <p>
                   <span style="font-weight:bold;text-align:right">1.是否需要添加车辆</span>
-                  <el-radio v-model="activity.needCar" label="1">是</el-radio>
-                  <el-radio v-model="activity.needCar" label="0">否</el-radio>
+                  <el-radio v-model="activity.needCar" label="1" value="1">是</el-radio>
+                  <el-radio v-model="activity.needCar" label="0" value="0">否</el-radio>
                 </p>
                 <p>
                   <span style="text-align:right">是否需认证</span>
-                  <el-radio v-model="activity.needAuthentication" label="1">是</el-radio>
-                  <el-radio v-model="activity.needAuthentication" label="0">否</el-radio>
+                  <el-radio v-model="activity.needAuthentication" label="1" value="1">是</el-radio>
+                  <el-radio v-model="activity.needAuthentication" label="0" value="0">否</el-radio>
                 </p>
                 <p
                   style="width:350px;height:80px;border:2px dashed #ccc;margin:10px 0 0 80px;"
@@ -301,8 +299,8 @@
               <div class="receive" style="width:97%;">
                 <p>
                   <span style="font-weight:bold;text-align:right">1.是否需要实名认证</span>
-                  <el-radio v-model="activity.isRealName" label="1">是</el-radio>
-                  <el-radio v-model="activity.isRealName" label="0">否</el-radio>
+                  <el-radio v-model="activity.isRealName" label="1" value="1">是</el-radio>
+                  <el-radio v-model="activity.isRealName" label="0" value="0">否</el-radio>
                 </p>
               </div>
             </div>
@@ -316,7 +314,10 @@
           <el-tab-pane label="奖项设置" name="third">
             <div class="prizeset">
               <div class="relation">
-                <span v-for="(item,index) in relationgoods">{{item}}</span>
+                <span
+                  v-for="(item,index) in relationgoods"
+                  style="width:auto;padding:0 4px 0 4px;"
+                >{{item.productSName}}</span>
                 <span @click="addgoods">添加</span>
               </div>
 
@@ -326,50 +327,36 @@
                   <a>添加商品</a>
                 </p>
                 <p>
-                  <select>
-                    <option>选择商品库</option>
+                  <select v-model="firstlist">
+                    <!-- <option selected="selected" value="">选择商品库</option> -->
                     <option
-                          v-for="(firstclass,index) in goodsclasslist"
-                          value="firstclass.productCatId"
-                        >{{firstclass.productCatName}}</option>
+                      v-for="(firstlist,index) in goodsclasslist"
+                      :value="firstlist"
+                    >{{firstlist.productCatName}}</option>
                   </select>
-                  <select>
-                    <option>选择商品类型</option>
+                  <select v-model="secondlist">
+                    <!-- <option selected="selected" value="">选择商品类型</option> -->
                     <option
-                          v-for="(firstclass,index) in goodsclasslist"
-                          value="firstclass.productCatId"
-                        >{{firstclass.productCatName}}</option>
+                      v-for="(secondlist,index) in firstlist.productCatList"
+                      :value="secondlist"
+                    >{{secondlist.productCatName}}</option>
                   </select>
-                  <select >
-                    <option>选择商品品牌</option>
+                  <select v-model="threelist" @change="selectthree">
+                    <!-- <option selected="selected" value="null">选择商品品牌</option> -->
                     <option
-                          v-for="(firstclass,index) in goodsclasslist"
-                          value="firstclass.productCatId"
-                        >{{firstclass.productCatName}}</option>
-                  </select>
-                  <select>
-                    <option>选择商品系列</option>
-                    <option
-                          v-for="(firstclass,index) in goodsclasslist"
-                          value="firstclass.productCatId"
-                        >{{firstclass.productCatName}}</option>
-                  </select>
-                  <select>
-                    <option>选择商品</option>
-                    <option
-                          v-for="(firstclass,index) in goodsclasslist"
-                          value="firstclass.productCatId"
-                        >{{firstclass.productCatName}}</option>
+                      v-for="(threelist,index) in secondlist.productCatList"
+                      :value="threelist"
+                    >{{threelist.productCatName}}</option>
                   </select>
 
+                  <select v-model="selectgood" @change="addgood">
+                    <option>选择商品</option>
+                    <option
+                      v-for="(goodsitem,index) in goodslist"
+                      :value="goodsitem"
+                    >{{goodsitem.productSName}}</option>
+                  </select>
                 </p>
-                 
-                  
-                  
-            
-                  
-               
-                
               </div>
               <div class="setprize">
                 <p style="height:40px;">
@@ -381,47 +368,48 @@
                 </p>
                 <div class="tab">
                   <el-table :data="prizedata" stripe style="width: 100%;font-size:12px;">
-                    <el-table-column prop="priority" label="优先级" width="68"></el-table-column>
+                    <el-table-column prop="priority" label="优先级" width="68">
+                      <!-- <template slot-scoped="scoped">
+                        <div>{{scoped.row}}</div>
+                      </template>-->
+                    </el-table-column>
                     <el-table-column prop="prize" label="奖品" width="100"></el-table-column>
                     <el-table-column prop="prizename" label="奖品名称" width="100">
-                      <template>
-                        <input
-                          type="text"
-                          style="width:100%;height:26px;outline:none;font-size:12px;"
-                          v-model="prizedata.prizename"
-                        >
+                      <template slot-scope="scope">
+                        <input type="text" style="width:100%;height:26px;outline:none;font-size:12px;" v-model="scope.row.prizename"/>
                       </template>
                     </el-table-column>
                     <el-table-column prop="Amount " label="金额" width="68">
-                      <template>
+                      <template slot-scope="scope">
                         <input
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
-                          v-model="prizedata.Amount"
+                          v-model="scope.row.Amount"
                         >
                       </template>
                     </el-table-column>
                     <el-table-column prop="prizenum" label="奖品数量" width="100">
-                      <template>
+                      <template slot-scope="scope">
                         <input
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
-                          v-model="prizedata.prizenum"
+                          v-model="scope.row.prizenum"
                         >
                       </template>
                     </el-table-column>
                     <el-table-column prop="setprize" label="出奖设置" width="78"></el-table-column>
                     <el-table-column prop="Tips" label="提示信息" width="188">
-                      <template>
+                      <template slot-scope="scope">
                         <input
                           type="text"
                           style="width:68%;height:26px;outline:none;font-size:12px;"
-                          v-model="prizedata.Tips"
+                          v-model="scope.row.Tips"
                         >现金红包
                       </template>
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="50">
                       <template slot-scope="scope">
+                        <el-button ></el-button>
                         <el-button
                           @click.native.prevent="deleteRow(scope.$index, tableData4)"
                           type="text"
@@ -525,9 +513,20 @@ export default {
       oilamount: false, //用油量
       enginenmb: false, //发动机号
       enginecode: false, //发动机型号
-      relationgoods: ["关联商品1", "关联商品2"],
+      relationgoods: [],
       //商品分类列表
       goodsclasslist: [],
+      //一级分类列表
+      firstlist: [],
+      //二级分类列表
+      secondlist: [],
+      //三级分类列表
+      threelist: [],
+      //商品列表
+      goodslist: [],
+      //选中的商品、
+      selectgood: {},
+      productsId: "",
       activity: {
         //活动名称ok
         activityName: "",
@@ -570,52 +569,62 @@ export default {
         //奖励背景图
         prizeUrl: ""
       },
-      list: {
-        activityPrizeList: {
-          //活动奖品名称
-          activityPrizeName: [],
-          //数量
-          activityPrizeCount: "",
-          //提示信息
-          activityPrizeInfo: "",
-          //概率
-          probability: "",
-          //商品id
-          productsId: ""
-        },
-        prizeList: {
-          //奖品名
-          prizeName: "",
-          //数量
-          count: "",
-          //价格
-          price: ""
+      list: [
+        {
+          activityPrizeList: [
+            {
+              activityPrizeName: "",
+              //数量
+              activityPrizeCount: "",
+              //提示信息
+              activityPrizeInfo: "",
+              //概率
+              probability: "",
+              //商品id
+              productsId: ""
+            }
+          ],
+          prizeList: [
+            {
+              //奖品名
+              prizeName: "",
+              //数量
+              count: "",
+              //价格
+              price: ""
+            }
+          ]
         }
-      },
+      ],
       //奖项列表
       prizedata: [
-        {
-          priority: "",
-          prize: "微信红包",
-          prizename: "",
-          Amount: "",
-          prizenum: "",
-          setprize: "",
-          Tips: ""
-        }
+        // {
+        //   productsId:"",
+        //   priority: "基础奖",
+        //   prize: "微信红包",
+        //   prizename: "",
+        //   Amount: "",
+        //   prizenum: "",
+        //   setprize: "",
+        //   Tips: ""
+        // }
       ],
       //创建成功弹窗
       createsuccesscanvas: false
     };
   },
-
+  watch:{
+    prizedata(val) {
+      console.log(val);
+    }
+  },
   methods: {
     goodclasslist() {
       Axios({
         url: "api/productsManager/productCatList",
         methods: "get"
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.goodsclasslist = data.data.data.firstCatList;
       });
     },
@@ -666,10 +675,72 @@ export default {
     },
     addgoods() {
       this.selectgoods = true;
+      //请求商品三级分类列表
+      this.goodclasslist();
+    },
+    //选择三级分类后
+    selectthree() {
+      // console.log(this.threelist);
+      Axios({
+        url: "api/productsManager/getProductsForCatId",
+        method: "get",
+        params: {
+          productCatId: this.threelist.productCatId
+        }
+      }).then(data => {
+        this.goodslist = data.data.data.productList;
+        // console.log(data);
+      });
+    },
+    //选择商品后弹出添加关联商品框
+    addgood() {
+      // console.log(this.selectgood);
+      this.$confirm("请确认是否添加该商品?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          //确认添加商品
+
+          this.$message({
+            type: "success",
+            message: "添加成功!"
+          });
+          //记录添加的商品的id
+          this.productsId = this.selectgood.productSId;
+          this.relationgoods.push(this.selectgood);
+          this.selectgoods = false;
+          this.firstlist = [];
+          this.secondlist = [];
+          this.goodslist = [];
+          this.prizedata.push({
+            productsId: this.productsId,
+            priority: "基础奖",
+            prize: "微信红包",
+            prizename: "",
+            Amount: "",
+            prizenum: "",
+            setprize: "1",
+            Tips: ""
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消添加"
+          });
+          this.selectgoods = false;
+          this.firstlist = [];
+          this.secondlist = [];
+          this.goodslist = [];
+        });
     },
     //添加奖项
     addprize() {
-      this.prizedata.push({
+      var lestnum=this.prizedata.length-1;
+      if(this.prizedata[lestnum].prizename && this.prizedata[lestnum].Amount && this.prizedata[lestnum].prizenum && this.prizedata[lestnum].Tips ){
+        this.prizedata.push({
         priority: "",
         prize: "微信红包",
         prizename: "",
@@ -678,6 +749,11 @@ export default {
         setprize: "",
         Tips: ""
       });
+      }else{
+        console.log(lestnum)
+      }
+      
+      console.log(this.prizedata);
     },
     check(value) {
       if (value.name == "first") {
@@ -1207,8 +1283,8 @@ export default {
           height: 80px;
           p {
             width: 100%;
-            select{
-              width:125px;
+            select {
+              width: 125px;
               height: 30px;
               font-size: 12px;
             }

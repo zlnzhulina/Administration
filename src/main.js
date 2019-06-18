@@ -15,7 +15,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {
     
     if (localStorage.getItem("ADMINLOGINTOKEN")) {
-      console.log("111")
+      // console.log("111")
       next();
     } else {
       next({

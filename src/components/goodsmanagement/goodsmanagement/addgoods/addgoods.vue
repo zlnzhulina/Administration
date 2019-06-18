@@ -103,7 +103,7 @@ export default {
         productCatId: "",
         productImgUrl: ""
       },
-      productParamSetSelectList: {},
+      productParamSetSelectList: [],
       //商品类列表
       goodsclasslist: [],
       //一级分类列表
@@ -144,6 +144,7 @@ export default {
     //商品参数列表
     goodsparameterlist() {
       console.log(this.threelist);
+      this.productS.productCatId=this.threelist.productCatId;
       Axios({
         url: "api/productsManager/productParamSetList",
         method: "get",
@@ -173,7 +174,7 @@ export default {
             // console.log(paramobj)
             arr.push(paramobj);
             this.selectlist = arr;
-            console.log(this.selectlist)
+            // console.log(this.selectlist)
           });
         }
       });
@@ -181,12 +182,14 @@ export default {
     // productParamSetId  参数id
     //选择参数
     selectparameter(i,val){
-       console.log(i)
+      //  console.log(i)
       
-      console.log(val)
+      // console.log(val)
        this.selectitemlist.push(val)
-       console.log(this.selectlist);
-       console.log("iiii",this.selectlist[i]["selectedI"]);
+      //  console.log(this.selectlist);
+       console.log(this.selectlist[i]["selectedI"]);
+       this.productParamSetSelectList.push(this.selectlist[i]["selectedI"]);
+       console.log(this.productParamSetSelectList)
       //  console.log("iiii",this.selectlist[i].selectedI);
     //   console.log("productCatList",this.productCatList[0]);
 	  // console.log("productCatList",this.productCatList[1]);
@@ -197,25 +200,14 @@ export default {
     //添加商品
     addgoods() {
       Axios({
-        url: "api/productManager/addProductS",
+        url: "api/productsManager/addProductS",
         method: "post",
         data: {
-          productS: {
-            productSName: this.productS.productSName,
-            status: "",
-            cityName: "",
-            productSName: this.productSName,
-            productImgUrl: this.goodsimg
-          },
-          productParamSetSelectList: [
-            {
-              productParamValueId: "",
-              productParamValueVal: "",
-              productParamSetId: "",
-              isEdit: ""
-            }
-          ]
-        }
+          productS:this.productS,
+          productParamSetSelectList: this.productParamSetSelectList,
+        },
+      }).then(data=>{
+        console.log(data)
       });
     },
 
@@ -229,8 +221,9 @@ export default {
     },
     updatesuccess(res, file) {
       if (res.code == 0) {
-        this.goodsimg.push(file.response.data.fileUrl);
-        console.log(this.goodsimg);
+        this.productS.productImgUrl=file.response.data.fileUrl;
+        // this.goodsimg.push(file.response.data.fileUrl);
+        // console.log(this.goodsimg);
       }
     }
   }

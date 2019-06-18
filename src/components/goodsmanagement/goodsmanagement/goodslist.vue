@@ -30,13 +30,13 @@
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
-      style="width: 100%"
+      style="width: 100%;font-size:12px;"
     >
       <!-- stripe="true" -->
-      <el-table-column prop="goodsid" label="商品编号" width="120px"></el-table-column>
-      <el-table-column prop="goodsname" label="商品名称" width="284"></el-table-column>
-      <el-table-column prop="goodsclass" label="商品分类" width="194px"></el-table-column>
-      <el-table-column prop="data" label="时间"></el-table-column>
+      <el-table-column prop="productSId" label="商品编号" width="160px" ></el-table-column>
+      <el-table-column prop="productSName" label="商品名称" width="244"></el-table-column>
+      <el-table-column prop="productCatName" label="商品分类" width="194px"></el-table-column>
+      <el-table-column prop="addTime" label="时间"></el-table-column>
       <el-table-column fixed="right" label="操作" width="146px">
         <template slot-scope="scope">
         <el-button type="text" size="small" @click="seedetails(scope.row)">编辑</el-button>
@@ -103,11 +103,19 @@ export default {
   methods: {
     goodslist(){
       Axios({
-        url:"api/productsManager/productCatList",
-        method:"get"
+        url:"api/productsManager/productSList",
+        method:"get",
+        params:{
+          pageNo:"1",
+          pageSize:"8",
+          productCatId:"",
+          littleTime:"",
+          bigTime:"",
+          productSName:"",
+        }
       }).then(data=>{
         console.log(data)
-        this.tabledata=data.data.data;
+        this.tabledata=data.data.data.productSPage.records;
       })
     },
     //查看
