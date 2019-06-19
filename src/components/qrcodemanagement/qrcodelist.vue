@@ -39,9 +39,7 @@
       <el-table-column prop="batchId" label="批次编号" width="148px"></el-table-column>
       <el-table-column prop="batchName" label="批次名称" width="158px"></el-table-column>
       <el-table-column prop="type" label="批次类型" width="120px">
-        <template slot-scope="scope">
-          {{scope.row.type==2?"双码":"单码"}}
-        </template>
+        <template slot-scope="scope">{{scope.row.type==2?"双码":"单码"}}</template>
       </el-table-column>
       <el-table-column prop="count" label="批次数量"></el-table-column>
       <el-table-column prop="Occupy" label="占用"></el-table-column>
@@ -69,6 +67,7 @@
         <li @click="withdraw">撤回</li>
       </ul>
     </div>
+    <!-- ----------二维码批次关联活动和商品 ---------------->
     <div class="relationcanvas" v-if="relationcanvas">
       <div class="scroll">
         <h3>
@@ -80,26 +79,29 @@
           <el-table
             ref="multipleTable"
             :header-cell-style="{background:'#eaedf1',height:'32',}"
-            :data="tabledata"
+            :data="relationlist"
             tooltip-effect="dark"
-            show-summary="true"
             :summary-method="getTotal"
             style="width:404px;float:left;margin-left:20px;"
           >
-            <el-table-column prop="batchid" label="批次编号" width="92"></el-table-column>
-            <el-table-column prop="batchname" label="批次名称" width="130"></el-table-column>
-            <el-table-column prop="batchclass" label="可用数量"></el-table-column>
+            <el-table-column prop="batchId" label="批次编号" width="92"></el-table-column>
+            <el-table-column prop="batchName" label="批次名称" width="130"></el-table-column>
+            <el-table-column prop="residueCount" label="可用数量"></el-table-column>
             <el-table-column prop="batchnum" label="关联数量">
               <template>
-                <input type="text" style="width:50px;height:25px;font-size:12px;">
+                <input
+                  type="text"
+                  style="width:50px;height:25px;font-size:12px;"
+                  v-model="relationconten"
+                >
               </template>
             </el-table-column>
           </el-table>
           <span>
             <i>*</i>关联渠道活动：
           </span>
-          <select name="active">
-            <option></option>
+          <select name="active" v-model="SAactivity">
+            <option v-for="(item,index) in SAactivitylist" :value="item">{{item.activityName}}</option>
           </select>
           <span>已关联消费者活动：</span>
           <select name="useractive">
@@ -110,24 +112,35 @@
             <option></option>
           </select>
           <span>关联商品：</span>
-          <select name="useractive">
-            <option></option>
+          <select name="useractive" v-model="firstlist">
+            <option
+              v-for="(firstlist,index) in goodsclasslist"
+              :value="firstlist"
+            >{{firstlist.productCatName}}</option>
           </select>
           <span></span>
-          <select name="useractive">
-            <option></option>
+          <select name="useractive" v-model="secondlist">
+            <option
+              v-for="(secondlist,index) in firstlist.productCatList"
+              :value="secondlist"
+            >{{secondlist.productCatName}}</option>
           </select>
           <span></span>
-          <select name="useractive">
-            <option></option>
+          <select name="useractive" v-model="threelist" @change="selectthree">
+            <option
+              v-for="(threelist,index) in secondlist.productCatList"
+              :value="threelist"
+            >{{threelist.productCatName}}</option>
           </select>
+          <!--     选择商品       -->
           <span></span>
-          <select name="useractive">
-            <option></option>
+          <select name="useractive" v-model="selectgood" @change="selegood">
+            <option v-for="(item,index) in goodslist" :value="item" >{{item.productSName}}</option>
           </select>
           <div style="width:152px;height:36px;margin:0px auto;clear:both;padding-top:45px;">
             <span
               style="width:152px;height:50px;background:#1abc9c;text-align:center;line-height:50px;margin:30px auto;clear:both;"
+              @click="subrelation"
             >确定</span>
           </div>
         </div>
@@ -149,17 +162,35 @@ export default {
       //关联码弹窗
       relationcanvas: false,
       //操作当前行的数据
-      row:{},
-      tabledata: [
-       
-      ]
+      row: {},
+      tabledata: [],
+      //关联批次的批次列表
+      relationlist: [],
+      //要关联的二维码批次的码的数量
+      relationconten: "",
+      //渠道活动列表
+      SAactivitylist: [],
+      //关联的渠道活动
+      SAactivity: {},
+      //商品三级分类列表
+      goodsclasslist: [],
+      //一级分类列表
+      firstlist: [],
+      //二级分类列表
+      secondlist: [],
+      //三级分类列表
+      threelist: [],
+      //商品列表
+      goodslist: [],
+      //选择商品
+      selectgood:{},
     };
   },
   methods: {
     qrcodelist() {
       Axios({
         //url:"http://192.168.1.128:8101/codeManager/batchList",
-        url: "api/codeManager/batchList",
+        url: "api/qrcode/codeManager/batchList",
         method: "get",
         params: {
           pageNo: "1",
@@ -179,27 +210,25 @@ export default {
     },
     //更多操作
     moreoperations(row) {
-      // console.log(row)
+      console.log(row);
       this.moreoperationscanvas = true;
-      this.row=row;
+      this.row = row;
     },
     details() {
       // console.log(1)
-      if(this.row.type==2){
+      if (this.row.type == 2) {
         //查看详情
-      this.$router.push({
-        path:"/doubledetails",
-        query:{flag:'2',data:this.row}
-      })
-      }else{
+        this.$router.push({
+          path: "/doubledetails",
+          query: { flag: "2", data: this.row }
+        });
+      } else {
         //单码
-      this.$router.push({
-        path: "/singledetails",
-        query:{flag:'2',data:this.row}
-      });
+        this.$router.push({
+          path: "/singledetails",
+          query: { flag: "2", data: this.row }
+        });
       }
-      
-      
     },
     download() {
       //下载
@@ -207,9 +236,105 @@ export default {
     relation() {
       //关联
       this.relationcanvas = true;
+      this.relationlist.push(this.row);
+      console.log(this.relationlist);
+      Axios({
+        url: "api/activityManager/activityList",
+        method: "get",
+        params: {
+          pageNo: "1"
+        }
+      }).then(data => {
+        console.log(data);
+        this.SAactivitylist = data.data.data.activityPage.records;
+      });
+      this.goodclasslist();
+    },
+    //获取三级分类列表
+    goodclasslist() {
+      Axios({
+        url: "api/productsManager/productCatList",
+        methods: "get"
+      }).then(data => {
+         console.log(data);
+        this.goodsclasslist = data.data.data.firstCatList;
+      });
+    },
+    //选择三级分类后
+    selectthree() {
+      Axios({
+        url: "api/productsManager/getProductsForCatId",
+        method: "get",
+        params: {
+          productCatId: this.threelist.productCatId
+        }
+      }).then(data => {
+        console.log(data)
+        this.goodslist = data.data.data.productList;
+      });
+    },
+    //选择商品之后
+    selegood(){
+      console.log(this.selectgood)
+    },
+    subrelation(){
+      Axios({
+        url:"api/qrcode/codeManager/joinActivityFromBatch",
+        method:"post",
+        data:{
+          batchList:[
+            {
+              batchId:this.row.batchId,
+              joinCount:this.relationconten,
+            }
+          ],
+          activityId:this.SAactivity.activityId,
+          activityName:this.SAactivity.activityName,
+          productsId:this.selectgood.productCatId,
+          productsName:this.selectgood.productSName,
+        }
+      }).then(data=>{
+        console.log(data);
+        if(data.data.code==0){
+           this.$message({
+                type: "success",
+                message: "关联成功!"
+              });
+              
+        }
+      })
     },
     del() {
       //删除
+      this.$confirm("此操作将永久删除该二维码, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          Axios({
+            url: "api/codeManager/delBatch",
+            method: "get",
+            params: {
+              batchIds: this.row.batchId
+            }
+          }).then(data => {
+            console.log(data);
+            if (data.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.qrcodelist();
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     withdraw() {
       //撤回
@@ -217,32 +342,32 @@ export default {
     exit() {
       this.relationcanvas = false;
     },
-    // getTotal(param) {
-    //   const { columns, data } = param;
-    //   const sums = [];
-    //   columns.forEach((column, index) => {
-    //     if (index === 0) {
-    //       sums[index] = "合计关联数量";
-    //       return;
-    //     }
-    //     const values = data.map(item => Number(item[column.property]));
-    //     if (column.property === "num") {
-    //       sums[index] = values.reduce((prev, curr) => {
-    //         const value = Number(curr);
-    //         if (!isNaN(value)) {
-    //           return prev + curr;
-    //         } else {
-    //           return prev;
-    //         }
-    //       }, 0);
-    //       sums[index];
-    //     } else {
-    //       sums[index] = "";
-    //     }
-    //   });
+    getTotal(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = "合计关联数量";
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (column.property === "num") {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          sums[index];
+        } else {
+          sums[index] = "";
+        }
+      });
 
-    //   return sums;
-    // }
+      return sums;
+    }
   }
 };
 //二维码列表
@@ -368,12 +493,12 @@ export default {
     position: absolute;
     left: 960px;
     top: 152px;
-    
+
     z-index: 999;
-    ul{
+    ul {
       width: 100%;
       height: 100%;
-      li{
+      li {
         width: 100%;
         height: 29px;
         line-height: 29px;

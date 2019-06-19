@@ -11,14 +11,22 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      "/api": {
-        target: "http://192.168.2.102:8001",
-        // target: "http://192.168.2.102:8101",
+      "/api/qrcode": {
+        
+        target: "http://192.168.2.102:8101",
         changeOrigin: true,
         pathRewrite: {
-          "^/api": ""
+          "^/api/qrcode": ""
         }
       },
+      "/api":{
+         target: "http://192.168.2.102:8001",
+         
+         changeOrigin: true,
+         pathRewrite: {
+           "^/api": ""
+         }
+      }
     },
 
       // Various Dev Server settings

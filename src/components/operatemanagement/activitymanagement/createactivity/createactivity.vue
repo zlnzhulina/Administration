@@ -144,7 +144,10 @@
                     <el-date-picker
                       type="date"
                       placeholder="选择日期"
+                      format="yyyy--MM--dd HH:mm:ss"
+                      value-format="yyyy-MM-dd HH:mm:ss"
                       v-model="activity.startTime"
+                      @change="startime"
                       style="width: 100%;"
                     ></el-date-picker>
                   </el-col>
@@ -154,6 +157,8 @@
                       type="date"
                       placeholder="选择日期"
                       v-model="activity.endTime"
+                      format="yyyy--MM--dd HH:mm:ss"
+                      value-format="yyyy-MM-dd HH:mm:ss"
                       style="width: 100%;"
                     ></el-date-picker>
                   </el-col>
@@ -178,9 +183,10 @@
                 </el-form-item>
                 <el-form-item v-show="usercodetype == -1 ? false:true">
                   <el-select v-model="activity.isQrcodeStatus" placeholder="请选择消费者码状态条件">
-                    <el-option label="已关联" value="已关联"></el-option>
-                    <el-option label="已查询(防伪查询)" value="已查询"></el-option>
-                    <el-option label="已激活" value="已激活"></el-option>
+                    <el-option label="未关联" value="1"></el-option>
+                    <el-option label="已关联" value="2"></el-option>
+                    <el-option label="已查询(防伪查询)" value="6"></el-option>
+                    <el-option label="已激活" value="5"></el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="消费者延时扫码">
@@ -376,7 +382,11 @@
                     <el-table-column prop="prize" label="奖品" width="100"></el-table-column>
                     <el-table-column prop="prizename" label="奖品名称" width="100">
                       <template slot-scope="scope">
-                        <input type="text" style="width:100%;height:26px;outline:none;font-size:12px;" v-model="scope.row.prizename"/>
+                        <input
+                          type="text"
+                          style="width:100%;height:26px;outline:none;font-size:12px;"
+                          v-model="scope.row.prizename"
+                        >
                       </template>
                     </el-table-column>
                     <el-table-column prop="Amount " label="金额" width="68">
@@ -397,7 +407,16 @@
                         >
                       </template>
                     </el-table-column>
-                    <el-table-column prop="setprize" label="出奖设置" width="78"></el-table-column>
+                    <el-table-column prop="setprize" label="出奖设置" width="78">
+                      <template slot-scope="scope">
+                        <input
+                          type="text"
+                          style="width:30%;height:26px;outline:none;font-size:12px;"
+                          v-model="scope.row.setprize"
+                        >
+                        <span>:1</span>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="Tips" label="提示信息" width="188">
                       <template slot-scope="scope">
                         <input
@@ -409,7 +428,6 @@
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="50">
                       <template slot-scope="scope">
-                        <el-button ></el-button>
                         <el-button
                           @click.native.prevent="deleteRow(scope.$index, tableData4)"
                           type="text"
@@ -419,7 +437,7 @@
                     </el-table-column>
                   </el-table>
                 </div>
-                <div class="addreq">保存 关联码</div>
+                <div class="addreq" @click="preservationsub">保存 关联码</div>
               </div>
             </div>
           </el-tab-pane>
@@ -497,6 +515,7 @@ export default {
       selectgoods: false,
       active: 0,
       type: "",
+      createtype: "1",
       // addgoods: "/addgoods",
       // addprize: "/addprize",
       creatcar: "1", //是否添加车辆
@@ -514,6 +533,8 @@ export default {
       enginenmb: false, //发动机号
       enginecode: false, //发动机型号
       relationgoods: [],
+      activityPrizeList: [],
+      prizeList: [],
       //商品分类列表
       goodsclasslist: [],
       //一级分类列表
@@ -524,6 +545,8 @@ export default {
       threelist: [],
       //商品列表
       goodslist: [],
+      //选中的商品列表
+      selectgoodslist: [],
       //选中的商品、
       selectgood: {},
       productsId: "",
@@ -569,54 +592,15 @@ export default {
         //奖励背景图
         prizeUrl: ""
       },
-      list: [
-        {
-          activityPrizeList: [
-            {
-              activityPrizeName: "",
-              //数量
-              activityPrizeCount: "",
-              //提示信息
-              activityPrizeInfo: "",
-              //概率
-              probability: "",
-              //商品id
-              productsId: ""
-            }
-          ],
-          prizeList: [
-            {
-              //奖品名
-              prizeName: "",
-              //数量
-              count: "",
-              //价格
-              price: ""
-            }
-          ]
-        }
-      ],
+      //要提交的奖品列表
+      list: [],
       //奖项列表
       prizedata: [
-        // {
-        //   productsId:"",
-        //   priority: "基础奖",
-        //   prize: "微信红包",
-        //   prizename: "",
-        //   Amount: "",
-        //   prizenum: "",
-        //   setprize: "",
-        //   Tips: ""
-        // }
+        
       ],
       //创建成功弹窗
       createsuccesscanvas: false
     };
-  },
-  watch:{
-    prizedata(val) {
-      console.log(val);
-    }
   },
   methods: {
     goodclasslist() {
@@ -628,12 +612,15 @@ export default {
         this.goodsclasslist = data.data.data.firstCatList;
       });
     },
+    startime(val) {
+      console.log(val);
+    },
     handleClick() {
       alert("button click");
     },
     //活动类型为扫码领红包
     redpacket() {
-      this.activity.activityType = "扫码领红包";
+      this.activity.activityType = "1";
       this.type = 1;
     },
     //扫码类型为滚动抽奖
@@ -655,10 +642,10 @@ export default {
         this.two = true;
         this.three = false;
       }
-      console.log(this.activity);
+      // console.log(this.activity);
     },
     nexttwo() {
-      console.log(this.activity);
+      // console.log(this.activity);
       if (this.active == 1) {
         this.active = 2;
         this.activeName = "third";
@@ -681,6 +668,7 @@ export default {
     //选择三级分类后
     selectthree() {
       // console.log(this.threelist);
+      // if(this.)
       Axios({
         url: "api/productsManager/getProductsForCatId",
         method: "get",
@@ -689,7 +677,6 @@ export default {
         }
       }).then(data => {
         this.goodslist = data.data.data.productList;
-        // console.log(data);
       });
     },
     //选择商品后弹出添加关联商品框
@@ -702,28 +689,81 @@ export default {
       })
         .then(() => {
           //确认添加商品
-
-          this.$message({
-            type: "success",
-            message: "添加成功!"
-          });
-          //记录添加的商品的id
-          this.productsId = this.selectgood.productSId;
-          this.relationgoods.push(this.selectgood);
-          this.selectgoods = false;
-          this.firstlist = [];
-          this.secondlist = [];
-          this.goodslist = [];
-          this.prizedata.push({
-            productsId: this.productsId,
-            priority: "基础奖",
-            prize: "微信红包",
-            prizename: "",
-            Amount: "",
-            prizenum: "",
-            setprize: "1",
-            Tips: ""
-          });
+          if (this.relationgoods.length == 0) {
+            this.$message({
+              type: "success",
+              message: "添加成功!"
+            });
+            //记录添加的商品的id
+            this.productsId = this.selectgood.productSId;
+            this.relationgoods.push(this.selectgood);
+            // console.log(this.selectgood);
+            this.selectgoods = false;
+            this.firstlist = [];
+            this.secondlist = [];
+            this.goodslist = [];
+            this.prizedata.push({
+              productsId: this.productsId,
+              priority: "基础奖",
+              prize: "微信红包",
+              prizename: "",
+              Amount: "",
+              prizenum: "",
+              setprize: "1",
+              Tips: ""
+            });
+          } else {
+            // console.log("已有选中的商品");
+            for (let i = 0; i < this.prizedata.length; i++) {
+              // console.log(this.prizedata)
+              this.activityPrizeList.push({
+                activityPrizeName: this.prizedata[i].prizename,
+                activityPrizeCount: this.prizedata[i].prizenum,
+                activityPrizeInfo: this.prizedata[i].Tips,
+                probability: this.prizedata[i].setprize,
+                productsId: this.productsId
+              });
+              // console.log("列表一：",this.activityPrizeList)
+              this.prizeList.push({
+                prizeName: this.prizedata[i].prizename,
+                count: this.prizedata[i].prizenum,
+                price: this.prizedata[i].Amount
+              });
+              // console.log("列表二：",this.prizeList)
+            }
+            // console.log(this.list)
+            this.list.push({
+              activityPrizeList: this.activityPrizeList,
+              prizeList: this.prizeList
+            });
+            this.prizedata = [];
+            this.activityPrizeList = [];
+            this.prizeList = [];
+            console.log("添加另外商品是保存list", this.list);
+            //再次选择另外商品是，初始化商品id 和奖品列表
+            this.$message({
+              type: "success",
+              message: "添加成功!"
+            });
+            //记录添加的商品的id
+            this.productsId = this.selectgood.productSId;
+            this.relationgoods.push(this.selectgood);
+            // console.log(this.selectgood);
+            this.selectgoods = false;
+            this.firstlist = [];
+            this.secondlist = [];
+            this.goodslist = [];
+            this.prizedata.push({
+              productsId: this.productsId,
+              priority: "基础奖",
+              prize: "微信红包",
+              prizename: "",
+              Amount: "",
+              prizenum: "",
+              setprize: "1",
+              Tips: ""
+            });
+          }
         })
         .catch(() => {
           this.$message({
@@ -738,22 +778,30 @@ export default {
     },
     //添加奖项
     addprize() {
-      var lestnum=this.prizedata.length-1;
-      if(this.prizedata[lestnum].prizename && this.prizedata[lestnum].Amount && this.prizedata[lestnum].prizenum && this.prizedata[lestnum].Tips ){
+      var lestnum = this.prizedata.length - 1;
+      if (
+        this.prizedata[lestnum].prizename &&
+        this.prizedata[lestnum].Amount &&
+        this.prizedata[lestnum].prizenum &&
+        this.prizedata[lestnum].Tips
+      ) {
         this.prizedata.push({
-        priority: "",
-        prize: "微信红包",
-        prizename: "",
-        Amount: "",
-        prizenum: "",
-        setprize: "",
-        Tips: ""
-      });
-      }else{
-        console.log(lestnum)
+          priority: "",
+          prize: "微信红包",
+          prizename: "",
+          Amount: "",
+          prizenum: "",
+          setprize: "",
+          Tips: ""
+        });
+        // this.prizeList.push({
+        //   prizeName:""
+        // })
+      } else {
+        // console.log(lestnum);
       }
-      
-      console.log(this.prizedata);
+
+      // console.log(this.prizedata);
     },
     check(value) {
       if (value.name == "first") {
@@ -770,11 +818,55 @@ export default {
         this.three = true;
       }
     },
+    //提交创建活动
+    preservationsub() {
+      if (this.createtype == 1) {
+        for (let i = 0; i < this.prizedata.length; i++) {
+          this.activityPrizeList.push({
+            activityPrizeName: this.prizedata[i].prizename,
+            activityPrizeCount: this.prizedata[i].prizenum,
+            activityPrizeInfo: this.prizedata[i].Tips,
+            probability: this.prizedata[i].setprize,
+            productsId: this.productsId
+          });
+
+          this.prizeList.push({
+            prizeName: this.prizedata[i].prizename,
+            count: this.prizedata[i].prizenum,
+            price: this.prizedata[i].Amount
+          });
+        }
+
+        this.list.push({
+          activityPrizeList: this.activityPrizeList,
+          prizeList: this.prizeList
+        });
+        this.prizedata = [];
+        this.activityPrizeList = [];
+        this.prizeList = [];
+        console.log(this.list);
+        console.log(this.activity);
+        this.createtype = "0";
+      }
+      console.log(this.list)
+      Axios({
+        url: "api/activityManager/addActivity",
+        method: "post",
+        data: {
+          activity: this.activity,
+          list: this.list
+        }
+      }).then(data => {
+        if(data.data.code==0){
+          this.$router.push("/operatemanagement");
+        }
+      });
+    },
     //背景图片上传成功
     handlebgimgSuccess(res, file) {
       if (file.response.code == 0) {
         this.imagebgUrl = URL.createObjectURL(file.raw);
-        console.log(file);
+        // console.log(file);
         this.activity.backgroundUrl = file.response.data.fileUrl;
       } else {
         this.$message({
@@ -826,34 +918,48 @@ export default {
     }
   },
   watch: {
-    // active(value) {},
-    usercodetype(val) {
-      if (val == -1) {
-        this.activity.isQrcodeStatus = "-1";
-      } else {
-        this.activity.isQrcodeStatus = "";
-      }
-    },
-    userdelayed(val) {
-      if (val == 0) {
-        this.activity.scanTime = "0";
-      } else {
-        this.activity.scanTime = "";
-      }
-    },
-    isbarTakeUpTime(val) {
-      if (val == 0) {
-        this.activity.barTakeUpTime = "0";
-      } else {
-        this.activity.barTakeUpTime = "";
-      }
-    },
-    isbarProtectTime(val) {
-      if (val == 0) {
-        this.activity.barProtectTime = "0";
-      } else {
-        this.activity.barProtectTime = "";
-      }
+    prizedata: {
+      handler(val) {
+        // console.log(val);
+        var index = val.length - 1;
+        if (!index == 0) {
+           var num=Math.round(
+            this.prizedata[0].prizenum / this.prizedata[index].prizenum
+          );
+           this.prizedata[index].setprize = num.toString()
+           console.log(this.prizedata)
+        }
+      },
+      deep: true
+    }
+  },
+  // active(value) {},
+  usercodetype(val) {
+    if (val == -1) {
+      this.activity.isQrcodeStatus = "-1";
+    } else {
+      this.activity.isQrcodeStatus = "";
+    }
+  },
+  userdelayed(val) {
+    if (val == 0) {
+      this.activity.scanTime = "0";
+    } else {
+      this.activity.scanTime = "";
+    }
+  },
+  isbarTakeUpTime(val) {
+    if (val == 0) {
+      this.activity.barTakeUpTime = "0";
+    } else {
+      this.activity.barTakeUpTime = "";
+    }
+  },
+  isbarProtectTime(val) {
+    if (val == 0) {
+      this.activity.barProtectTime = "0";
+    } else {
+      this.activity.barProtectTime = "";
     }
   }
 };
