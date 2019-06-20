@@ -1,6 +1,13 @@
 <template>
   <div class="container">
-    <span class="add">批量导入经销商用户</span>
+    <el-upload
+      class="upload-demo"
+      action="api/networkUserManager/importUser"
+      :on-success="handlePreview"
+    >
+
+      <span class="add" @click="uploadexcel" type="primary">批量导入经销商用户</span>
+    </el-upload>
     <span class="add">下载导入模板</span>
     <el-table
       :header-cell-style="{background:'#9decff',height:'32'}"
@@ -38,12 +45,14 @@ export default {
       tabledata: [
         {
           VIPid: "12543245543",
-          userclass:"机修工",
-          distributornum:"22431151515",
-          name:"张三",
+          userclass: "机修工",
+          distributornum: "22431151515",
+          name: "张三",
           dotname: "北京xxxxx汽车服务销售有限公司"
         }
-      ]
+      ],
+      imageUrl: "",
+      childValue: false
     };
   },
   methods: {
@@ -58,19 +67,45 @@ export default {
     adduser() {
       this.$router.push({
         path: "/adduser"
-        
       });
     },
     //编辑
-    edit(){
-          this.$router.push("/modify")
-      },
+    edit() {
+      this.$router.push("/modify");
+    },
     exit() {
       this.delcanvas = false;
     },
 
     del() {
       this.delcanvas = false;
+    },
+    //批量导入
+    uploadexcel() {},
+    bbb() {
+      return this.GLOBAL.excelUrl;
+    },
+    handlePreview(file) {
+      if (file.code == 0) {
+        this.$message.success("文件上传成功！");
+        console.log(file);
+      }
+    },
+    beforeAvatarUpload(file) {
+      console.log(file);
+      const isXlsx =
+        file.type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const isXls = file.type === "application/vnd.ms-excel";
+      if (!isXlsx && !isXls) {
+        this.$message.error("上传文件只能是xls/xlsx格式!");
+      }
+      return isXlsx || isXls;
+    },
+    uploadError() {},
+    uploadSuccess() {
+      console.log(this.childValue);
+      this.$emit("childByValue", this.childValue);
     }
   }
 };
@@ -81,6 +116,12 @@ export default {
   width: 960px;
   height: 622px;
   position: relative;
+  .el-upload {
+    float: left;
+  }
+  .el-upload--text {
+    float: left;
+  }
   .add {
     display: block;
     width: 122px;

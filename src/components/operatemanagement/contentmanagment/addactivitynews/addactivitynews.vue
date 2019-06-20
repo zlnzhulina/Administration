@@ -9,11 +9,11 @@
     <ul class="information">
       <li>
         <span>标题</span>
-        <input type="text">
+        <input type="text" v-model="newstitle">
       </li>
       <li style="height:100px;">
         <span>资讯摘要</span>
-        <textarea></textarea>
+        <textarea v-model="newscontent"></textarea>
       </li>
       <li>
         <span style="float:left;margin-left:13px;">资讯封面图：</span>
@@ -36,20 +36,42 @@
     <div class="detailsinfo">
       <div class="left">
         <el-upload
+          class="avatar-uploader el-upload--text"
+          action="api/upload/uploadVideo"
+          :show-file-list="false"
+          accept=".mp4"
+          :on-success="handleVideoSuccess"
+          :before-upload="beforeUploadVideo"
+          :on-progress="uploadVideoProcess"
+        >
+          <i class="el-icon-plus avatar-uploader-icon"></i>
+          <el-progress
+            v-if="videoFlag == true"
+            type="circle"
+            width="50"
+            style="position: absolute;left: 65px;top: 25px;z-index:111"
+            :percentage="videoUploadPercent"
+          ></el-progress>
+        </el-upload>
+
+        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+        <el-upload
           class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="api/upload/uploadImage"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
         >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar">
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <i class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
-        <el-dialog :visible.sync="dialogVisible">
-  <img width="100%" :src="dialogImageUrl" alt="">
-</el-dialog>
       </div>
-      <div class="right"></div>
+      <div class="right">
+        <video
+          v-if="showVideoPath !='' && !videoFlag"
+          :src="showVideoPath"
+          class="avatar video-avatar"
+          controls="controls"
+        >您的浏览器不支持视频播放</video>
+      </div>
     </div>
   </div>
 </template>
@@ -59,12 +81,71 @@ export default {
   //添加活动资讯
   data() {
     return {
-      imagenewcoverUrl: ""
+      imagenewcoverUrl: "",
+     
+      videoFlag: false, //是否显示进度条
+      videoUploadPercent: "", //进度条的进度，
+      isShowUploadVideo: false, //显示上传按钮
+      global: {},
+      //资讯详情视频地址
+      showVideoPath: "",
+      imageUrl: "",
+
+      //资讯标题
+      newstitle: "",
+      //资讯摘要
+      newscontent: "",
+      //资讯封面图
+      newscoverimg:"",
+      //资讯详情图片
+      newsdetailsimg:"",
+      
     };
   },
   methods: {
     handlenewcoverSuccess(res, file) {
       this.imagenewcoverUrl = URL.createObjectURL(file.raw);
+      //设置资讯封面图路径
+      // console.log(file)
+      this.newscoverimg=file.response.data.fileUrl;
+    },
+    beforeUploadVideo(file) {
+      const isLt20M = file.size / 1024 / 1024 < 20;
+      if (["video/mp4"].indexOf(file.type) == -1) {
+        //'video/ogg', 'video/flv', 'video/avi', 'video/wmv', 'video/rmvb'
+        this.$message.error("请上传正确的视频格式");
+        return false;
+      }
+      if (!isLt20M) {
+        this.$message.error("上传视频大小不能超过20MB哦!");
+        return false;
+      }
+      this.isShowUploadVideo = false;
+    },
+    //进度条
+    uploadVideoProcess(event, file, fileList) {
+      this.videoFlag = true;
+      this.videoUploadPercent = file.percentage.toFixed(0) * 1;
+    },
+
+    //视频上传成功回调
+    handleVideoSuccess(res, file) {
+      console.log(file);
+      this.isShowUploadVideo = true;
+      this.videoFlag = false;
+      this.videoUploadPercent = 0;
+      if (file.response.code == 0) {
+        this.showVideoPath = file.response.data.fileUrl;
+        
+      } else {
+        this.$message.error("视频上传失败，请重新上传！");
+      }
+    },
+    //资讯图片上传成功
+    handleAvatarSuccess(res, file) {
+      console.log(file);
+      this.imageUrl = URL.createObjectURL(file.raw);
+      this.newsdetailsimg=file.response.data.fileUrl;
     }
   }
 };
@@ -138,6 +219,7 @@ export default {
         border-radius: 5px;
         display: block;
         float: right;
+        resize: none;
       }
       .coverimg {
         width: 128px;
@@ -175,16 +257,59 @@ export default {
     width: 878px;
     height: 333px;
     margin: 0 auto;
-    background: #ccc;
+
     .left {
       width: 182px;
       min-height: 216px;
       float: left;
+      .avatar-uploader {
+        position: relative;
+        margin-top: 13px;
+      }
+      .avatar-uploader .el-upload {
+        border: 1px dashed #409eff;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .avatar-uploader .el-upload:hover {
+        border-color: #409eff;
+      }
+      .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 180px;
+        height: 100px;
+        line-height: 100px;
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        text-align: center;
+      }
+      .avatar {
+        width: 182px;
+        height: 90px;
+        display: block;
+        margin-top: 13px;
+      }
+      .video-avatar {
+        width: 400px;
+        height: 200px;
+      }
     }
     .right {
       width: 672px;
       height: 670px;
       float: right;
+      .avatar {
+        width: 100%;
+        height: 290px;
+        display: block;
+      }
+      .video-avatar {
+        width: 100%;
+        height: 290px;
+      }
     }
   }
 }
