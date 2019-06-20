@@ -40,6 +40,7 @@ Vue.use(BaiduMap,{
   ak:'ZISshnqhU8NdP5xNwQjIaoVlWV4fpduV'
 });
 Vue.use(ElementUI);
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

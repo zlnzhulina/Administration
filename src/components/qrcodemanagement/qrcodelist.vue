@@ -36,9 +36,9 @@
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
-      <el-table-column prop="batchId" label="批次编号" width="148px"></el-table-column>
-      <el-table-column prop="batchName" label="批次名称" width="158px"></el-table-column>
-      <el-table-column prop="type" label="批次类型" width="120px">
+      <el-table-column prop="batchId" label="批次编号" width="158px"></el-table-column>
+      <el-table-column prop="batchName" label="批次名称" width="128px"></el-table-column>
+      <el-table-column prop="type" label="批次类型" width="90px">
         <template slot-scope="scope">{{scope.row.type==2?"双码":"单码"}}</template>
       </el-table-column>
       <el-table-column prop="count" label="批次数量"></el-table-column>
@@ -50,11 +50,6 @@
       <el-table-column fixed="right" label="操作" width="75px">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button>
-          <!-- <el-button type="text" size="small" @click="edit(scope.row)">详情</el-button>
-          <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
-          <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
-          <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
-          <el-button type="text" size="small" @click="withdraw(scope.$index,scope.row)">撤回</el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -135,7 +130,7 @@
           <!--     选择商品       -->
           <span></span>
           <select name="useractive" v-model="selectgood" @change="selegood">
-            <option v-for="(item,index) in goodslist" :value="item" >{{item.productSName}}</option>
+            <option v-for="(item,index) in goodslist" :value="item">{{item.productSName}}</option>
           </select>
           <div style="width:152px;height:36px;margin:0px auto;clear:both;padding-top:45px;">
             <span
@@ -183,7 +178,8 @@ export default {
       //商品列表
       goodslist: [],
       //选择商品
-      selectgood:{},
+      selectgood: {},
+      timer: ""
     };
   },
   methods: {
@@ -230,8 +226,40 @@ export default {
         });
       }
     },
+    //下载批次二维码图片
     download() {
-      //下载
+      Axios({
+        url: "api/qrcode/codeManager/batchDownloadFileToZIP",
+        method: "get",
+        params: {
+          batchId: this.row.batchId
+        }
+      }).then(data => {
+        console.log(data);
+        if (data.data.code == 0) {
+          console.log(this.row.batchId);
+          this.timer = setInterval(() => {
+            Axios({
+              url: "api/qrcode/codeManager/validationZIP",
+              method: "get",
+              params: {
+                batchId: this.row.batchId
+              }
+            }).then(res => {
+              console.log(res);
+              if (res.data.code == 0) {
+                //表示压缩包压缩完成 开始下载
+                clearInterval(this.timer);
+          
+                window.location.href="api/qrcode/codeManager/downloadZIP?batchId="+this.row.batchId;
+              }
+            });
+          }, 3000);
+        }
+      });
+    },
+    con() {
+      console.log(1);
     },
     relation() {
       //关联
@@ -256,7 +284,7 @@ export default {
         url: "api/productsManager/productCatList",
         methods: "get"
       }).then(data => {
-         console.log(data);
+        console.log(data);
         this.goodsclasslist = data.data.data.firstCatList;
       });
     },
@@ -269,40 +297,39 @@ export default {
           productCatId: this.threelist.productCatId
         }
       }).then(data => {
-        console.log(data)
+        console.log(data);
         this.goodslist = data.data.data.productList;
       });
     },
     //选择商品之后
-    selegood(){
-      console.log(this.selectgood)
+    selegood() {
+      console.log(this.selectgood);
     },
-    subrelation(){
+    subrelation() {
       Axios({
-        url:"api/qrcode/codeManager/joinActivityFromBatch",
-        method:"post",
-        data:{
-          batchList:[
+        url: "api/qrcode/codeManager/joinActivityFromBatch",
+        method: "post",
+        data: {
+          batchList: [
             {
-              batchId:this.row.batchId,
-              joinCount:this.relationconten,
+              batchId: this.row.batchId,
+              joinCount: this.relationconten
             }
           ],
-          activityId:this.SAactivity.activityId,
-          activityName:this.SAactivity.activityName,
-          productsId:this.selectgood.productCatId,
-          productsName:this.selectgood.productSName,
+          activityId: this.SAactivity.activityId,
+          activityName: this.SAactivity.activityName,
+          productsId: this.selectgood.productCatId,
+          productsName: this.selectgood.productSName
         }
-      }).then(data=>{
+      }).then(data => {
         console.log(data);
-        if(data.data.code==0){
-           this.$message({
-                type: "success",
-                message: "关联成功!"
-              });
-              
+        if (data.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "关联成功!"
+          });
         }
-      })
+      });
     },
     del() {
       //删除

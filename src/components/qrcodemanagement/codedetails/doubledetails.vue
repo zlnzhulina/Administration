@@ -101,7 +101,9 @@
         </template>
       </el-table-column>
       <el-table-column prop="barActivityName" label="渠道活动" width="146">
-        <template slot-scope="scope">{{scope.row.barActivityName==null?"未关联渠道活动":scope.row.barActivityName}}</template>
+        <template
+          slot-scope="scope"
+        >{{scope.row.barActivityName==null?"未关联渠道活动":scope.row.barActivityName}}</template>
       </el-table-column>
       <el-table-column prop="barStatus" label="渠道状态" width="90">
         <template slot-scope="scope">
@@ -118,9 +120,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="productsName" label="关联商品" width="142">
-        <template slot-scope="scope">
-          {{scope.row.productsName?scope.row.productsName:"未关联商品"}}
-        </template>
+        <template slot-scope="scope">{{scope.row.productsName?scope.row.productsName:"未关联商品"}}</template>
       </el-table-column>
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
@@ -140,10 +140,13 @@
     <!-- 码详情弹窗 -->
     <div class="qrdetails" v-if="qrdetailscanvas">
       <div class="tab">
-        <div class="header"><span>码详情</span><img @click="exit" src="@/assets/no.png"/></div>
+        <div class="header">
+          <span>码详情</span>
+          <img @click="exit" src="@/assets/no.png">
+        </div>
       </div>
     </div>
-<!-- 关联码弹窗 -->
+    <!-- 关联码弹窗 -->
     <div class="relationcanvas" v-if="relationcanvas">
       <div class="scroll">
         <h3>
@@ -191,7 +194,7 @@
           <!--     选择商品       -->
           <span></span>
           <select name="useractive" v-model="selectgood" @change="selegood">
-            <option v-for="(item,index) in goodslist" :value="item" >{{item.productSName}}</option>
+            <option v-for="(item,index) in goodslist" :value="item">{{item.productSName}}</option>
           </select>
           <div style="width:152px;height:36px;margin:0px auto;clear:both;padding-top:45px;">
             <span
@@ -219,13 +222,13 @@ export default {
       tabledata: [
         //
       ],
-      row:{},
+      row: {},
       //渠道活动列表
-      SAactivitylist:[],
+      SAactivitylist: [],
       //
-      SAactivity:[],
+      SAactivity: [],
       //三级分类列表
-      goodsclasslist:[],
+      goodsclasslist: [],
       //一级分类列表
       firstlist: [],
       //二级分类列表
@@ -235,9 +238,9 @@ export default {
       //商品列表
       goodslist: [],
       //选择商品
-      selectgood:{},
+      selectgood: {},
       //码详情
-      qrdetailscanvas:false,
+      qrdetailscanvas: false
     };
   },
   created() {
@@ -272,21 +275,22 @@ export default {
     //跟多操作
     moreoperations(row) {
       this.moreoperationscanvas = true;
-      this.row=row;
-       console.log(row)
+      this.row = row;
+      console.log(row);
     },
     details() {
       //查看详情
-      this.qrdetailscanvas=true;
+      this.qrdetailscanvas = true;
     },
+    //下载单码
     download() {
-      //下载
+      
     },
     relation() {
       //关联
       this.relationcanvas = true;
       //获取活动列表
-       Axios({
+      Axios({
         url: "api/activityManager/activityList",
         method: "get",
         params: {
@@ -297,11 +301,11 @@ export default {
         this.SAactivitylist = data.data.data.activityPage.records;
       });
       //获取商品三级列表
-       Axios({
+      Axios({
         url: "api/productsManager/productCatList",
         methods: "get"
       }).then(data => {
-         console.log(data);
+        console.log(data);
         this.goodsclasslist = data.data.data.firstCatList;
       });
     },
@@ -314,49 +318,79 @@ export default {
           productCatId: this.threelist.productCatId
         }
       }).then(data => {
-        console.log(data)
+        console.log(data);
         this.goodslist = data.data.data.productList;
       });
     },
     //选择商品之后
-    selegood(){
-      console.log(this.selectgood)
+    selegood() {
+      console.log(this.selectgood);
     },
     //提交关联
-    subrelation(){
-       console.log(this.row.qrId)
-       console.log(this.SAactivity)
-       console.log(this.selectgood)
+    subrelation() {
+      console.log(this.row.qrId);
+      console.log(this.SAactivity);
+      console.log(this.selectgood);
       Axios({
-        url:"api/qrcode/codeManager/joinActivity",
-        method:"get",
-        params:{
-          qrIds:this.row.qrId,
-          activityId:this.SAactivity.activityId,
-          activityName:this.SAactivity.activityName,
-          productsId:this.selectgood.productSId,
-          productsName:this.selectgood.productSName,
+        url: "api/qrcode/codeManager/joinActivity",
+        method: "get",
+        params: {
+          qrIds: this.row.qrId,
+          activityId: this.SAactivity.activityId,
+          activityName: this.SAactivity.activityName,
+          productsId: this.selectgood.productSId,
+          productsName: this.selectgood.productSName
         }
-      }).then(data=>{
+      }).then(data => {
         console.log(data);
-        if(data.data.code==0){
-           this.$message({
-                type: "success",
-                message: "关联成功!"
-              });
-              
+        if (data.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "关联成功!"
+          });
+          this.detailslist();
+        } else {
+          this.$message({
+            type: "error",
+            message: "关联失败，请重新尝试!"
+          });
         }
-      })
+        this.relationcanvas = false;
+        this.SAactivitylist = [];
+        this.goodsclasslist = [];
+        this.goodslist = [];
+        this.SAactivity = [];
+        this.firstlist = [];
+        this.secondlist = [];
+        this.threelist = [];
+      });
     },
     exit() {
       this.relationcanvas = false;
-      this.qrdetailscanvas=false;
+      this.qrdetailscanvas = false;
+      this.SAactivitylist = [];
+      this.goodsclasslist = [];
+      this.goodslist = [];
+      this.SAactivity = [];
+      this.firstlist = [];
+      this.secondlist = [];
+      this.threelist = [];
     },
     del() {
       //删除
     },
+    //撤回码
     withdraw() {
       //撤回
+      Axios({
+        url:"api/qrcode/codeManager/recallCode",
+        method:"get",
+        params:{
+          qrIds:this.row.qrId,
+        }
+      }).then(data=>{
+        console.log(data);
+      })
     }
   }
 };
@@ -486,15 +520,15 @@ export default {
       }
     }
   }
-  .qrdetails{
+  .qrdetails {
     width: 100%;
-    height:100%;
+    height: 100%;
     position: absolute;
     left: 0;
     top: 0;
     background: rgba(167, 165, 165, 0.6);
     z-index: 11;
-    .tab{
+    .tab {
       width: 830px;
       height: 336px;
       position: absolute;
@@ -503,7 +537,7 @@ export default {
       margin-left: -415px;
       background: #fff;
       z-index: 12;
-      .header{
+      .header {
         width: 100%;
         height: 58px;
         border-bottom: 1px solid #555;
@@ -512,11 +546,11 @@ export default {
         font-size: 18px;
         color: #333;
         font-weight: bold;
-        span{
+        span {
           padding-left: 13px;
         }
       }
-      img{
+      img {
         float: right;
         margin-right: 13px;
         margin-top: 15px;
