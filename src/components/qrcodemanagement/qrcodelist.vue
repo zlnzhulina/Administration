@@ -71,50 +71,75 @@
       ></el-pagination>
     </div>
 
+    <!-- ----------二维码撤回 -->
+    <div class="withdrawcanvaswrap" v-if="withdrawcanvas">
+      <div class="withdrawcanvas">
+        <div class="header">
+          <span>撤回码</span>
+        </div>
+        <div class="withdrawnum">
+          <b>撤回数量：</b>
+          <input type="text" v-model="withdrawnum">
+        </div>
+        <div class="withdrawnumbtn">
+          <span style="background:#1abc9c;border:none;color:#fff;" @click="withdrawok">确定</span>
+          <span @click="exit">取消</span>
+        </div>
+      </div>
+    </div>
     <!-- ----------二维码批次关联活动和商品 ---------------->
-    <div class="relationcanvas" v-if="relationcanvas">
-      <div class="scroll">
-        <h3>
-          <span>关联</span>
-          <img src="@/assets/no.png" @click="exit">
-        </h3>
-        <div class="main">
+    <div class="relationcanvastwowrap" v-if="relationcanvas"></div>
+    <div class="relationcanvastwo" v-if="relationcanvas">
+      <img src="@/assets/no.png" @click="exit">
+      <div class="relationSA" style="width:100%;">
+        <div class="membershow">
+          <span>批次编号：</span>
+          <i>{{row.batchId}}</i>
+          <span>批次名称：</span>
+          <i>{{row.batchName}}</i>
+        </div>
+      </div>
+      <div class="relationSA" v-for="(item,index) in memberrelationlist">
+        <div class="membershow">
+          <span>消费者活动：</span>
+          <p>{{item.qrActivityName}}</p>
+          <span>关联商品：</span>
+          <p>{{item.productsName}}</p>
+        </div>
+        <div class="membershow">
+          <span>可用数量：</span>
+          <i>{{item.useCount}}</i>
+        </div>
+        <div class="membershow" style="margin-bottom:20px;">
+          <span>请选择关联SA活动：</span>
+          <select v-model="relationarr[index].activity" @change="aaa(index,item)">
+            <option>--请选择--</option>
+            <option
+              v-for="(val,index) in SAactivityarr[item.productsId]"
+              :value="val"
+            >{{val.activityName}}</option>
+          </select>
           <span>关联数量：</span>
-          <el-table
-            ref="multipleTable"
-            :header-cell-style="{background:'#eaedf1',height:'32',}"
-            :data="relationlist"
-            tooltip-effect="dark"
-            :summary-method="getTotal"
-            style="width:404px;float:left;margin-left:20px;"
-          >
-            <el-table-column prop="batchId" label="批次编号" width="92"></el-table-column>
-            <el-table-column prop="batchName" label="批次名称" width="130"></el-table-column>
-            <el-table-column prop="residueCount" label="可用数量"></el-table-column>
-            <el-table-column prop="batchnum" label="关联数量">
-              <template>
-                <input
-                  type="text"
-                  style="width:50px;height:25px;font-size:12px;"
-                  v-model="relationconten"
-                >
-              </template>
-            </el-table-column>
-          </el-table>
+          <input type="text" v-model="relationarr[index].joinCount">
+          <span>个</span>
+        </div>
+        <button @click="subrelation(index)">确定关联</button>
+        <hr>
+      </div>
+      <!-- 裸码关联 -->
+      <div class="relationSA">
+        <div class="membershow">
+          <span style="padding:0px;">裸码关联</span>
+        </div>
+        <div class="membershow">
           <span>
-            <i>*</i>关联渠道活动：
+            <i>*</i> 关联渠道活动：
           </span>
           <select name="active" v-model="SAactivity">
             <option v-for="(item,index) in SAactivitylist" :value="item">{{item.activityName}}</option>
           </select>
-          <span>已关联消费者活动：</span>
-          <select name="useractive">
-            <option></option>
-          </select>
-          <span></span>
-          <select name="useractive">
-            <option></option>
-          </select>
+        </div>
+        <div class="membershow">
           <span>关联商品：</span>
           <select name="useractive" v-model="firstlist">
             <option
@@ -141,25 +166,16 @@
           <select name="useractive" v-model="selectgood" @change="selegood">
             <option v-for="(item,index) in goodslist" :value="item">{{item.productSName}}</option>
           </select>
-          <div style="width:152px;height:36px;margin:0px auto;clear:both;padding-top:45px;">
-            <span
-              style="width:152px;height:50px;background:#1abc9c;text-align:center;line-height:50px;margin:30px auto;clear:both;"
-              @click="subrelation"
-            >确定</span>
-          </div>
         </div>
-      </div>
-    </div>
-    <div class="withdrawcanvaswrap" v-if="withdrawcanvas">
-      <div class="withdrawcanvas">
-        <div class="header">
-          <span>撤回码</span>
+        <div class="membershow">
+          <span>可关联数量：</span>
+          <i>{{residueCount}}</i>
         </div>
-        <div class="withdrawnum">
-          <b>撤回数量：</b><input type="text" v-model="withdrawnum"/>
+        <div class="membershow">
+          <span>请输入关联数量：</span>
+          <input type="text" v-model="residuenum">
         </div>
-        <div class="withdrawnumbtn"><span style="background:#1abc9c;border:none;color:#fff;" @click="withdrawok">确定</span><span @click="exit">取消</span>
-        </div>
+        <button @click="residueok">确认关联</button>
       </div>
     </div>
   </div>
@@ -202,15 +218,40 @@ export default {
       selectgood: {},
       timer: "",
       totalCount: 1,
-      pagesize: "10",
+      pagesize: "",
       currentPage: 1,
       //撤回弹框
       withdrawcanvas: false,
       //撤回数量
-      withdrawnum:"",
+      withdrawnum: "",
+      //二维码关联的会员活动及商品列表
+      memberrelationlist: [],
+      productsIds: [],
+      SAactivityarr: [],
+      relationarr: [
+        {
+          productsId: "",
+          activity: {},
+          joinCount: "",
+
+          productsName: ""
+        }
+      ],
+      //裸码数量
+      residueCount: "",
+      //关联裸码数量
+      residuenum: ""
     };
   },
   methods: {
+    aaa(i, val) {
+      console.log(i);
+      console.log(val);
+      this.relationarr[i].productsId = val.productsId;
+      this.relationarr[i].productsName = val.productsName;
+
+      console.log(this.relationarr);
+    },
     qrcodelist() {
       Axios({
         //url:"http://192.168.1.128:8101/codeManager/batchList",
@@ -219,7 +260,8 @@ export default {
         params: {
           pageNo: this.currentPage,
           batchCode: "",
-          type: ""
+          type: "",
+          from: "2"
         }
       }).then(data => {
         console.log(data);
@@ -283,8 +325,7 @@ export default {
                 clearInterval(this.timer);
 
                 window.location.href =
-                  "api/qrcode/codeManager/downloadZIP?batchId=" +
-                  this.row.batchId;
+                  "api/qrcode/codeManager/downloadZIP?batchId=" + row.batchId;
               }
             });
           }, 3000);
@@ -298,8 +339,48 @@ export default {
       //关联
       this.row = row;
       this.relationcanvas = true;
-      this.relationlist.push(row);
-      console.log(this.relationlist);
+      Axios({
+        url: "api/qrcode/codeManager/beforeJoinActivity",
+        method: "get",
+        params: {
+          batchId: row.batchId
+        }
+      }).then(data => {
+        console.log(data);
+        this.memberrelationlist=[];
+        this.memberrelationlist = data.data.data.list;
+        this.residueCount = data.data.data.residueCount;
+        console.log(this.memberrelationlist);
+        for (var i = 0; i < this.memberrelationlist.length; i++) {
+          this.productsIds.push(this.memberrelationlist[i].productsId);
+        }
+
+        if (data.data.code == 0) {
+          Axios({
+            url: "api/activityManager/selectActivityByProductId",
+            method: "get",
+            params: {
+              productsIds: this.productsIds.toString()
+            }
+          }).then(res => {
+            console.log(res);
+            this.productsIds.length = 0;
+            if (res.data.code == 0) {
+              this.SAactivityarr = res.data.data;
+              var count = Object.keys(this.SAactivityarr);
+              this.relationarr.length = 0;
+              for (var i = 0; i < count.length; i++) {
+                this.relationarr.push({
+                  productsId: "",
+                  joinCount: "",
+                  activity: {},
+                  productsName: ""
+                });
+              }
+            }
+          });
+        }
+      });
       Axios({
         url: "api/activityManager/activityList",
         method: "get",
@@ -307,7 +388,7 @@ export default {
           pageNo: "1"
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.SAactivitylist = data.data.data.activityPage.records;
       });
       this.goodclasslist();
@@ -318,7 +399,7 @@ export default {
         url: "api/productsManager/productCatList",
         methods: "get"
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.goodsclasslist = data.data.data.firstCatList;
       });
     },
@@ -331,30 +412,32 @@ export default {
           productCatId: this.threelist.productCatId
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.goodslist = data.data.data.productList;
       });
     },
     //选择商品之后
     selegood() {
-      console.log(this.selectgood);
+      // console.log(this.selectgood);
     },
     //确认关联
-    subrelation() {
+
+    subrelation(i) {
+      console.log(
+        this.relationarr[i].productsId,
+        this.relationarr[i].productsName
+      );
       Axios({
-        url: "api/qrcode/codeManager/joinActivityFromBatch",
-        method: "post",
-        data: {
-          batchList: [
-            {
-              batchId: this.row.batchId,
-              joinCount: this.relationconten
-            }
-          ],
-          activityId: this.SAactivity.activityId,
-          activityName: this.SAactivity.activityName,
-          productsId: this.selectgood.productCatId,
-          productsName: this.selectgood.productSName
+        url: "api/qrcode/codeManager/joinSAActivity",
+        method: "get",
+        params: {
+          activityId: this.relationarr[i].activity.activityId,
+          activityName: this.relationarr[i].activity.activityName,
+          productsId: this.relationarr[i].productsId,
+          productsName: this.relationarr[i].productsName,
+          joinCount: this.relationarr[i].joinCount,
+          batchId: this.row.batchId,
+          type:"",
         }
       }).then(data => {
         console.log(data);
@@ -363,6 +446,36 @@ export default {
             type: "success",
             message: "关联成功!"
           });
+          this.relationcanvas=false;
+          this.relationarr.length = 0;
+          console.log(this.relationarr)
+          
+        }
+      });
+    },
+    //确认关联裸码
+    residueok() {
+      // console.log(this.SAactivity.activityId,this.SAactivity.activityName,this.selectgood.productCatId,this.selectgood.productSName,this.residuenum,this.row.batchId)
+      Axios({
+        url: "api/qrcode/codeManager/joinSAActivity",
+        method: "get",
+        params: {
+          activityId: this.SAactivity.activityId,
+          activityName: this.SAactivity.activityName,
+          productsId: this.selectgood.productCatId,
+          productsName: this.selectgood.productSName,
+          joinCount: this.residuenum,
+          batchId: this.row.batchId,
+          type:"1",
+        }
+      }).then(data => {
+        console.log(data);
+        if (data.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "关联成功!"
+          });
+          this.relationcanvas=false;
         }
       });
     },
@@ -404,19 +517,19 @@ export default {
       this.withdrawcanvas = true;
     },
     //确认撤回
-    withdrawok(){
+    withdrawok() {
       Axios({
-        url:"api/qrcode/codeManager/recallCodeFromBatch",
-        method:"get",
-        params:{
-          batchId:this.row.batchId,
-          recallCount:this.withdrawnum,
+        url: "api/qrcode/codeManager/recallCodeFromBatch",
+        method: "get",
+        params: {
+          batchId: this.row.batchId,
+          recallCount: this.withdrawnum
         }
-      })
+      });
     },
     exit() {
       this.relationcanvas = false;
-      this.withdrawcanvas=false;
+      this.withdrawcanvas = false;
     },
     getTotal(param) {
       const { columns, data } = param;
@@ -601,7 +714,7 @@ export default {
     position: absolute;
     left: 0;
     top: 0;
-    background: rgba(#fff, .6);
+    background: rgba(#fff, 0.6);
     z-index: 111;
     .withdrawcanvas {
       width: 828px;
@@ -625,7 +738,7 @@ export default {
           color: #555;
         }
       }
-      .withdrawnumbtn{
+      .withdrawnumbtn {
         width: 300px;
         height: 50px;
         position: absolute;
@@ -634,7 +747,7 @@ export default {
         margin-left: -150px;
         display: flex;
         justify-content: space-around;
-        span{
+        span {
           display: block;
           width: 130px;
           height: 48px;
@@ -645,19 +758,90 @@ export default {
           border-radius: 8px;
         }
       }
-      .withdrawnum{
+      .withdrawnum {
         width: 60%;
         height: 50px;
         margin: 20px auto;
-        input{
+        input {
           width: 400px;
           height: 43px;
           border-radius: 5px;
           border: 1px solid #555;
           text-align: center;
-
         }
+      }
+    }
+  }
+  .relationcanvastwowrap {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgba(#eee, 0.6);
+    z-index: 110;
+  }
+  .relationcanvastwo {
+    width: 64%;
+    height: 100%;
+    background: #fff;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    margin-left: -35%;
+    z-index: 111;
+    border: 1px solid #555;
+    img {
+      position: absolute;
+      right: 13px;
+      top: 13px;
+    }
+    .relationSA {
+      width: 90%;
 
+      margin: 0 auto;
+      .membershow {
+        width: 100%;
+        height: 44px;
+        margin-top: 20px;
+        color: #555;
+        display: flex;
+        align-items: center;
+
+        span {
+          padding-left: 16px;
+          font-size: 16px;
+          font-weight: bold;
+        }
+        i {
+          color: goldenrod;
+        }
+        p {
+          width: 100px;
+          height: 34px;
+          line-height: 34px;
+          border: 1px solid #555;
+          border-radius: 6px;
+          text-align: center;
+          margin-left: 14px;
+        }
+        select {
+          width: 160px;
+          height: 36px;
+        }
+        input {
+          width: 90px;
+          height: 30px;
+        }
+      }
+      button {
+        width: 100px;
+        height: 36px;
+        border: none;
+        background: #1abc9c;
+        margin-bottom: 20px;
+        color: #fff;
+        border-radius: 6px;
       }
     }
   }

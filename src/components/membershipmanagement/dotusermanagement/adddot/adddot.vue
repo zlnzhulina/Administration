@@ -195,6 +195,7 @@ export default {
               message: data.data.msg,
               type: "success"
             });
+            this.$router.push("/Membershipmanagement/dotlist")
           }
           if (data.data.code == "-1") {
             this.$message({

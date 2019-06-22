@@ -17,9 +17,10 @@
       :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
-       stripe 
+      stripe
       tooltip-effect="dark"
       style="width: 100%"
+      @selection-change="handleSelectionChange"
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
@@ -29,23 +30,23 @@
       <el-table-column prop="network.networkName" label="网点名称"></el-table-column>
       <el-table-column fixed="right" label="操作" width="240px">
         <template slot-scope="scope">
-        <el-button type="text" size="small" @click="seedetails(scope.row)">查看</el-button>
-        <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
-        <el-button type="text" size="small" @click="deleteUser(scope.$index,scope.row)">删除</el-button>
+          <el-button type="text" size="small" @click="seedetails(scope.row)">查看</el-button>
+          <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="deleteUser(scope.$index,scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-     <!-- 分页功能-->
-        <div class="block fr" style="margin-top: 10px;">
-            <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-size="pagesize"
-                    layout="total,  prev, pager, next, jumper"
-                    :total="totalCount">
-            </el-pagination>
-        </div>
+    <!-- 分页功能-->
+    <div class="block fr" style="margin-top: 10px;">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="pagesize"
+        layout="total,  prev, pager, next, jumper"
+        :total="totalCount"
+      ></el-pagination>
+    </div>
     <div class="delcanvas" v-if="delcanvas">
       <h3>温馨提示</h3>
       <p>岗位信息删除后不可恢复，确认删除？</p>
@@ -56,7 +57,7 @@
 </template>
 
 <script>
-import Axios from 'axios';
+import Axios from "axios";
 export default {
   //网点列表
   data() {
@@ -65,83 +66,82 @@ export default {
       pagesize: 7,
       currentPage: 1,
       totalCount: 0,
-      tabledata: []
+      tabledata: [],
+      //选中的用户列表
+      useridarr: [],
+      //删除的用户id
+      deluserids: ""
     };
   },
-  created:function(){
-      this.init();
+  created: function() {
+    this.init();
   },
   methods: {
-    deleteUser(index,row){
-      console.log(row)
-      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    Axios(
-                        {
-                        method: "get",
-                        url: "api/networkUserManager/delUser"+'?userIds='+row.userId,
-                        }
-                    ).then(data => {
-                        this.init();
-                        console.log(data)
-                        if(data.data.code == '0'){
-                            this.$message({
-                                message: data.data.msg,
-                                type: 'success'
-                            });
-                        }
-                        if(data.data.code == '-1'){
-                            this.$message({
-                                message: data.data.msg,
-                                type: 'error'
-                            });
-                        }
-                        
-                        
-                    })
-                    
-                    
-                }).catch(() => {
-                    this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                    });          
-                });
+    deleteUser(index, row) {
+      console.log(row);
+      this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          Axios({
+            method: "get",
+            url: "api/networkUserManager/delUser" + "?userIds=" + row.userId
+          }).then(data => {
+            this.init();
+            console.log(data);
+            if (data.data.code == "0") {
+              this.$message({
+                message: data.data.msg,
+                type: "success"
+              });
+            }
+            if (data.data.code == "-1") {
+              this.$message({
+                message: data.data.msg,
+                type: "error"
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
-    batchmaintenance(){
-      this.$router.push("/Membershipmanagement/batchmaintenance")
+    batchmaintenance() {
+      this.$router.push("/Membershipmanagement/batchmaintenance");
     },
-    init:function(){
-      Axios(
-        {
-          method: "get",
-          url: "api/networkUserManager/userList"+'?pageNo='+this.currentPage+'&pageSize='+this.pagesize,
-          
-        }
-      ).then(data => {
-        console.log(data)
+    init: function() {
+      Axios({
+        method: "get",
+        url:
+          "api/networkUserManager/userList" +
+          "?pageNo=" +
+          this.currentPage +
+          "&pageSize=" +
+          this.pagesize
+      }).then(data => {
+        console.log(data);
         this.totalCount = data.data.data.userPage.total;
         this.pagesize = data.data.data.userPage.size;
         this.currentPage = data.data.data.userPage.current;
         this.tabledata = data.data.data.userPage.records;
-        
-      })
+      });
     },
-    handleSizeChange(val) {
-    },
+    handleSizeChange(val) {},
     handleCurrentChange(val) {
-        this.currentPage = val;
-        this.getTable();
+      this.currentPage = val;
+      this.getTable();
     },
     //查看
     seedetails(row) {
-
       this.$router.push({
         path: "/userdetails",
-        query:{flag:'2',data:row}
+        query: { flag: "2", data: row }
         // params: {Id:id}
       });
     },
@@ -149,19 +149,60 @@ export default {
     adduser() {
       this.$router.push({
         path: "/adduser"
-        
       });
     },
-    edit(row){
+    edit(row) {
       this.$router.push({
-        path:"/adduser",
-        query: {flag:'1',networkParm:row}
-      })
-      
+        path: "/adduser",
+        query: { flag: "1", networkParm: row }
+      });
     },
-    //编辑
+    //批量删除
     deleteall() {
-      this.delcanvas = true;
+      this.$confirm("此操作将永久删除多条数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          Axios({
+            url: "api/networkUserManager/delUser",
+            method: "get",
+            params: {
+              userIds: this.deluserids
+            }
+          }).then(data => {
+            console.log(data);
+            if (data.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.init();
+            } else {
+              this.$message({
+                type: "error",
+                message: "删除失败!"
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    //批量选中
+    handleSelectionChange(val) {
+      console.log(val)
+      this.useridarr.length = 0;
+      for (var i = 0; i < val.length; i++) {
+        this.useridarr.push(val[i].userId);
+      }
+
+      this.deluserids = this.useridarr.toString();
     },
     exit() {
       this.delcanvas = false;

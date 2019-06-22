@@ -23,7 +23,7 @@
       <el-table-column fixed="right" label="操作" width="310">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="details(scope.row)">查看</el-button>
-          <el-button type="text" size="small">修改</el-button>
+          <el-button type="text" size="small" @click="edit(scope.row)">修改</el-button>
           <el-button type="text" size="small">结束</el-button>
         </template>
       </el-table-column>
@@ -64,7 +64,7 @@ export default {
         method: "get",
         params: {
           pageNo: this.currentPage,
-          pageSize: this.pagesize
+          pageSize: this.pagesize,
         }
       }).then(data => {
         console.log(data);
@@ -82,6 +82,13 @@ export default {
       this.$router.push({
         path: "/activitydetails"
       });
+    },
+    //编辑
+    edit(row){
+      this.$router.push({
+        path:"/createactivity",
+        query:{flag:1,rowdata:row}
+      })
     },
     //分页功能
     handleSizeChange(val) {},

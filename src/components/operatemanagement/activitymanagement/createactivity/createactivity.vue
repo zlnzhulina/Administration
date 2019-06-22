@@ -483,9 +483,17 @@ import Axios from "axios";
 export default {
   created() {
     this.goodclasslist();
+    console.log(this.$route.query);
+    this.flag=this.$route.query.flag;
+    this.activity.activityName=this.$route.query.rowdata.activityName;
+    this.imagebgUrl=this.$route.query.rowdata.backgroundUrl;
+    this.activity.endTime=this.$route.query.rowdata.endTime;
+    this.activity.startTime=this.$route.query.rowdata.startTime;
+    
   },
   data() {
     return {
+      flag:"",
       one: true,
       two: false,
       three: false,

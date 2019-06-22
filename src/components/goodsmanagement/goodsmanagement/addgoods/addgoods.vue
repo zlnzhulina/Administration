@@ -208,6 +208,13 @@ export default {
         },
       }).then(data=>{
         console.log(data)
+        if(data.data.code==0){
+           this.$message({
+            type: 'success',
+            message: '添加成功!'
+          });
+          this.$router.push("/goodsmanagement/goodslist")
+        }
       });
     },
 

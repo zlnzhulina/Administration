@@ -31,9 +31,11 @@
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%;font-size:12px;"
+      @selection-change="handleSelectionChange"
        stripe 
     >
       <!-- stripe="true" -->
+      <el-table-column type="selection" width="55" v-model="checkList"></el-table-column>
       <el-table-column prop="productSId" label="商品编号" width="160px" ></el-table-column>
       <el-table-column prop="productSName" label="商品名称" width="244"></el-table-column>
       <el-table-column prop="productCatName" label="商品分类" width="194px"></el-table-column>
@@ -41,7 +43,7 @@
       <el-table-column fixed="right" label="操作" width="146px">
         <template slot-scope="scope">
         <el-button type="text" size="small" @click="seedetails(scope.row)">编辑</el-button>
-        <el-button type="text" size="small">删除</el-button>
+        <el-button type="text" size="small" @click="removegoods(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -95,7 +97,12 @@ export default {
           goodsclass: "afsefw",
           data: "2019-3-4"
         }
-      ]
+      ],
+      checkList:[],
+      //批量删除商品id
+      goodsidarr:[],
+      //删除的商品id的集合字符串
+      delgoodsids:"",
     };
   },
   created(){
@@ -136,9 +143,88 @@ export default {
     yesedit(){
 
     },
+    //批量选中
+    handleSelectionChange(val){
+      console.log(val)
+      this.goodsidarr.length=0;
+      for(var i=0;i<val.length;i++){
+         this.goodsidarr.push(val[i].productSId)
+      };
+        
+         this.delgoodsids=this.goodsidarr.toString()
+    },
     //批量删除
     deleteall(){
+      this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          Axios({
+            url:"api/productsManager/delProductS",
+            method:"get",
+            params:{
+              productSId:this.degoodsids,
+            }
+          }).then(data=>{
+            console.log(data);
+            if(data.data.code==0){
+              this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.goodslist();
+            }else{
+              this.$message({
+            type: 'error',
+            message: '删除失败!'
+          });
+            }
 
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    },
+    removegoods(val){
+      this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          Axios({
+            url:"api/productsManager/delProductS",
+            method:"get",
+            params:{
+              productSId:val.degoodsids,
+            }
+          }).then(data=>{
+            console.log(data);
+            if(data.data.code==0){
+              this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.goodslist();
+            }else{
+              this.$message({
+            type: 'error',
+            message: '删除失败!'
+          });
+            }
+
+          })
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
     },
     exit() {
       this.delcanvas = false;

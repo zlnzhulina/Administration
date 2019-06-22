@@ -27,6 +27,7 @@
       tooltip-effect="dark"
       style="width: 100%"
       stripe
+      @selection-change="handleSelectionChange"
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
@@ -72,7 +73,10 @@ export default {
       pagesize: 7,
       currentPage: 1,
       totalCount: 0,
-      fileList: []
+      fileList: [],
+      dotidarr:[],
+      deldotids:"",
+
     };
   },
   created: function() {
@@ -170,8 +174,52 @@ export default {
         query: { flag: "1", networkParm: row }
       });
     },
+    //批量选中
+    handleSelectionChange(val) {
+      console.log(val)
+      this.dotidarr.length = 0;
+      for (var i = 0; i < val.length; i++) {
+        this.dotidarr.push(val[i].networkId);
+      }
+
+      this.deldotids = this.dotidarr.toString();
+    },
+    //批量删除
     deleteall() {
-      this.delcanvas = true;
+      this.$confirm("此操作将永久删除多条数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          Axios({
+            url: "api/networkUserManager/delNetwork",
+            method: "get",
+            params: {
+              networkIds: this.deldotids
+            }
+          }).then(data => {
+            console.log(data);
+            if (data.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.selectNetWorkList();
+            } else {
+              this.$message({
+                type: "error",
+                message: "删除失败!"
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     exit() {
       this.delcanvas = false;

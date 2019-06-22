@@ -2,7 +2,7 @@
   <div class="container">
     <div class="search">
       <span @click="addstaff">添加员工</span>
-      <span class="delete" @click="delstaff">删除选中</span>
+      <span class="delete" @click="delstall">删除选中</span>
       <input type="text" placeholder="请输入关键字搜索" v-model="searchval">
     </div>
     <el-table
@@ -326,7 +326,7 @@ export default {
         });
    },
    //删除选中
-   delstaff(){
+   delstall(){
      this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
