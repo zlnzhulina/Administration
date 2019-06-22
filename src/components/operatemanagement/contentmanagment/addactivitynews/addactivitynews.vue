@@ -198,6 +198,9 @@ export default {
           imgList:this.imgurlarr,
         }
       }).then(data=>{
+        if(data.data.code==0){
+          this.$router.push("/operatemanagement/indexactivityinformation")
+        }
         console.log(data)
       });
     }
