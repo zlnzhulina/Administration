@@ -72,14 +72,12 @@ export default {
     padding: 0;
 }
 .header{
-    width: 1200px;
+    width: 100%;
     height: 60px;
     background: #595e6c;
     margin: -0 auto;
     position: absolute;
-    left: 50%;
-    margin-left: -600px;
-    top: 30px;
+    top: 0;
     .logo{
         width: 250px;
         height: 60px;

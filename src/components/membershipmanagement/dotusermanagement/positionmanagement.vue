@@ -193,8 +193,8 @@ ok(){
 
 <style lang="scss" scoped>
 .container{
-     width: 960px;
-  height: 622px;
+     width: 100%;
+  height: 100%;
   position: relative;
   .top{
       width: 100%;

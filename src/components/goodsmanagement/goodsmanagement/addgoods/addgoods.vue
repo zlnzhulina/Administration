@@ -233,7 +233,7 @@ export default {
 <style lang="scss" scoped>
 .wrap {
   width: 1200px;
-  padding-top: 90px;
+  padding-top: 60px;
   margin: 0 auto;
   h3 {
     width: 100%;

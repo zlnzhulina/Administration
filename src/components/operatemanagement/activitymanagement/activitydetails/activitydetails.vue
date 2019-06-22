@@ -44,7 +44,7 @@
           <b>活动规则</b>
           <span>修改</span>
         </h3>
-        <el-table :data="tableData" stripe style="width: 100%;background:#eee;">
+        <el-table :data="tableData" stripe style="width: 100%;">
           
           <el-table-column prop="date" label="规则类型" width="327"></el-table-column>
           <el-table-column prop="name" label="规则名称" width="327"></el-table-column>
@@ -55,7 +55,7 @@
           <b>奖项与奖品信息</b>
           <span>修改</span>
         </h3>
-        <el-table :data="tableData" stripe style="width: 100%;background:#eee;">
+        <el-table :data="tableData" stripe style="width: 100%;">
           
           <el-table-column prop="date" label="奖品名称" width="142"></el-table-column>
           <el-table-column prop="name" label="奖项名称" width="142"></el-table-column>
@@ -66,7 +66,7 @@
               <el-table-column prop="name" label="中奖概率"></el-table-column>
         </el-table>
         <h2 style="width:100%;height:60px;background:#ddd;line-height:60px;margin-top:30px;"><span style="margin-left:20px;font-size:14px;">关联条码</span></h2>
-        <el-table :data="tableData" stripe style="width: 100%;background:#eee;">
+        <el-table :data="tableData" stripe style="width: 100%;">
           
           <el-table-column prop="date" label="活动名称" width="199"></el-table-column>
           <el-table-column prop="name" label="关联商品" width="199"></el-table-column>
@@ -106,7 +106,7 @@ export default {
 .wrap {
   width: 1120px;
   height: auto;
-  padding-top: 90px;
+  padding-top: 60px;
   margin: 0 auto;
   .header {
     width: 100%;

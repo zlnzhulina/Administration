@@ -32,18 +32,18 @@
         <el-collapse-item>
           <template slot="title">
             {{firstitem.productCatName}}
-            <span style="right:100px" @click="addnextclass(firstitem.productCatId,$event)">添加下级分类</span>
-            <span style="right:50px">编辑</span>
-            <span style="right:6px;" @click="deleteclass(firstitem.productCatId)">删除</span>
+            <span style="right:120px" @click="addnextclass(firstitem.productCatId,$event)">添加下级分类</span>
+            <span style="right:70px">编辑</span>
+            <span style="right:26px;" @click="deleteclass(firstitem.productCatId)">删除</span>
           </template>
           <div>
             <el-collapse v-model="seconditem.productCatId" v-for="(seconditem,index) in firstitem.productCatList">
               <el-collapse-item>
                 <template slot="title">
                   {{seconditem.productCatName}}
-                  <span style="right:100px" @click="addnextclass(seconditem.productCatId,$event)">添加下级分类</span>
-                  <span style="right:50px">编辑</span>
-                  <span style="right:6px;" @click="deleteclass(seconditem.productCatId)">删除</span>
+                  <span style="right:120px" @click="addnextclass(seconditem.productCatId,$event)">添加下级分类</span>
+                  <span style="right:70px">编辑</span>
+                  <span style="right:26px;" @click="deleteclass(seconditem.productCatId)">删除</span>
                 </template>
                 <div v-for="(threeitem,index) in seconditem.productCatList">
                   <b style="font-weight: normal;margin-left:30px;">{{threeitem.productCatName}}</b>
@@ -239,8 +239,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+   width: 100%;
+  height:100%;
   position: relative;
   .header {
     width: 100%;
@@ -325,10 +325,12 @@ export default {
     }
   }
   .tabhand {
+
     width: 958px;
     height: 32px;
-    background: #9decff;
-    margin: 0 auto;
+    background: #ccd1e0;
+    margin: 15px auto;
+    margin-bottom: 0;
     line-height: 32px;
   }
   .tabbody {
@@ -337,6 +339,7 @@ export default {
     margin: 0 auto;
     border: 1px solid #797979;
     .el-collapse-item__header {
+      
       span {
         display: block;
         position: absolute;
@@ -352,6 +355,7 @@ export default {
       width: 916px;
       margin: 0 auto;
       border: none;
+      position: relative;
       .el-collapse {
         width: 900px;
         margin: 0 auto;

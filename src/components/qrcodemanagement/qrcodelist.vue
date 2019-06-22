@@ -28,17 +28,18 @@
       </select>
     </div>
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
-      <el-table-column prop="batchId" label="批次编号" width="158px"></el-table-column>
-      <el-table-column prop="batchName" label="批次名称" width="128px"></el-table-column>
-      <el-table-column prop="type" label="批次类型" width="90px">
+      <el-table-column prop="batchId" label="批次编号" width="188px"></el-table-column>
+      <el-table-column prop="batchName" label="批次名称" width="158px"></el-table-column>
+      <el-table-column prop="type" label="批次类型" width="100px">
         <template slot-scope="scope">{{scope.row.type==2?"双码":"单码"}}</template>
       </el-table-column>
       <el-table-column prop="count" label="批次数量"></el-table-column>
@@ -47,21 +48,29 @@
       <el-table-column prop="consumeractivity" label="消费者活动"></el-table-column>
       <el-table-column prop="activity" label="渠道活动"></el-table-column>
 
-      <el-table-column fixed="right" label="操作" width="75px">
+      <el-table-column fixed="right" label="操作" width="300px">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button>
+          <!-- <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button> -->
+          <el-button type="text" size="small" @click="details(scope.row)">详情</el-button>
+          <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
+          <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
+          <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
+          <el-button type="text" size="small" @click="withdraw(scope.row)">撤回</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <div class="moreoperationscanvas" v-show="moreoperationscanvas">
-      <ul>
-        <li @click="details">详情</li>
-        <li @click="download">下载</li>
-        <li @click="relation">关联</li>
-        <li @click="del">删除</li>
-        <li @click="withdraw">撤回</li>
-      </ul>
+    <!-- 分页功能 -->
+    <div class="block fr" style="margin-top: 10px;">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="pagesize"
+        layout="total,  prev, pager, next, jumper"
+        :total="totalCount"
+      ></el-pagination>
     </div>
+
     <!-- ----------二维码批次关联活动和商品 ---------------->
     <div class="relationcanvas" v-if="relationcanvas">
       <div class="scroll">
@@ -141,6 +150,18 @@
         </div>
       </div>
     </div>
+    <div class="withdrawcanvaswrap" v-if="withdrawcanvas">
+      <div class="withdrawcanvas">
+        <div class="header">
+          <span>撤回码</span>
+        </div>
+        <div class="withdrawnum">
+          <b>撤回数量：</b><input type="text" v-model="withdrawnum"/>
+        </div>
+        <div class="withdrawnumbtn"><span style="background:#1abc9c;border:none;color:#fff;" @click="withdrawok">确定</span><span @click="exit">取消</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -179,7 +200,14 @@ export default {
       goodslist: [],
       //选择商品
       selectgood: {},
-      timer: ""
+      timer: "",
+      totalCount: 1,
+      pagesize: "10",
+      currentPage: 1,
+      //撤回弹框
+      withdrawcanvas: false,
+      //撤回数量
+      withdrawnum:"",
     };
   },
   methods: {
@@ -189,12 +217,15 @@ export default {
         url: "api/qrcode/codeManager/batchList",
         method: "get",
         params: {
-          pageNo: "1",
+          pageNo: this.currentPage,
           batchCode: "",
           type: ""
         }
       }).then(data => {
-        // console.log(data);
+        console.log(data);
+        this.totalCount = data.data.data.batchPage.total;
+        this.pagesize = data.data.data.batchPage.size;
+        this.currentPage = data.data.data.batchPage.current;
         this.tabledata = data.data.data.batchPage.records;
       });
     },
@@ -205,53 +236,55 @@ export default {
       });
     },
     //更多操作
-    moreoperations(row) {
-      console.log(row);
-      this.moreoperationscanvas = true;
-      this.row = row;
-    },
-    details() {
+    // moreoperations(row) {
+    //   console.log(row);
+    //   this.moreoperationscanvas = true;
+    //   this.row = row;
+    // },
+    details(row) {
       // console.log(1)
-      if (this.row.type == 2) {
+      if (row.type == 2) {
         //查看详情
         this.$router.push({
           path: "/doubledetails",
-          query: { flag: "2", data: this.row }
+          query: { flag: "2", data: row }
         });
       } else {
         //单码
         this.$router.push({
           path: "/singledetails",
-          query: { flag: "2", data: this.row }
+          query: { flag: "2", data: row }
         });
       }
     },
     //下载批次二维码图片
-    download() {
+    download(row) {
       Axios({
         url: "api/qrcode/codeManager/batchDownloadFileToZIP",
         method: "get",
         params: {
-          batchId: this.row.batchId
+          batchId: row.batchId
         }
       }).then(data => {
         console.log(data);
         if (data.data.code == 0) {
-          console.log(this.row.batchId);
+          console.log(row.batchId);
           this.timer = setInterval(() => {
             Axios({
               url: "api/qrcode/codeManager/validationZIP",
               method: "get",
               params: {
-                batchId: this.row.batchId
+                batchId: row.batchId
               }
             }).then(res => {
               console.log(res);
               if (res.data.code == 0) {
                 //表示压缩包压缩完成 开始下载
                 clearInterval(this.timer);
-          
-                window.location.href="api/qrcode/codeManager/downloadZIP?batchId="+this.row.batchId;
+
+                window.location.href =
+                  "api/qrcode/codeManager/downloadZIP?batchId=" +
+                  this.row.batchId;
               }
             });
           }, 3000);
@@ -261,10 +294,11 @@ export default {
     con() {
       console.log(1);
     },
-    relation() {
+    relation(row) {
       //关联
+      this.row = row;
       this.relationcanvas = true;
-      this.relationlist.push(this.row);
+      this.relationlist.push(row);
       console.log(this.relationlist);
       Axios({
         url: "api/activityManager/activityList",
@@ -305,6 +339,7 @@ export default {
     selegood() {
       console.log(this.selectgood);
     },
+    //确认关联
     subrelation() {
       Axios({
         url: "api/qrcode/codeManager/joinActivityFromBatch",
@@ -331,7 +366,7 @@ export default {
         }
       });
     },
-    del() {
+    del(row) {
       //删除
       this.$confirm("此操作将永久删除该二维码, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -340,10 +375,10 @@ export default {
       })
         .then(() => {
           Axios({
-            url: "api/codeManager/delBatch",
+            url: "api/qrcode/codeManager/delBatch",
             method: "get",
             params: {
-              batchIds: this.row.batchId
+              batchIds: row.batchId
             }
           }).then(data => {
             console.log(data);
@@ -363,11 +398,25 @@ export default {
           });
         });
     },
-    withdraw() {
+    withdraw(row) {
       //撤回
+      this.row = row;
+      this.withdrawcanvas = true;
+    },
+    //确认撤回
+    withdrawok(){
+      Axios({
+        url:"api/qrcode/codeManager/recallCodeFromBatch",
+        method:"get",
+        params:{
+          batchId:this.row.batchId,
+          recallCount:this.withdrawnum,
+        }
+      })
     },
     exit() {
       this.relationcanvas = false;
+      this.withdrawcanvas=false;
     },
     getTotal(param) {
       const { columns, data } = param;
@@ -394,7 +443,17 @@ export default {
       });
 
       return sums;
+    },
+    //分页功能
+    handleSizeChange(val) {},
+    handleCurrentChange(val) {
+      console.log(val);
+      this.currentPage = val;
+      this.qrcodelist();
     }
+    // getTable(){
+
+    // }
   }
 };
 //二维码列表
@@ -402,8 +461,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   .createbatch {
     width: 80px;
@@ -533,6 +592,72 @@ export default {
         font-size: 12px;
         border: 1px solid #ccc;
         list-style: none;
+      }
+    }
+  }
+  .withdrawcanvaswrap {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgba(#fff, .6);
+    z-index: 111;
+    .withdrawcanvas {
+      width: 828px;
+      height: 260px;
+      position: absolute;
+      left: 50%;
+      top: 100px;
+      z-index: 111;
+      background: #eee;
+      margin-left: -414px;
+      border: 1px solid #555;
+      .header {
+        width: 100%;
+        height: 60px;
+        border-bottom: 1px solid #555;
+        line-height: 60px;
+        span {
+          padding-left: 20px;
+          font-size: 16px;
+          font-weight: bold;
+          color: #555;
+        }
+      }
+      .withdrawnumbtn{
+        width: 300px;
+        height: 50px;
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        margin-left: -150px;
+        display: flex;
+        justify-content: space-around;
+        span{
+          display: block;
+          width: 130px;
+          height: 48px;
+          text-align: center;
+          line-height: 48px;
+          border: 1px solid #555;
+          background: #fff;
+          border-radius: 8px;
+        }
+      }
+      .withdrawnum{
+        width: 60%;
+        height: 50px;
+        margin: 20px auto;
+        input{
+          width: 400px;
+          height: 43px;
+          border-radius: 5px;
+          border: 1px solid #555;
+          text-align: center;
+
+        }
+
       }
     }
   }

@@ -4,10 +4,15 @@
       <span v-on:click="createactivity">创建</span>
       <span class="delete">批量删除</span>
     </div>
-    <el-table :data="tableData" stripe style="width: 100%">
+    <el-table
+      :data="tableData"
+      stripe
+      style="width: 100%"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
+    >
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="activityName" label="活动名称" width="185"></el-table-column>
-      <el-table-column prop="endTime" label="有效时间" width="185"></el-table-column>
+      <el-table-column prop="activityName" label="活动名称"></el-table-column>
+      <el-table-column prop="endTime" label="有效时间"></el-table-column>
       <el-table-column prop="activityType" label="活动状态">
         <template slot-scope="scope">
           {{scope.row.activityType==0?"未结束":""}}
@@ -17,52 +22,73 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="310">
         <template slot-scope="scope">
-        <el-button type="text" size="small" @click="details(scope.row)">查看</el-button>
-        <el-button type="text" size="small">修改</el-button>
-        <el-button type="text" size="small">结束</el-button>
+          <el-button type="text" size="small" @click="details(scope.row)">查看</el-button>
+          <el-button type="text" size="small">修改</el-button>
+          <el-button type="text" size="small">结束</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页功能 -->
+    <div class="block fr" style="margin-top: 10px;">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="pagesize"
+        layout="total,  prev, pager, next, jumper"
+        :total="totalCount"
+      ></el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
-import Axios from 'axios';
+import Axios from "axios";
 export default {
   // 活动列表
   data() {
     return {
-      tableData: [
-        
-      ]
+      tableData: [],
+      totalCount: 1,
+      pagesize: "10",
+      currentPage: 1
     };
   },
-  created(){
-    this.activitylist()
+  created() {
+    this.activitylist();
   },
-  methods:{
-    activitylist(){
+  methods: {
+    activitylist() {
       Axios({
-        url:"api/activityManager/activityList",
-        method:"get",
-        params:{
-          pageNo:"1",
-          pageSize:"8",
+        url: "api/activityManager/activityList",
+        method: "get",
+        params: {
+          pageNo: this.currentPage,
+          pageSize: this.pagesize
         }
-      }).then(data=>{
+      }).then(data => {
         console.log(data);
-        this.tableData=data.data.data.activityPage.records;
-      })
+        this.tableData = data.data.data.activityPage.records;
+        this.totalCount = data.data.data.batchPage.total;
+        this.pagesize = data.data.data.batchPage.size;
+        this.currentPage = data.data.data.batchPage.current;
+      });
     },
-    createactivity:function(){
-      this.$router.push("/createactivity")
+    createactivity: function() {
+      this.$router.push("/createactivity");
     },
     //查看活动详情
-    details(row){
+    details(row) {
       this.$router.push({
-        path:"/activitydetails",
-
-      })
+        path: "/activitydetails"
+      });
+    },
+    //分页功能
+    handleSizeChange(val) {},
+    handleCurrentChange(val) {
+      console.log(val);
+      this.currentPage = val;
+      this.activitylist();
     }
   }
 };
@@ -70,8 +96,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   .search {
     width: 100%;
     height: 26px;
@@ -90,8 +116,11 @@ export default {
       margin-left: 22px;
     }
   }
-  .el-table-column{
+  .el-table {
+    margin-top: 13px;
+    .el-table-column {
       text-align: center;
+    }
   }
 }
 </style>

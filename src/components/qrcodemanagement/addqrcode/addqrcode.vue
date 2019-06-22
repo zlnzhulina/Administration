@@ -78,7 +78,7 @@ export default {
 .wrap {
   width: 1120px;
   margin: 0 auto;
-  padding-top: 90px;
+  padding-top: 60px;
   .header {
     width: 100%;
     height: 62px;

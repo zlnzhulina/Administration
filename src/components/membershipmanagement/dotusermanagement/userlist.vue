@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <span class="add" @click="adduser">添加用户</span>
-    <span class="add">批量导入用户</span>
+    <span class="add" @click="batchmaintenance">批量导入用户</span>
     <span class="add" @click="deleteall">批量删除用户</span>
     <span class="add">下载导入模板</span>
     <div class="search">
@@ -14,19 +14,20 @@
       <span>查询</span>
     </div>
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
+       stripe 
       tooltip-effect="dark"
       style="width: 100%"
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
-      <el-table-column prop="phoneNumber" label="会员账号" width="148px"></el-table-column>
+      <el-table-column prop="phoneNumber" label="会员账号" width="208px"></el-table-column>
       <el-table-column prop="userCat.userCatName" label="用户类型" width="158px"></el-table-column>
-      <el-table-column prop="name" label="真实姓名" width="120px"></el-table-column>
+      <el-table-column prop="name" label="真实姓名" width="180px"></el-table-column>
       <el-table-column prop="network.networkName" label="网点名称"></el-table-column>
-      <el-table-column fixed="right" label="操作" width="140px">
+      <el-table-column fixed="right" label="操作" width="240px">
         <template slot-scope="scope">
         <el-button type="text" size="small" @click="seedetails(scope.row)">查看</el-button>
         <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
@@ -61,7 +62,7 @@ export default {
   data() {
     return {
       delcanvas: false,
-      pagesize: 10,
+      pagesize: 7,
       currentPage: 1,
       totalCount: 0,
       tabledata: []
@@ -109,6 +110,9 @@ export default {
                     message: '已取消删除'
                     });          
                 });
+    },
+    batchmaintenance(){
+      this.$router.push("/Membershipmanagement/batchmaintenance")
     },
     init:function(){
       Axios(
@@ -172,8 +176,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   .add {
     display: block;

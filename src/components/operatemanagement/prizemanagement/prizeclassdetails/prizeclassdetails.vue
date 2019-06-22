@@ -26,12 +26,14 @@
       >添加</span>
     </h3>
     <el-table
-      :header-cell-style="{background:'#9decff'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       style="width: 100%"
+       stripe
     >
+      <!-- :header-cell-style="{background:'#9decff'}" -->
       <!-- stripe="true" -->
 
       <el-table-column prop="prizeclassname" label="分类名称" width="140px"></el-table-column>
@@ -78,7 +80,7 @@ export default {
 <style lang="scss" scoped>
 .wrap {
   width: 1000px;
-  padding-top: 90px;
+  padding-top: 60px;
   margin: 0 auto;
   h3 {
     width: 100%;

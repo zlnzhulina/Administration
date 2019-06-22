@@ -1,29 +1,55 @@
 <template>
   <div class="container">
-    <el-upload
+    <div style="display:flex;">
+      <el-upload
+      ref="upload"
       class="upload-demo"
       action="api/networkUserManager/importUser"
       :on-success="handlePreview"
+      :file-list="fileList"
     >
-
-      <span class="add" @click="uploadexcel" type="primary">批量导入经销商用户</span>
+      <span class="add" type="primary">批量导入经销商用户</span>
     </el-upload>
     <span class="add">下载导入模板</span>
+    </div>
+    
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
+      
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
-      <el-table-column prop="VIPid" label="用户账号" width="128px"></el-table-column>
-      <el-table-column prop="name" label="真实姓名" width="126px"></el-table-column>
-      <el-table-column prop="userclass" label="用户类型" width="126px"></el-table-column>
-      <el-table-column prop="distributornum" label="经销商编号" width="184px"></el-table-column>
-      <el-table-column prop="dotname" label="网点名称"></el-table-column>
+      <el-table-column prop="phoneNumber" label="用户账号" width="208px">
+        <template slot-scope="scope">
+          <input type="text" v-model="scope.row.phoneNumber" style="width:100%;height:30px;border:none;">
+        </template>
+      </el-table-column>
+      <el-table-column prop="name" label="真实姓名" width="126px">
+        <template slot-scope="scope">
+          <input type="text" v-model="scope.row.name" style="width:100%;height:30px;border:none;">
+        </template>
+      </el-table-column>
+      <el-table-column prop="userCat" label="用户类型" width="126px">
+        <template slot-scope="scope">
+          <input type="text" v-model="scope.row.userCat.userCatName" style="width:100%;height:30px;border:none;">
+        </template>
+      </el-table-column>
+      <el-table-column prop="network" label="经销商编号" width="224px">
+        <template slot-scope="scope">
+          <input type="text" v-model="scope.row.network.networkCode" style="width:100%;height:30px;border:none;">
+        </template>
+      </el-table-column>
+      <el-table-column prop="network" label="网点名称" >
+        <template slot-scope="scope">
+          <input type="text" v-model="scope.row.network.networkName" style="width:100%;height:30px;border:none;">
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="126px">
-        <el-button type="text" size="small" @click="edit(id)">编辑</el-button>
+        <!-- <el-button type="text" size="small" @click="edit(id)">编辑</el-button> -->
         <el-button type="text" size="small">删除</el-button>
       </el-table-column>
     </el-table>
@@ -33,26 +59,31 @@
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="del">确认</span>
     </div>
+    
+      <div class="subtable">
+        <span @click="subuserdata" style="background:#169bd5;color:#fff;">提交</span>
+        <span @click="exit" style="border:1px solid #555;">取消</span>
+      </div>
+   
   </div>
 </template>
 
 <script>
+import Axios from "axios";
 export default {
   //网点列表
   data() {
     return {
       delcanvas: false,
       tabledata: [
-        {
-          VIPid: "12543245543",
-          userclass: "机修工",
-          distributornum: "22431151515",
-          name: "张三",
-          dotname: "北京xxxxx汽车服务销售有限公司"
-        }
+        
       ],
       imageUrl: "",
-      childValue: false
+      childValue: false,
+      //批量导入弹窗
+      uploadexcelcanvas: false,
+      excelData: [],
+      fileList: []
     };
   },
   methods: {
@@ -70,42 +101,50 @@ export default {
       });
     },
     //编辑
-    edit() {
-      this.$router.push("/modify");
-    },
+    // edit() {
+    //   this.$router.push("/modify");
+    // },
     exit() {
       this.delcanvas = false;
+      this.uploadexcelcanvas = false;
+      this.$refs.upload.clearFiles();
     },
 
     del() {
       this.delcanvas = false;
     },
-    //批量导入
-    uploadexcel() {},
-    bbb() {
-      return this.GLOBAL.excelUrl;
+    //提交批量导入的用户数据
+    subuserdata() {
+      if (this.tabledata.length == 0) {
+        this.$message.error("上传数据为空，请重新上传表");
+        this.uploadexcelcanvas = false;
+        this.$refs.upload.clearFiles();
+      } else {
+        Axios({
+          url: "api/networkUserManager/saveData",
+          method: "post",
+          data: {
+            userList: this.tabledata
+          }
+        }).then(data => {
+          console.log(data);
+          if (data.data.code == 0) {
+            this.$message.success("批量添加成功！");
+            // this.$router.push();
+            this.$refs.upload.clearFiles();
+          }
+        });
+      }
     },
+
     handlePreview(file) {
       if (file.code == 0) {
         this.$message.success("文件上传成功！");
+        //文件上传成功，弹框编辑
+        
+        this.tabledata = file.data.userList;
         console.log(file);
       }
-    },
-    beforeAvatarUpload(file) {
-      console.log(file);
-      const isXlsx =
-        file.type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-      const isXls = file.type === "application/vnd.ms-excel";
-      if (!isXlsx && !isXls) {
-        this.$message.error("上传文件只能是xls/xlsx格式!");
-      }
-      return isXlsx || isXls;
-    },
-    uploadError() {},
-    uploadSuccess() {
-      console.log(this.childValue);
-      this.$emit("childByValue", this.childValue);
     }
   }
 };
@@ -113,8 +152,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+   width: 100%;
+  height: 100%;
   position: relative;
   .el-upload {
     float: left;
@@ -213,5 +252,49 @@ export default {
       line-height: 40px;
     }
   }
+  // .uploadexcelcanvas {
+  //   width: 100%;
+  //   height: 100%;
+  //   position: absolute;
+  //   left: 0;
+  //   top: 0px;
+  //   background: #eee;
+  //   z-index: 111;
+  //   .el-table {
+  //     .el-table--border {
+  //       td:first-child {
+  //         .cell {
+  //           padding: 0;
+  //         }
+  //       }
+  //     }
+  //     .cell {
+  //       padding: 0;
+  //     }
+  //     td {
+  //       padding: 0px;
+  //     }
+  //   }
+  //}
+    .subtable {
+      width: 300px;
+      height: 40px;
+      margin: 30px auto;
+      display: flex;
+      justify-content: space-between;
+      span {
+        display: inline-block;
+        width: 120px;
+        height: 40px;
+        background: #fff;
+        text-align: center;
+        line-height: 40px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 8px;
+        
+      }
+    }
+
 }
 </style>

@@ -91,7 +91,7 @@
             style="display：block;float:right;width:94px;height:32px;text-align:center;line-height:32px;background:#fff;border:1px solid #ccc;font-size:14px;font-weight:normal;margin-right:13px;margin-top:13px;"
           >导出</span>
         </h2>
-        <el-table :data="tableData" stripe style="width: 100%;background:#eee;">
+        <el-table :data="tableData" stripe style="width: 100%;">
           <el-table-column prop="date" label="用户账号" width="110"></el-table-column>
           <el-table-column prop="name" label="奖项名称" width="110"></el-table-column>
           <el-table-column prop="address" label="奖品名称" width="110"></el-table-column>
@@ -132,7 +132,7 @@ export default {
   width: 1120px;
   height: auto;
   margin: 0 auto;
-  padding-top: 90px;
+  padding-top: 60px;
   .header {
     width: 100%;
     height: 62px;

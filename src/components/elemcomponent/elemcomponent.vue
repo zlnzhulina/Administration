@@ -1,13 +1,13 @@
 <template>
   <el-container>
-    <el-aside width="200px">
+    <el-aside>
       <div class="twomenu" v-for="(item,index) in twomenu">
         <h3>{{item.title}}</h3>
         <h6 v-for="(itemtwo,index) in item.threemenu" v-on:click="getheader(itemtwo)"><router-link :to="itemtwo.navto">{{itemtwo.title}}</router-link></h6>
       </div>
     </el-aside>
     <el-container>
-      <el-header style="height:49px;color:#fff;">{{itemtwo.title}}</el-header>
+      <el-header style="width:100%;height:49px;color:#fff;">{{itemtwo.title}}</el-header>
       <el-main class="content">
          <router-view></router-view>
         <!-- <yglist-com v-if="false"></yglist-com>
@@ -47,10 +47,11 @@ export default {
 
 <style lang="scss" scoped>
 .el-container {
-  width: 1200px;
-  height: 722px;
+  width: 100%;
+  height: 878px;
   .el-aside {
-    height: 722px;
+    width: 288px;
+    height: 100%;
     background: #7a8899;
     .twomenu {
       color: #fff;
@@ -65,8 +66,8 @@ export default {
       }
       h6 {
         width: 160px;
-        height: 34px;
-        margin-left: 30px;
+        height: 36px;
+        margin-left: 56px;
         font-size: 13px;
         font-weight: normal;
         a{
@@ -99,7 +100,7 @@ export default {
     }
   }
   .el-header {
-    // width: 982px;
+    //  width: 100%;
     // height: 49px;
      line-height: 50px;
     font-size: 18px;

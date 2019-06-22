@@ -6,12 +6,13 @@
       <input type="text" placeholder="请输入关键字搜索" v-model="searchval">
     </div>
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tableData"
       tooltip-effect="dark"
       @selection-change="handleSelectionChange"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55" v-model="checkList"></el-table-column>
@@ -21,8 +22,8 @@
           <el-button type="text" size="small" @click="edityg(scope.$index,scope.row)">编辑</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="adminName" label="姓名" width="120"></el-table-column>
-      <el-table-column prop="phoneNumber" label="联系方式" width="120"></el-table-column>
+      <el-table-column prop="adminName" label="姓名" width="180"></el-table-column>
+      <el-table-column prop="phoneNumber" label="联系方式" width="180"></el-table-column>
       <el-table-column prop="departmentName" label="部门" show-overflow-tooltip></el-table-column>
       <el-table-column prop="postName" label="岗位" show-overflow-tooltip></el-table-column>
     </el-table>
@@ -367,8 +368,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
 
   .search {

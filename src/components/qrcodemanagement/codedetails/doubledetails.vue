@@ -67,27 +67,28 @@
 
     <!-- 二维码列表 -->
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px;"></el-table-column>
-      <el-table-column prop="qrId" label="ID" width="104px"></el-table-column>
+      <el-table-column prop="qrId" label="ID" width="154px"></el-table-column>
       <el-table-column prop="goodsname" label="批次名称" width="156">
         <template>{{batchName}}</template>
       </el-table-column>
-      <el-table-column prop="type" label="批次类型" width="76">
+      <el-table-column prop="type" label="批次类型" width="90">
         <template slot-scope="scope">{{scope.row.type==1?"单码":"双码"}}</template>
       </el-table-column>
-      <el-table-column prop="barActivityName" label="消费者活动" width="146">
+      <el-table-column prop="barActivityName" label="消费者活动" width="186">
         <template
           slot-scope="scope"
         >{{scope.row.barActivityName==null?"未关联消费者活动":scope.row.barActivityName}}</template>
       </el-table-column>
-      <el-table-column prop="qrStatus" label="消费者状态" width="90">
+      <el-table-column prop="qrStatus" label="消费者状态" width="120">
         <template slot-scope="scope">
           {{scope.row.qrStatus==1?"未关联":""}}
           {{scope.row.qrStatus==2?"已关联":""}}
@@ -100,12 +101,12 @@
           <img src="scoped.row.qrCodeUrl">
         </template>
       </el-table-column>
-      <el-table-column prop="barActivityName" label="渠道活动" width="146">
+      <el-table-column prop="barActivityName" label="渠道活动" width="186">
         <template
           slot-scope="scope"
         >{{scope.row.barActivityName==null?"未关联渠道活动":scope.row.barActivityName}}</template>
       </el-table-column>
-      <el-table-column prop="barStatus" label="渠道状态" width="90">
+      <el-table-column prop="barStatus" label="渠道状态" width="120">
         <template slot-scope="scope">
           {{scope.row.barStatus==1?"未关联":""}}
           {{scope.row.barStatus==2?"已关联":""}}
@@ -119,12 +120,17 @@
           <img src="scope.row.barCodeUrl">
         </template>
       </el-table-column>
-      <el-table-column prop="productsName" label="关联商品" width="142">
+      <el-table-column prop="productsName" label="关联商品" width="182">
         <template slot-scope="scope">{{scope.row.productsName?scope.row.productsName:"未关联商品"}}</template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作">
+      <el-table-column fixed="right" label="操作" width="260px">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button>
+          <!-- <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button> -->
+          <el-button type="text" size="small" @click="details(scope.row)">详情</el-button>
+          <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
+          <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
+          <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
+          <el-button type="text" size="small" @click="withdraw(scope.row)">撤回</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -273,20 +279,21 @@ export default {
       this.$router.back();
     },
     //跟多操作
-    moreoperations(row) {
-      this.moreoperationscanvas = true;
-      this.row = row;
-      console.log(row);
-    },
-    details() {
+    // moreoperations(row) {
+    //   this.moreoperationscanvas = true;
+    //   this.row = row;
+    //   console.log(row);
+    // },
+    details(row) {
       //查看详情
       this.qrdetailscanvas = true;
     },
     //下载单码
-    download() {
+    download(row) {
       
     },
-    relation() {
+    relation(row) {
+      this.row=row;
       //关联
       this.relationcanvas = true;
       //获取活动列表
@@ -380,13 +387,13 @@ export default {
       //删除
     },
     //撤回码
-    withdraw() {
+    withdraw(row) {
       //撤回
       Axios({
         url:"api/qrcode/codeManager/recallCode",
         method:"get",
         params:{
-          qrIds:this.row.qrId,
+          qrIds:row.qrId,
         }
       }).then(data=>{
         console.log(data);
@@ -398,9 +405,9 @@ export default {
 
 <style lang="scss" scoped>
 .wrap {
-  width: 1120px;
+  width: 90%;
   margin: 0 auto;
-  padding-top: 90px;
+  padding-top: 60px;
   .header {
     width: 100%;
     height: 62px;

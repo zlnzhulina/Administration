@@ -19,17 +19,18 @@
       </select>
     </div>
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="goodsid" label="奖品名称" width="120px"></el-table-column>
-      <el-table-column prop="goodsname" label="奖品分类" width="90px"></el-table-column>
-      <el-table-column prop="goodsclass" label="面值" width="100px"></el-table-column>
+      <el-table-column prop="goodsid" label="奖品名称" width="180px"></el-table-column>
+      <el-table-column prop="goodsname" label="奖品分类" ></el-table-column>
+      <el-table-column prop="goodsclass" label="面值" ></el-table-column>
       <el-table-column prop="data" label="奖品数量"></el-table-column>
       <el-table-column prop="data" label="已占用"></el-table-column>
 
@@ -144,8 +145,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   .header {
       width: 100%;

@@ -5,11 +5,12 @@
     </div>
     <div class="tab">
       <el-table
-        :header-cell-style="{background:'#9decff',height:'32'}"
+        :header-cell-style="{background:'#ccd1e0',height:'32'}"
         ref="multipleTable"
         :data="jurisdictionData"
         tooltip-effect="dark"
         style="width: 100%"
+        stripe
       >
         <!-- stripe="true" -->
         <el-table-column type="selection" width="55"></el-table-column>
@@ -193,11 +194,11 @@ li {
   list-style: none;
 }
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   
   .search {
-    width: 960px;
+    width: 100%;
     height: 58px;
     line-height: 60px;
     overflow: hidden;
@@ -211,7 +212,7 @@ li {
     }
   }
   .tab {
-    width: 960px;
+    width: 100%;
     height: 536px;
     position: relative;
     .el-table {

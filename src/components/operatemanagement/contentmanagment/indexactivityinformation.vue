@@ -5,11 +5,12 @@
     </div>
 
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
 
@@ -128,8 +129,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   .header {
     width: 100%;

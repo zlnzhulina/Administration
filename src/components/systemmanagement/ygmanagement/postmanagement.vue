@@ -6,12 +6,13 @@
       <input type="text" placeholder="请输入关键字搜索" v-model="postName">
     </div>
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="postdata"
       tooltip-effect="dark"
       @selection-change="handleSelectionChange"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px"></el-table-column>
@@ -309,8 +310,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
 
   position: relative;
 

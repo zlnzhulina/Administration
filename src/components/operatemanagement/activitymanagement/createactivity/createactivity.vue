@@ -462,6 +462,7 @@
           :data="tabledata"
           tooltip-effect="dark"
           style="width: 540px"
+          stripe
         >
           <!-- stripe="true" -->
 
@@ -973,7 +974,7 @@ export default {
 .container {
   width: 1120px;
   margin: 0 auto;
-  padding-top: 90px;
+  padding-top: 60px;
 
   header {
     width: 1120px;

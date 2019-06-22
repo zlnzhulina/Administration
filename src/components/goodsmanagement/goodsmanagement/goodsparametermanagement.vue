@@ -31,12 +31,13 @@
       <span class="add" @click="addparameter">添加参数</span>
     </div>
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
       @row-click="editrow"
+      stripe
     >
       <!-- stripe="true" -->
       <el-table-column prop="productParamSetName" label="参数名称" width="362px"></el-table-column>
@@ -87,11 +88,12 @@
         <span @click="delval">删除选中</span>
       </div>
       <el-table
-        :header-cell-style="{background:'#f2f2f2',height:'32'}"
+        :header-cell-style="{height:'32'}"
         ref="multipleTable"
         :data="metermagevallist"
         tooltip-effect="dark"
         style="width: 100%"
+        stripe 
       >
         <!-- stripe="true" -->
         <el-table-column type="selection" width="55"></el-table-column>
@@ -304,8 +306,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+   width: 100%;
+  height: 100%;
   position: relative;
   .add {
     display: block;

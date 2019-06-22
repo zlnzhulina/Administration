@@ -82,9 +82,9 @@ export default {
 </script>
 <style>
 .wrap {
-  width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  padding-top: 90px;
+  padding-top: 60px;
 }
 </style>
 

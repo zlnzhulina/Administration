@@ -53,8 +53,20 @@
             :percentage="videoUploadPercent"
           ></el-progress>
         </el-upload>
-
-        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+        <div class="previewdetailsimg" v-for="(item,index) in newsdetailsimglist">
+          <div
+            class="mouseover"
+            @mouseover="removepreviewimg(index)"
+            @mouseout="removepreviewimgno(index)"
+          >
+            <img v-if="item.imageUrl" :src="item.imageUrl" class="avatar">
+            <div class="removeimg" v-show="item.showremovecanvas">
+              <i @click="removedetailsimg(index)">
+                <img src="@/assets/deleteIcon.png">
+              </i>
+            </div>
+          </div>
+        </div>
         <el-upload
           class="avatar-uploader"
           action="api/upload/uploadImage"
@@ -71,18 +83,23 @@
           class="avatar video-avatar"
           controls="controls"
         >您的浏览器不支持视频播放</video>
+        <div v-for="(item,index) in newsdetailsimglist">
+          <img :src="item.imageUrl" style="width:100%;">
+        </div>
       </div>
     </div>
+    <span class="addnews" @click="addnews">保存</span>
   </div>
 </template>
 
 <script>
+import Axios from 'axios'
 export default {
   //添加活动资讯
   data() {
     return {
       imagenewcoverUrl: "",
-     
+
       videoFlag: false, //是否显示进度条
       videoUploadPercent: "", //进度条的进度，
       isShowUploadVideo: false, //显示上传按钮
@@ -90,16 +107,16 @@ export default {
       //资讯详情视频地址
       showVideoPath: "",
       imageUrl: "",
-
       //资讯标题
       newstitle: "",
       //资讯摘要
       newscontent: "",
       //资讯封面图
-      newscoverimg:"",
+      newscoverimg: "",
       //资讯详情图片
-      newsdetailsimg:"",
-      
+      newsdetailsimg: "",
+      newsdetailsimglist: [],
+      imgurlarr: []
     };
   },
   methods: {
@@ -107,7 +124,7 @@ export default {
       this.imagenewcoverUrl = URL.createObjectURL(file.raw);
       //设置资讯封面图路径
       // console.log(file)
-      this.newscoverimg=file.response.data.fileUrl;
+      this.newscoverimg = file.response.data.fileUrl;
     },
     beforeUploadVideo(file) {
       const isLt20M = file.size / 1024 / 1024 < 20;
@@ -127,7 +144,6 @@ export default {
       this.videoFlag = true;
       this.videoUploadPercent = file.percentage.toFixed(0) * 1;
     },
-
     //视频上传成功回调
     handleVideoSuccess(res, file) {
       console.log(file);
@@ -136,7 +152,6 @@ export default {
       this.videoUploadPercent = 0;
       if (file.response.code == 0) {
         this.showVideoPath = file.response.data.fileUrl;
-        
       } else {
         this.$message.error("视频上传失败，请重新上传！");
       }
@@ -145,7 +160,46 @@ export default {
     handleAvatarSuccess(res, file) {
       console.log(file);
       this.imageUrl = URL.createObjectURL(file.raw);
-      this.newsdetailsimg=file.response.data.fileUrl;
+      this.newsdetailsimg = file.response.data.fileUrl;
+      this.newsdetailsimglist.push({
+        imageUrl: this.imageUrl,
+        newsdetailsimg: this.newsdetailsimg,
+        showremovecanvas: false
+      });
+    },
+    removepreviewimg(i) {
+      this.newsdetailsimglist[i].showremovecanvas = true;
+    },
+    removepreviewimgno(i) {
+      this.newsdetailsimglist[i].showremovecanvas = false;
+    },
+    //删除预览图片
+    removedetailsimg(i) {
+      this.newsdetailsimglist.splice(i, 1);
+    },
+    //保存，添加资讯
+    addnews() {
+      console.log(this.newsdetailsimglist);
+      for (var i = 0; i < this.newsdetailsimglist.length; i++) {
+        this.imgurlarr.push(this.newsdetailsimglist[i].newsdetailsimg);
+      }
+      console.log(this.imgurlarr);
+      Axios({
+        url: "api/contentManager/addInformation",
+        method: "post",
+        data: {
+          newsData: {
+            newsId: "",
+            title: this.newstitle,
+            information: this.newscontent,
+            coverImageUrl: this.newscoverimg,
+            videoUrl: this.showVideoPath,
+          },
+          imgList:this.imgurlarr,
+        }
+      }).then(data=>{
+        console.log(data)
+      });
     }
   }
 };
@@ -172,7 +226,6 @@ export default {
     height: 27px;
     border-bottom: 1px solid #ccc;
     margin: 15px auto;
-
     p {
       width: 100px;
       height: 27px;
@@ -257,7 +310,6 @@ export default {
     width: 878px;
     height: 333px;
     margin: 0 auto;
-
     .left {
       width: 182px;
       min-height: 216px;
@@ -296,10 +348,33 @@ export default {
         width: 400px;
         height: 200px;
       }
+      .previewdetailsimg {
+        width: 180px;
+        height: 100px;
+
+        .mouseover {
+          width: 100%;
+          height: 100%;
+          position: relative;
+          .removeimg {
+            width: 182px;
+            height: 90px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(#fff, 0.6);
+            text-align: center;
+            i {
+              display: block;
+              margin: 30px auto;
+            }
+          }
+        }
+      }
     }
     .right {
       width: 672px;
-      height: 670px;
+      min-height: 400px;
       float: right;
       .avatar {
         width: 100%;
@@ -311,6 +386,18 @@ export default {
         height: 290px;
       }
     }
+  }
+  .addnews {
+    width: 100px;
+    height: 40px;
+    background: darkcyan;
+    color: #fff;
+    display: block;
+    margin: 30px auto;
+    border-radius: 5px;
+    line-height: 40px;
+    text-align: center;
+    clear: both;
   }
 }
 </style>

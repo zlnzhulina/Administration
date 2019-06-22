@@ -26,10 +26,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .wrap {
-  width: 1200px;
-  height: 600px;
+  width: 100%;
+  
   margin: 0 auto;
-  padding-top: 90px;
+  padding-top: 60px;
   
   .welimg{
     width: 270px;

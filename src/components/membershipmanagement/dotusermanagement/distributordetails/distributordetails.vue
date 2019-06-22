@@ -3,7 +3,7 @@
     <h3>
       <span>网点用户详情>经销商名称...</span>
     </h3>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table :data="tableData" border style="width: 100%" stripe >
       <el-table-column prop="network.networkCode" label="经销商编号" width="290"></el-table-column>
       <el-table-column prop="network.networkId" label="网点名称" width="310"></el-table-column>
       <el-table-column prop="userCat.userCatName" label="职位"></el-table-column>
@@ -70,7 +70,7 @@ export default {
 <style lang="scss" scoped>
 .wrap {
   width: 1200px;
-  padding-top: 90px;
+  padding-top: 60px;
   margin: 0 auto;
   h3 {
     width: 100%;

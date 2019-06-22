@@ -5,21 +5,22 @@
       <div class="title"></div>
       
     </div>
-    <div class="right" style="float:right;width:600px;">
+    <div class="right" style="float:left;width:74%;margin-left:20px;">
       <el-table
-        :header-cell-style="{background:'#9decff',height:'32'}"
+        :header-cell-style="{background:'#ccd1e0',height:'32'}"
         ref="multipleTable"
         :data="tabledata"
         tooltip-effect="dark"
-        style="width: 100%"
+        style="width:100%"
+        stripe
       >
-        <el-table-column prop="title" label="名称" width="82px"></el-table-column>
-        <el-table-column prop="imgUrl" label="展示图" width="126px">
+        <el-table-column prop="title" label="名称" width="182px"></el-table-column>
+        <el-table-column prop="imgUrl" label="展示图" width="226px">
           <template slot-scope="scope">
             <img :src="scope.row.imgUrl" style="width:114px;height:62px;">
           </template>
         </el-table-column>
-        <el-table-column prop="id" label="小程序ID" width="126px"></el-table-column>
+        <el-table-column prop="id" label="小程序ID" width="186px"></el-table-column>
 
         <el-table-column prop="url" label="链接">
           <template slot-scope="scope">
@@ -160,8 +161,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   .addcanvas {
     width: 100%;

@@ -4,20 +4,21 @@
       <span class="add" @click="addprizeclass">添加分类</span>
     </div>
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
-      <el-table-column prop="prizeid" label="编号" width="120px"></el-table-column>
-      <el-table-column prop="prizeclassname" label="分类名称" width="140px"></el-table-column>
+      <el-table-column prop="prizeid" label="编号" width="180px"></el-table-column>
+      <el-table-column prop="prizeclassname" label="分类名称" width="200px"></el-table-column>
       <el-table-column prop="grade" label="级别" width="126px"></el-table-column>
       <el-table-column prop="butnum" label="分类下设奖品数量"></el-table-column>
       <el-table-column prop="num" label="分类关联奖品数量"></el-table-column>
 
-      <el-table-column fixed="right" label="操作" width="176px">
+      <el-table-column fixed="right" label="操作" >
         <template>
           <el-button type="text" size="small" @click="prizedetails">查看</el-button>
           <el-button type="text" size="small" @click="addthisclassprize">添加分类奖品</el-button>
@@ -99,8 +100,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   .header {
     width: 100%;

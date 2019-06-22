@@ -62,7 +62,7 @@
 
     <!-- 二维码列表 -->
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
@@ -240,7 +240,7 @@ export default {
 .wrap {
   width: 1120px;
   margin: 0 auto;
-  padding-top: 90px;
+  padding-top: 60px;
   .header {
     width: 100%;
     height: 62px;

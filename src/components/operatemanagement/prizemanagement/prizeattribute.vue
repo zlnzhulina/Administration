@@ -6,11 +6,11 @@
         style="display：block;float:right;width:94px;height:32px;text-align:center;line-height:32px;background:#fff;border:1px solid #ccc;font-size:14px;font-weight:normal;margin-right:13px;margin-top:13px;padding:0;"
       >添加参数</span>
     </h2>
-    <el-table :data="tableData" stripe style="width: 100%;background:#eee;">
+    <el-table :data="tableData" stripe :header-cell-style="{background:'#ccd1e0',height:'32'}" style="width: 100%;background:#eee;">
           
-          <el-table-column prop="date" label="编号" width="240"></el-table-column>
-          <el-table-column prop="name" label="分类名称" width="240"></el-table-column>
-          <el-table-column prop="address" label="参数名称" width="240"></el-table-column>
+          <el-table-column prop="date" label="编号" ></el-table-column>
+          <el-table-column prop="name" label="分类名称" ></el-table-column>
+          <el-table-column prop="address" label="参数名称" ></el-table-column>
            <el-table-column prop="name" label="操作">
                <template>
                    <el-button>默认不可删除</el-button>
@@ -40,8 +40,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   h2 {
     width: 100%;

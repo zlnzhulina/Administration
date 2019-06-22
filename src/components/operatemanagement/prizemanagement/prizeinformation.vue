@@ -22,20 +22,21 @@
         <span>申请列表</span>
       </h3>
       <el-table
-        :header-cell-style="{background:'#fafafa',height:'32'}"
+        :header-cell-style="{background:'#ccd1e0',height:'32'}"
         ref="multipleTable"
         :data="tabledata"
         tooltip-effect="dark"
         style="width: 100%"
+        stripe
       >
         <!-- stripe="true" -->
 
-        <el-table-column prop="goodsid" label="用户账号" width="160px"></el-table-column>
-        <el-table-column prop="goodsname" label="邮寄地址" width="234px"></el-table-column>
-        <el-table-column prop="goodsclass" label="奖品名称" width="140px"></el-table-column>
+        <el-table-column prop="goodsid" label="用户账号" width="180px"></el-table-column>
+        <el-table-column prop="goodsname" label="邮寄地址" width="300px"></el-table-column>
+        <el-table-column prop="goodsclass" label="奖品名称" width="180px"></el-table-column>
         <el-table-column prop="data" label="状态"></el-table-column>
         <el-table-column prop="data" label="操作"></el-table-column>
-        <el-table-column prop="data" label="备注" width="234px"></el-table-column>
+        <el-table-column prop="data" label="备注" width="334px"></el-table-column>
       </el-table>
     </div>
   </div>
@@ -55,8 +56,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   .header {
     width: 100%;

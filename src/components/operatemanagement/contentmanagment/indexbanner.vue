@@ -5,14 +5,15 @@
     </div>
 
     <el-table
-      :header-cell-style="{background:'#9decff',height:'32'}"
+      :header-cell-style="{background:'#ccd1e0',height:'32'}"
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
+      stripe
     >
       <!-- stripe="true" -->
-      <el-table-column prop="orderNum" label="序" width="30px"></el-table-column>
+      <el-table-column prop="orderNum" label="序" width="50px"></el-table-column>
       <el-table-column prop="bannerName" label="名称" width="185px"></el-table-column>
       <el-table-column prop="img" label="展示图" width="220px">
         <template slot-scope="scope">
@@ -318,8 +319,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-  width: 960px;
-  height: 622px;
+  width: 100%;
+  height: 100%;
   position: relative;
   .header {
     width: 100%;
