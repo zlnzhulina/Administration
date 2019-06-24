@@ -3,7 +3,7 @@
     <div class="header">
       <span class="add" @click="addgoods">添加商品</span>
       <span class="add" @click="deleteall">批量删除</span>
-      <input type="text" placeholder="账号"><img src="@/assets/sousuo.png"/>
+      <input type="text" placeholder="账号 " v-model="searchId"><img @click="searchid" src="@/assets/sousuo.png"/>
     </div>
 
     <div class="search">
@@ -103,6 +103,8 @@ export default {
       goodsidarr:[],
       //删除的商品id的集合字符串
       delgoodsids:"",
+      //搜索id值
+      searchId:"",
     };
   },
   created(){
@@ -115,7 +117,7 @@ export default {
         method:"get",
         params:{
           pageNo:"1",
-          pageSize:"8",
+          pageSize:8,
           productCatId:"",
           littleTime:"",
           bigTime:"",
@@ -125,6 +127,10 @@ export default {
         console.log(data)
         this.tabledata=data.data.data.productSPage.records;
       })
+    },
+    //搜索账号
+    searchid(){
+      
     },
     //查看
     seedetails(row) {
@@ -275,7 +281,7 @@ export default {
         width: 20px;
         height: 20px;
         position: absolute;
-        left: 932px;
+        right: 13px;
         top: 18px;
     }
   }

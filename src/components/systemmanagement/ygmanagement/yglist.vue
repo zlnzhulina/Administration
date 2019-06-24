@@ -38,6 +38,7 @@
               id="department"
               class="department"
               v-model="departmentmodle.departmentid"
+              @change="selectdepartment(departmentmodle.departmentid)"
             >
               <option value="volvo">—请选择—</option>
               <option
@@ -85,6 +86,7 @@
               name="department"
               id="department"
               class="department"
+              @change="selectdepartment()"
               v-model="editmodle.departmentid"
             >
               <option value="volvo">—请选择—</option>
@@ -102,6 +104,7 @@
               id="department"
               class="department"
               v-model="editmodle.postId"
+              
             >
               <option>—请选择—</option>
               <option v-for="(item,index) in post" :value="item.postId">{{item.postName}}</option>
@@ -160,12 +163,13 @@ export default {
         adminName: "",
         postId: "",
         phoneNumber: ""
-      }
+      },
+      post:[],
     };
   },
   created() {
     this.yglist();
-    this.postlist();
+    // this.postlist();
     this.departmentlist();
   },
   watch:{
@@ -203,30 +207,30 @@ export default {
         console.log(data);
       });
     },
-    postlist() {
-      Axios({
-        method: "get",
-        url: "api/systemManager/postList",
-        params: {
-          pageNo: "1",
-          pageSize: "30",
-          postName: ""
-        },
-        headers: {
-          ADMINLOGINTOKEN: localStorage.ADMINLOGINTOKEN
-        }
-      }).then(data => {
-        this.post = data.data.data.postPage.records;
-        console.log(data);
-      });
-    },
+    // postlist() {
+    //   Axios({
+    //     method: "get",
+    //     url: "api/systemManager/postList",
+    //     params: {
+    //       pageNo: "1",
+    //       pageSize: 30,
+    //       postName: ""
+    //     },
+    //     headers: {
+    //       ADMINLOGINTOKEN: localStorage.ADMINLOGINTOKEN
+    //     }
+    //   }).then(data => {
+    //     this.post = data.data.data.postPage.records;
+    //     console.log(data);
+    //   });
+    // },
     departmentlist() {
       Axios({
         method: "get",
         url: "api/systemManager/departmengList",
         params: {
           pageNo: "1",
-          pageSize: "30",
+          pageSize: 10,
           departmentName: ""
         },
         headers: {
@@ -236,6 +240,19 @@ export default {
         this.department = data.data.data.departmentPage.records;
         console.log(data);
       });
+    },
+    //选择部门之后查询岗位
+    selectdepartment(val){
+      Axios({
+        url:"api/systemManager/selectPostList",
+        method:"get",
+        params:{
+          departmentId:this.departmentmodle.departmentid,
+        }
+      }).then(data=>{
+        console.log(data)
+              this.post = data.data.data.postList;
+      })
     },
     addstaff() {
       this.addstaffcanvas = true;
@@ -254,6 +271,17 @@ export default {
         }
       }).then(data => {
         console.log(data);
+        if(data.data.code==0){
+           this.$message({
+            type: 'success',
+            message: '添加成功!'
+          });
+        }else{
+           this.$message({
+            type: 'error',
+            message: '添加失败!'
+          });
+        }
         this.yglist();
       });
       this.addstaffcanvas = false;
@@ -286,6 +314,15 @@ export default {
         if(data.data.code==0){
           this.yglist();
            this.editstaffcanvas = false;
+           this.$message({
+            type: 'success',
+            message: '编辑成功!'
+          });
+        }else{
+           this.$message({
+            type: 'error',
+            message: '编辑失败!'
+          });
         }
         console.log(data);
       })

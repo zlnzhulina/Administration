@@ -2,20 +2,26 @@
   <div class="container">
     <div style="display:flex;">
       <el-upload
-      ref="upload"
-      class="upload-demo"
-      action="api/networkUserManager/importUser"
-      :on-success="handlePreview"
-      :file-list="fileList"
-    >
-      <span class="add" type="primary">批量导入经销商用户</span>
-    </el-upload>
-    <span class="add">下载导入模板</span>
+        ref="upload"
+        class="upload-demo"
+        action="api/networkUserManager/importUser"
+        :on-success="handlePreview"
+        :file-list="fileList"
+      >
+        <span class="add" type="primary">批量导入经销商用户</span>
+      </el-upload>
+      <span class="add">
+        <a style="display:block;width:100%;height:100%;color:#000;"
+          href="api/networkUserManager/downloadTemplateForNetwork?type=2"
+          rel="external nofollow"
+          download="user"
+        >下载模板</a>
+      </span>
+      <!-- <span class="add" @click="dowmodule">下载导入模板</span> -->
     </div>
-    
+
     <el-table
       :header-cell-style="{background:'#ccd1e0',height:'32'}"
-      
       ref="multipleTable"
       :data="tabledata"
       tooltip-effect="dark"
@@ -25,7 +31,11 @@
       <!-- stripe="true" -->
       <el-table-column prop="phoneNumber" label="用户账号" width="208px">
         <template slot-scope="scope">
-          <input type="text" v-model="scope.row.phoneNumber" style="width:100%;height:30px;border:none;">
+          <input
+            type="text"
+            v-model="scope.row.phoneNumber"
+            style="width:100%;height:30px;border:none;"
+          >
         </template>
       </el-table-column>
       <el-table-column prop="name" label="真实姓名" width="126px">
@@ -35,17 +45,29 @@
       </el-table-column>
       <el-table-column prop="userCat" label="用户类型" width="126px">
         <template slot-scope="scope">
-          <input type="text" v-model="scope.row.userCat.userCatName" style="width:100%;height:30px;border:none;">
+          <input
+            type="text"
+            v-model="scope.row.userCat.userCatName"
+            style="width:100%;height:30px;border:none;"
+          >
         </template>
       </el-table-column>
       <el-table-column prop="network" label="经销商编号" width="224px">
         <template slot-scope="scope">
-          <input type="text" v-model="scope.row.network.networkCode" style="width:100%;height:30px;border:none;">
+          <input
+            type="text"
+            v-model="scope.row.network.networkCode"
+            style="width:100%;height:30px;border:none;"
+          >
         </template>
       </el-table-column>
-      <el-table-column prop="network" label="网点名称" >
+      <el-table-column prop="network" label="网点名称">
         <template slot-scope="scope">
-          <input type="text" v-model="scope.row.network.networkName" style="width:100%;height:30px;border:none;">
+          <input
+            type="text"
+            v-model="scope.row.network.networkName"
+            style="width:100%;height:30px;border:none;"
+          >
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="126px">
@@ -59,12 +81,11 @@
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="del">确认</span>
     </div>
-    
-      <div class="subtable">
-        <span @click="subuserdata" style="background:#169bd5;color:#fff;">提交</span>
-        <span @click="exit" style="border:1px solid #555;">取消</span>
-      </div>
-   
+
+    <div class="subtable">
+      <span @click="subuserdata" style="background:#169bd5;color:#fff;">提交</span>
+      <span @click="exit" style="border:1px solid #555;">取消</span>
+    </div>
   </div>
 </template>
 
@@ -75,9 +96,7 @@ export default {
   data() {
     return {
       delcanvas: false,
-      tabledata: [
-        
-      ],
+      tabledata: [],
       imageUrl: "",
       childValue: false,
       //批量导入弹窗
@@ -113,6 +132,12 @@ export default {
     del() {
       this.delcanvas = false;
     },
+    //下载导入模板
+    // dowmodule(){
+    //   this.$http.get("api/networkUserManager/downloadTemplateForNetwork").then(data=>{
+    //     console.log(data)
+    //   })
+    // },
     //提交批量导入的用户数据
     subuserdata() {
       if (this.tabledata.length == 0) {
@@ -141,7 +166,7 @@ export default {
       if (file.code == 0) {
         this.$message.success("文件上传成功！");
         //文件上传成功，弹框编辑
-        
+
         this.tabledata = file.data.userList;
         console.log(file);
       }
@@ -152,7 +177,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-   width: 100%;
+  width: 100%;
   height: 100%;
   position: relative;
   .el-upload {
@@ -276,25 +301,23 @@ export default {
   //     }
   //   }
   //}
-    .subtable {
-      width: 300px;
+  .subtable {
+    width: 300px;
+    height: 40px;
+    margin: 30px auto;
+    display: flex;
+    justify-content: space-between;
+    span {
+      display: inline-block;
+      width: 120px;
       height: 40px;
-      margin: 30px auto;
-      display: flex;
-      justify-content: space-between;
-      span {
-        display: inline-block;
-        width: 120px;
-        height: 40px;
-        background: #fff;
-        text-align: center;
-        line-height: 40px;
-        font-size: 14px;
-        font-weight: bold;
-        border-radius: 8px;
-        
-      }
+      background: #fff;
+      text-align: center;
+      line-height: 40px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
     }
-
+  }
 }
 </style>

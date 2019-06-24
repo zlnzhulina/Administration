@@ -50,7 +50,7 @@ export default {
     return {
       tableData: [],
       totalCount: 1,
-      pagesize: "10",
+      pagesize: 10,
       currentPage: 1
     };
   },

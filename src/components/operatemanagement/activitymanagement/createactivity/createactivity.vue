@@ -449,14 +449,14 @@
         </h3>
         <ul>
           <li>
-            <span>活动名称：</span>
+            <span>活动名称：</span>{{activity.activityName}}
           </li>
           <li>
-            <span>活动时效：</span>
+            <span>活动时效：</span>{{activity.startTime}}--{{activity.endTime}}
           </li>
         </ul>
 
-        <el-table
+        <!-- <el-table
           :header-cell-style="{background:'#eee',height:'32'}"
           ref="multipleTable"
           :data="tabledata"
@@ -464,11 +464,11 @@
           style="width: 540px"
           stripe
         >
-          <!-- stripe="true" -->
+  
 
           <el-table-column prop="goodsid" label="奖品名称" width="335px"></el-table-column>
           <el-table-column prop="goodsname" label="奖品分类"></el-table-column>
-        </el-table>
+        </el-table> -->
         <div class="btn">
           <span @click="exit">暂不关联</span>
           <span style="background:#1abc9c;color:#fff;" @click="code">关联相关码</span>
@@ -867,7 +867,9 @@ export default {
         }
       }).then(data => {
         if(data.data.code==0){
-          this.$router.push("/operatemanagement");
+          //说明活动创建成功
+          this.createsuccesscanvas=true;
+          // this.$router.push("/operatemanagement");
         }
       });
     },

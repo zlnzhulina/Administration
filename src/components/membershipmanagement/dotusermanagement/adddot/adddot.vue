@@ -182,7 +182,14 @@ export default {
         });
       }
       if (this.$route.query.flag == 0) {
-        Axios({
+        //添加网点
+        if(networkCode=="" && networkName=="" && phoneNumber==""){
+          this.$message({
+              message: "必填项未填写",
+              type: "error"
+            });
+        }else{
+          Axios({
           method: "post",
           url: "api/networkUserManager/addNetwork",
           data: JSON.stringify(this.networkdata),
@@ -204,6 +211,8 @@ export default {
             });
           }
         });
+        }
+        
       }
     },
     //选择区域

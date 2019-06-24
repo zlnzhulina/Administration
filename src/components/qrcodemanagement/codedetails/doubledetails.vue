@@ -15,25 +15,34 @@
       </div>
       <div class="searchactivity">
         <span>活动：</span>
-        <select name="user">
-          <option>请选择活动</option>
-          <option>机修工</option>
-          <option>SA</option>
+        <select name="user" v-model="activityid">
+          <option value>请选择活动</option>
+          <option
+            v-for="(item,index) in activitylist"
+            :value="item.activityId"
+          >{{item.activityName}}</option>
         </select>
         <span>条码状态：</span>
-        <select name="user">
-          <option>请选择状态</option>
-          <option>机修工</option>
-          <option>SA</option>
+        <select v-model="SAcodetype">
+          <option value="">请选择状态</option>
+         <option value="1">未关联</option>
+         <option value="2">已关联</option>
+         <option value="5">已激活</option>
+         <option value="3">已占用</option>
+         <option value="4">已保护</option>
+          
+         
         </select>
         <span>小程序码状态：</span>
-        <select name="user">
-          <option>请选择状态</option>
-          <option>机修工</option>
-          <option>SA</option>
+        <select v-model="usercodetype">
+          <option value="">请选择状态</option>
+          <option value="1">未关联</option>
+          <option value="2">已关联</option>
+          <option value="5">已激活</option>
+          <option value="6">已查询</option>
         </select>
         <span>编号查询：</span>
-        <input placeholder="请输入码的编号">
+        <input placeholder="请输入码的编号" v-model="codeid">
         <div class="all">
           <b>删除选中</b>
           <b>关联选中</b>
@@ -42,30 +51,38 @@
       </div>
       <div class="searchactivity">
         <span>商品：</span>
-        <select name="userw">
-          <option>请选择商品库</option>
-          <option>机修工</option>
-          <option>SA</option>
+        <select name="userw" v-model="searchfirstlist">
+          <option value="">请选择商品库</option>
+          <option
+            v-for="(searchfirstitem,index) in searchgoodsclasslist"
+            :value="searchfirstitem"
+          >{{searchfirstitem.productCatName}}</option>
         </select>
-        <select name="userw">
-          <option>请选择商品类型</option>
-          <option>机修工</option>
-          <option>SA</option>
+        <select name="userw" v-model="searchsecondlist">
+          <option value="">请选择商品类型</option>
+          <option
+            v-for="(searchseconditem,index) in searchfirstlist.productCatList"
+            :value="searchseconditem"
+          >{{searchseconditem.productCatName}}</option>
         </select>
-        <select name="userw">
-          <option>请选择商品品牌</option>
-          <option>机修工</option>
-          <option>SA</option>
+        <select name="userw" v-model="searchthreelist" @change="searchselectthree()">
+          <option value="">请选择商品品牌</option>
+          <option
+            v-for="(searchthreeitem,index) in searchsecondlist.productCatList"
+            :value="searchthreeitem"
+          >{{searchthreeitem.productCatName}}</option>
         </select>
-        <select name="userw">
+        <!-- <select name="userw">
           <option>请选择商品系列</option>
           <option>机修工</option>
           <option>SA</option>
-        </select>
-        <select name="userw">
-          <option>请选择商品</option>
-          <option>机修工</option>
-          <option>SA</option>
+        </select>-->
+        <select name="userw" v-model="productSId" @change="selegoodsearch">
+          <option value="">请选择商品</option>
+          <option
+            v-for="(goodsitem,index) in searchgoodslist"
+            :value="goodsitem.productSId"
+          >{{goodsitem.productSName}}</option>
         </select>
       </div>
     </div>
@@ -139,7 +156,17 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <!-- 分页功能 -->
+    <div class="block fr" style="margin-top: 10px;">
+      <el-pagination
+        @size-change="handleSizeChange"
+        :current-page="currentPage"
+        @current-change="handleCurrentChange"
+        :page-size="pagesize"
+        layout="total,  prev, pager, next, jumper"
+        :total="totalCount"
+      ></el-pagination>
+    </div>
     <!-- 码详情弹窗 -->
     <div class="qrdetails" v-if="qrdetailscanvas">
       <div class="tab">
@@ -147,6 +174,14 @@
           <span>码详情</span>
           <img @click="exit" src="@/assets/no.png">
         </div>
+        <ul>
+          <li><div style="width:128px; border:1px solid #555;">消费者码</div><div style="width:128px;border:1px solid #555;">扫码时间</div><div style="width:128px;border:1px solid #555;">用户姓名</div><div style="width:128px;border:1px solid #555;">用户账号</div><div style="width:53px;border:1px solid #555;">区域</div><div style="width:128px;border:1px solid #555;">奖项</div><div style="width:53px;border:1px solid #555;">状态</div></li>
+          <li style="background:#eee;"><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:53px;"></div><div style="width:128px;"></div><div style="width:53px;"></div></li>
+        </ul>
+        <ul>
+          <li><div style="width:128px; border:1px solid #555;">渠道码</div><div style="width:128px;border:1px solid #555;">扫码时间</div><div style="width:128px;border:1px solid #555;">用户姓名</div><div style="width:128px;border:1px solid #555;">用户账号</div><div style="width:53px;border:1px solid #555;">区域</div><div style="width:128px;border:1px solid #555;">奖项</div><div style="width:53px;border:1px solid #555;">状态</div></li>
+          <li style="background:#eee;"><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:53px;"></div><div style="width:128px;"></div><div style="width:53px;"></div></li>
+        </ul>
       </div>
     </div>
     <!-- 关联码弹窗 -->
@@ -166,11 +201,20 @@
             <option v-for="(item,index) in SAactivitylist" :value="item">{{item.activityName}}</option>
           </select>
           <span>已关联消费者活动：</span>
-          <span style="width:404px;margin-left:20px;text-align:center;" v-show="row.qrActivityId==null?true:false">未关联消费者活动</span>
-          <span v-show="row.qrActivityId" style="display:inline-block;background:#1abc9c;color:#fff;height:30px;text-align:center;line-height:30px;width:auto;padding:0 15px 0;">{{row.qrActivityName}}</span>
+          <span
+            style="width:404px;margin-left:20px;text-align:center;"
+            v-show="row.qrActivityId==null?true:false"
+          >未关联消费者活动</span>
+          <span
+            v-show="row.qrActivityId"
+            style="display:inline-block;background:#1abc9c;color:#fff;height:30px;text-align:center;line-height:30px;width:auto;padding:0 15px 0;"
+          >{{row.qrActivityName}}</span>
           <span>关联商品：</span>
           <!-- 如果商品已关联 显示关联的商品 -->
-          <span v-show="row.productsId==null?false:true" style="display:inline-block;background:#1abc9c;color:#fff;height:30px;text-align:center;line-height:30px;width:auto;padding:0 15px 0;">{{row.productsName}}</span>
+          <span
+            v-show="row.productsId==null?false:true"
+            style="display:inline-block;background:#1abc9c;color:#fff;height:30px;text-align:center;line-height:30px;width:auto;padding:0 15px 0;"
+          >{{row.productsName}}</span>
           <select name="useractive" v-model="firstlist" v-show="row.productsId==null?true:false">
             <option
               v-for="(firstlist,index) in goodsclasslist"
@@ -185,7 +229,12 @@
             >{{secondlist.productCatName}}</option>
           </select>
           <span v-show="row.productsId==null?true:false"></span>
-          <select name="useractive" v-model="threelist" @change="selectthree" v-show="row.productsId==null?true:false">
+          <select
+            name="useractive"
+            v-model="threelist"
+            @change="selectthree"
+            v-show="row.productsId==null?true:false"
+          >
             <option
               v-for="(threelist,index) in secondlist.productCatList"
               :value="threelist"
@@ -193,7 +242,12 @@
           </select>
           <!--     选择商品       -->
           <span v-show="row.productsId==null?true:false"></span>
-          <select name="useractive" v-model="selectgood" @change="selegood"  v-show="row.productsId==null?true:false">
+          <select
+            name="useractive"
+            v-model="selectgood"
+            @change="selegood"
+            v-show="row.productsId==null?true:false"
+          >
             <option v-for="(item,index) in goodslist" :value="item">{{item.productSName}}</option>
           </select>
           <div style="width:152px;height:36px;margin:0px auto;clear:both;padding-top:45px;">
@@ -222,7 +276,30 @@ export default {
       tabledata: [
         //
       ],
+      //查询
+      //二维码id
+      codeid: "",
+      //商品id
+      productSId: "",
+      //渠道活动id
+      activityid: "",
+      //SA码状态
+      SAcodetype:"",
+      //小程序码状态
+      usercodetype:"",
+      barActivityId: "",
+      //活动列表
+      activitylist: "",
       row: {},
+       searchgoodsclasslist: [],
+      //一级分类列表
+      searchfirstlist: [],
+      //二级分类列表
+      searchsecondlist: [],
+      //三级分类列表
+      searchthreelist: [],
+      //商品列表
+      searchgoodslist: [],
       //渠道活动列表
       SAactivitylist: [],
       //
@@ -240,14 +317,19 @@ export default {
       //选择商品
       selectgood: {},
       //码详情
-      qrdetailscanvas: false
+      qrdetailscanvas: false,
+      totalCount: 1,
+      pagesize: 10,
+      currentPage: 1
     };
   },
   created() {
-    console.log(this.$route.query);
+    // console.log(this.$route.query);
     this.batchId = this.$route.query.data.batchId;
     this.batchName = this.$route.query.data.batchName;
     this.detailslist();
+    this.classlist();
+    this.barActivitylist();
   },
   methods: {
     //详情列表
@@ -257,18 +339,49 @@ export default {
         method: "get",
         params: {
           batchId: this.batchId,
-          pageNo: "1",
-          barActivityId: "",
-          qrStatus: "",
-          barStatus: "",
-          qrId: "",
-          productSId: ""
+          pageNo: this.currentPage,
+          barActivityId: this.activityid,
+          qrStatus:this.usercodetype,
+          barStatus: this.SAcodetype,
+          qrId: this.codeid,
+          productSId: this.productSId,
         }
       }).then(data => {
         console.log(data);
+        this.totalCount = data.data.data.codePage.total;
+        this.pagesize = data.data.data.codePage.size;
+        this.currentPage = data.data.data.codePage.current;
         this.tabledata = data.data.data.codePage.records;
+        // for (var i = 0; i < this.tabledata.length; i++) {
+        //   this.barStatuslist.push()
+        // }
       });
     },
+    //商品分类列表
+    classlist() {
+      Axios({
+        url: "api/productsManager/productCatList",
+        methods: "get"
+      }).then(data => {
+        //  console.log(data);
+        this.searchgoodsclasslist = data.data.data.firstCatList;
+      });
+    },
+    //活动列表
+    barActivitylist() {
+      Axios({
+        url: "api/activityManager/activityList",
+        method: "get",
+        params: {
+          pageNo: "1",
+          pageSize: ""
+        }
+      }).then(data => {
+        // console.log(data);
+        this.activitylist = data.data.data.activityPage.records;
+      });
+    },
+
     back() {
       this.$router.back();
     },
@@ -285,19 +398,18 @@ export default {
     //下载单码
     download(row) {},
     relation(row) {
-      console.log(row);
+      // console.log(row);
       this.row = row;
       //关联
       // this.relationcanvas = true;
 
-      if (row.barActivityId!==null && row.productsId!==null) {
+      if (row.barActivityId !== null && row.productsId !== null) {
         this.$message({
           type: "warning",
           message: "此码已关联!"
         });
-          this.relationcanvas=false;
-
-      } else if (row.productsId!==null && row.barActivityId==null) {
+        this.relationcanvas = false;
+      } else if (row.productsId !== null && row.barActivityId == null) {
         //说明关联商品但并未关联SA活动
         //获取活动列表
         this.relationcanvas = true;
@@ -308,34 +420,32 @@ export default {
             pageNo: "1"
           }
         }).then(data => {
-          console.log(data);
+          // console.log(data);
           this.SAactivitylist = data.data.data.activityPage.records;
         });
-
-      }else{
+      } else {
         //未关联商品和SA活动
         this.relationcanvas = true;
-         Axios({
+        Axios({
           url: "api/activityManager/activityList",
           method: "get",
           params: {
             pageNo: "1"
           }
         }).then(data => {
-          console.log(data);
+          // console.log(data);
           this.SAactivitylist = data.data.data.activityPage.records;
         });
-         Axios({
-        url: "api/productsManager/productCatList",
-        methods: "get"
-      }).then(data => {
-        console.log(data);
-        this.goodsclasslist = data.data.data.firstCatList;
-      });
+        Axios({
+          url: "api/productsManager/productCatList",
+          methods: "get"
+        }).then(data => {
+          // console.log(data);
+          this.goodsclasslist = data.data.data.firstCatList;
+        });
       }
 
       //获取商品三级列表
-     
     },
     //选择三级列表后获取商品列表
     selectthree() {
@@ -350,15 +460,32 @@ export default {
         this.goodslist = data.data.data.productList;
       });
     },
+    searchselectthree(){
+      console.log(1)
+       Axios({
+        url: "api/productsManager/getProductsForCatId",
+        method: "get",
+        params: {
+          productCatId: this.searchthreelist.productCatId
+        }
+      }).then(data => {
+        console.log(data);
+        this.searchgoodslist = data.data.data.productList;
+      });
+    },
+    selegoodsearch(val) {
+      // console.log(val);
+     this.detailslist();
+    },
     //选择商品之后
     selegood() {
-      console.log(this.selectgood);
+      // console.log(this.selectgood);
     },
     //提交关联
     subrelation() {
-      console.log(this.row.qrId);
-      console.log(this.SAactivity);
-      console.log(this.selectgood);
+      // console.log(this.row.qrId);
+      // console.log(this.SAactivity);
+      // console.log(this.selectgood);
       Axios({
         url: "api/qrcode/codeManager/joinActivity",
         method: "get",
@@ -366,11 +493,17 @@ export default {
           qrIds: this.row.qrId,
           activityId: this.SAactivity.activityId,
           activityName: this.SAactivity.activityName,
-          productsId: this.row.productsId==null?this.selectgood.productSId:this.row.productsId,
-          productsName: this.row.productsName==null?this.selectgood.productSName:this.row.productsName,
+          productsId:
+            this.row.productsId == null
+              ? this.selectgood.productSId
+              : this.row.productsId,
+          productsName:
+            this.row.productsName == null
+              ? this.selectgood.productSName
+              : this.row.productsName
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         if (data.data.code == 0) {
           this.$message({
             type: "success",
@@ -403,8 +536,8 @@ export default {
       this.firstlist = [];
       this.secondlist = [];
       this.threelist = [];
-      var aaa={};
-      this.row=aaa;
+      var aaa = {};
+      this.row = aaa;
     },
     del() {
       //删除
@@ -420,15 +553,46 @@ export default {
         }
       }).then(data => {
         console.log(data);
-        if(data.data.code==0){
+        if (data.data.code == 0) {
           this.$message({
             type: "success",
-            message: "撤回成功！",
+            message: "撤回成功！"
           });
           this.detailslist();
+        }else{
+          this.$message({
+            type: "error",
+            message: "撤回失败！"
+          });
         }
       });
+    },
+    handleSizeChange() {},
+    handleCurrentChange(val) {
+      // console.log(val);
+      this.currentPage = val;
+      this.detailslist();
     }
+  },
+  watch: {
+    codeid(val) {
+      this.detailslist();
+    },
+    activityid(val){
+      this.detailslist();
+    },
+    SAcodetype(val){
+      this.detailslist();
+
+    },
+    usercodetype(val){
+      this.detailslist();
+    },
+    productSId(val){
+      this.detailslist();
+
+    }
+
   }
 };
 </script>
@@ -608,6 +772,22 @@ export default {
         float: right;
         margin-right: 13px;
         margin-top: 15px;
+      }
+      ul{
+        width: 760px;
+        height: 80px;
+        margin: 20px auto;
+        li{
+          width: 100%;
+          list-style: none;
+          height: 40px;
+          display: flex;
+          div{
+            height: 38px;
+            text-align: center;
+            line-height: 38px;
+          }
+        }
       }
     }
   }

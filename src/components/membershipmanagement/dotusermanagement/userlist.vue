@@ -5,13 +5,12 @@
     <span class="add" @click="deleteall">批量删除用户</span>
     <span class="add">下载导入模板</span>
     <div class="search">
-      <select name="userclass">
-        <option>负责人</option>
-        <option>机修工</option>
-        <option>SA</option>
+      <select name="userclass" v-model="userCatId">
+        <option value="">--请选择用户类型--</option>
+       <option v-for="(item,index) in position" :value="item.userCatId">{{item.userCatName}}</option>
       </select>
-      <input type="text" placeholder="用户账号">
-      <span>查询</span>
+      <input type="text" placeholder="用户账号" v-model="phoneNumber">
+      <span @click="search">查询</span>
     </div>
     <el-table
       :header-cell-style="{background:'#ccd1e0',height:'32'}"
@@ -63,6 +62,7 @@ export default {
   data() {
     return {
       delcanvas: false,
+      phoneNumber:"",
       pagesize: 7,
       currentPage: 1,
       totalCount: 0,
@@ -70,11 +70,16 @@ export default {
       //选中的用户列表
       useridarr: [],
       //删除的用户id
-      deluserids: ""
+      deluserids: "",
+      //职位列表
+      position:[],
+      //选中的职位id
+      userCatId:""
     };
   },
   created: function() {
     this.init();
+    this.selectUserCatList();
   },
   methods: {
     deleteUser(index, row) {
@@ -112,8 +117,25 @@ export default {
           });
         });
     },
+    //搜索功能
+    search(){
+      this.init();
+    },
     batchmaintenance() {
       this.$router.push("/Membershipmanagement/batchmaintenance");
+    },
+     selectUserCatList:function(){
+        Axios(
+        {
+          method: "get",
+          url: "api/networkUserManager/UserCatList"+'?pageNo=1&pageSize=10',
+        }
+      ).then(data => {
+          console.log(data)
+          
+        this.position = data.data.data.userCatPage.records;
+        console.log(this.position)
+      })
     },
     init: function() {
       Axios({
@@ -123,7 +145,7 @@ export default {
           "?pageNo=" +
           this.currentPage +
           "&pageSize=" +
-          this.pagesize
+          this.pagesize+"&phoneNumber="+this.phoneNumber+"&userCatId="+this.userCatId
       }).then(data => {
         console.log(data);
         this.totalCount = data.data.data.userPage.total;

@@ -12,8 +12,8 @@
             v-for="item in initUserCat"
             :key="item.userCatName"
             :label="item.userCatName"
-            :value="item.userCatId">
-          </el-option>
+            :value="item.userCatId"
+          ></el-option>
         </el-select>
       </li>
       <li>
@@ -24,8 +24,8 @@
             v-for="item in initNetwork"
             :key="item.networkName"
             :label="item.networkName"
-            :value="item.networkId">
-          </el-option>
+            :value="item.networkId"
+          ></el-option>
         </el-select>
       </li>
       <li>
@@ -38,120 +38,136 @@
       </li>
 
       <div class="tips">账号添加成功后将发送短信至该手机号，其内容包含：账号信息（该手机号）、初始密码以及要登录的小程序名称</div>
-      <div class="tips" style="color:#aaaaaa;margin-top:15px;">【解放渠道产品分销系统】张xx您好！登录账号：xxxxxxxx，初始密码：15613512，请您尽快登录小程序“解放渠道分销平台”修改密码。</div>
+      <div
+        class="tips"
+        style="color:#aaaaaa;margin-top:15px;"
+      >【解放渠道产品分销系统】张xx您好！登录账号：xxxxxxxx，初始密码：15613512，请您尽快登录小程序“解放渠道分销平台”修改密码。</div>
       <span class="sub" @click="addUser">提交</span>
     </ul>
-
   </div>
 </template>
 
 <script>
-import Axios from 'axios';
+import Axios from "axios";
 
 export default {
   //经销商用户编辑
   data() {
     return {
-      initUserCat:[],
-      initNetwork:[],
-      flag:false,
-      user:{
-        userId:'',
-        phoneNumber:'',
-        name:'',
-        networkId:'',
-        userCatId:''
+      initUserCat: [],
+      initNetwork: [],
+      flag: false,
+      user: {
+        userId: "",
+        phoneNumber: "",
+        name: "",
+        networkId: "",
+        userCatId: ""
       }
     };
   },
-  created:function(){
+  created: function() {
     this.initData();
     this.init();
   },
-  methods:{
-    init(){
+  methods: {
+    init() {
       console.log(this.$route.query);
-      if(this.$route.query.flag==1){
-        this.flag=true;
-        this.user.userCatId=this.$route.query.networkParm.userCatId;
-        this.user.networkId=this.$route.query.networkParm.networkId;
-        this.user.name=this.$route.query.networkParm.name;
-        this.user.phoneNumber=this.$route.query.networkParm.phoneNumber;
-        this.user.userId=this.$route.query.networkParm.userId;
+      if (this.$route.query.flag == 1) {
+        this.flag = true;
+        this.user.userCatId = this.$route.query.networkParm.userCatId;
+        this.user.networkId = this.$route.query.networkParm.networkId;
+        this.user.name = this.$route.query.networkParm.name;
+        this.user.phoneNumber = this.$route.query.networkParm.phoneNumber;
+        this.user.userId = this.$route.query.networkParm.userId;
       }
     },
-    addUser:function(){
-      console.log(this.user)
-      if(this.flag){
+    addUser: function() {
+      console.log(this.user);
+      if (this.flag) {
         //更改员工信息
-        Axios(
-        {
+        Axios({
           method: "post",
           url: "api/networkUserManager/editUser",
-          data:JSON.stringify(this.user),
-          headers:{
-            "Content-Type":"application/json"
+          data: JSON.stringify(this.user),
+          headers: {
+            "Content-Type": "application/json"
           }
-        }
-      ).then(data => {
-        if(data.data.code == '0'){
+        }).then(data => {
+          if (data.data.code == "0") {
+            this.$message({
+              message: data.data.msg,
+              type: "success"
+            });
+            this.$router.back();
+          }
+          if (data.data.code == "-1") {
+            this.$message({
+              message: data.data.msg,
+              type: "error"
+            });
+          }
+        });
+      } else {
+        //添加员工信息
+        if (!/^1(3|4|5|7|8)\d{9}$/.test(user.phoneNumber)) {
+          this.$message({
+            message: "手机号填写有误，请重新填写",
+            type: "error"
+          });
+        } else if (user.userCatId == "") {
+          this.$message({
+            message: "请选择用户职位",
+            type: "error"
+          });
+        } else if ((user.networkId = "")) {
+          this.$message({
+            message: "请选择所属网点",
+            type: "error"
+          });
+        } else if (user.name == "") {
+          //
+          this.$message({
+            message: "请填写用户名称",
+            type: "error"
+          });
+        } else {
+          Axios({
+            method: "post",
+            url: "api/networkUserManager/addUser",
+            data: JSON.stringify(this.user),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }).then(data => {
+            if (data.data.code == "0") {
               this.$message({
-                  message: data.data.msg,
-                  type: 'success'
+                message: data.data.msg,
+                type: "success"
               });
               this.$router.back();
-          }
-          if(data.data.code == '-1'){
+            }
+            if (data.data.code == "-1") {
               this.$message({
-                  message: data.data.msg,
-                  type: 'error'
+                message: data.data.msg,
+                type: "error"
               });
-          }
-      })
-      }else{
-        Axios(
-        {
-          method: "post",
-          url: "api/networkUserManager/addUser",
-          data:JSON.stringify(this.user),
-          headers:{
-            "Content-Type":"application/json"
-          }
+            }
+          });
         }
-      ).then(data => {
-        if(data.data.code == '0'){
-              this.$message({
-                  message: data.data.msg,
-                  type: 'success'
-              });
-              this.$router.back();
-          }
-          if(data.data.code == '-1'){
-              this.$message({
-                  message: data.data.msg,
-                  type: 'error'
-              });
-          }
-      })
       }
-      
     },
-    initData:function(){
-      Axios(
-        {
-          method: "get",
-          url: "api/networkUserManager/initUserCatAndNetworkList",
-          
-        }
-      ).then(data => {
-        console.log(this.initUserCat)
+    initData: function() {
+      Axios({
+        method: "get",
+        url: "api/networkUserManager/initUserCatAndNetworkList"
+      }).then(data => {
+        console.log(this.initUserCat);
         this.initNetwork = data.data.data.networkList;
         this.initUserCat = data.data.data.userCatList;
-        console.log(this.initUserCat)
-      })
-    },
-    
-
+        console.log(this.initUserCat);
+      });
+    }
   }
 };
 </script>
@@ -199,7 +215,7 @@ export default {
         text-align: center;
         border: none;
       }
-      .el-select{
+      .el-select {
         width: 258px;
         // height: 38px;
       }
@@ -213,26 +229,25 @@ export default {
         border: 1px solid #555;
         border-radius: 5px;
       }
-     
     }
-    .tips{
-        width: 438px;
-        
-        color: #d9001b;
-        font-size: 14px;
-        font-weight: bold;
-        margin-top: 10px;
+    .tips {
+      width: 438px;
+
+      color: #d9001b;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
     }
-    .sub{
-        display: block;
-        width: 182px;
-        height: 50px;
-        color: #fff;
-        background: #169bd5;
-        text-align: center;
-        line-height: 50px;
-        margin: 0 auto;
-        border-radius: 6px;
+    .sub {
+      display: block;
+      width: 182px;
+      height: 50px;
+      color: #fff;
+      background: #169bd5;
+      text-align: center;
+      line-height: 50px;
+      margin: 0 auto;
+      border-radius: 6px;
     }
   }
 }

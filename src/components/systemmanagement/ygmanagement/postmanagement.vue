@@ -49,7 +49,7 @@
                 :value="department.departmentId"
               >{{ department.departmentName }}</option>
             </select>
-            <span style="display:inline;margin-left:17px;color:#a6a6a6;">管理部门</span>
+            <span style="display:inline;margin-left:17px;color:#a6a6a6;" @click="managementdepartment">管理部门</span>
           </li>
           <li>
             <span>名称</span>
@@ -152,6 +152,7 @@ export default {
           "&postName=" +
           this.postName
       }).then(data => {
+        console.log(data)
         this.totalCount = data.data.data.postPage.total;
         this.pagesize = data.data.data.postPage.size;
         this.currentPage = data.data.data.postPage.current;
@@ -191,6 +192,17 @@ export default {
       }).then(data => {
         this.addpostcanvas = false;
         this.postList();
+        if(data.data.code==0){
+          this.$message({
+            type: 'success',
+            message: '添加成功!'
+          });
+        }else{
+           this.$message({
+            type: 'error',
+            message: '添加失败!'
+          });
+        }
       });
     },
     exit() {
@@ -198,6 +210,10 @@ export default {
       this.delpostcanvas = false;
       this.editpostcanvas=false;
 
+    },
+    //管理部门
+    managementdepartment(){
+      this.$router.push("/systemmanagement/departmentmanagement")
     },
     //重命名岗位
     editpost(index, row) {
@@ -224,6 +240,11 @@ export default {
                 message: "更改成功"
               });
               this.postList();
+            }else{
+               this.$message({
+                type: "error",
+                message: "更改失败"
+              });
             }
           });
     },

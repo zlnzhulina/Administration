@@ -8,6 +8,8 @@ import router from './router';
 import store from "./store";
 import axios from "axios";
 import BaiduMap from 'vue-baidu-map';
+import VueResource from 'vue-resource'
+
 Vue.prototype.axios = axios;
 
 Vue.config.productionTip = false;
@@ -40,6 +42,7 @@ Vue.use(BaiduMap,{
   ak:'ZISshnqhU8NdP5xNwQjIaoVlWV4fpduV'
 });
 Vue.use(ElementUI);
+Vue.use(VueResource);
 
 /* eslint-disable no-new */
 new Vue({

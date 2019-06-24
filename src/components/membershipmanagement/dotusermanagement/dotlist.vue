@@ -14,10 +14,11 @@
     </div>
 
     <span class="add" @click="deleteall">批量删除网点</span>
-    <span class="add">下载导入模板</span>
+    <!-- <span class="add">下载导入模板</span> -->
+    <span class="add"><a href="api/networkUserManager/downloadTemplateForNetwork?type=1" rel="external nofollow" download="user" style="display:block;width:100%;height:100%;color:#000;">下载导入模板</a></span>
     <div class="search">
-      <input type="text" placeholder="网点名称/编号">
-      <span>查询</span>
+      <input type="text" placeholder="网点名称/编号" v-model="networkName">
+      <span @click="search">查询</span>
     </div>
     <el-table
       :header-cell-style="{background:'#ccd1e0',height:'32'}"
@@ -76,7 +77,7 @@ export default {
       fileList: [],
       dotidarr:[],
       deldotids:"",
-
+      networkName:""
     };
   },
   created: function() {
@@ -88,6 +89,9 @@ export default {
         console.log(val)
       },
       deep:true
+    },
+    networkName(val){
+      this.selectNetWorkList();
     }
   },
   methods: {
@@ -98,7 +102,7 @@ export default {
           "api/networkUserManager/networkList?pageNo=" +
           this.currentPage +
           "&pageSize=" +
-          this.pagesize
+          this.pagesize+"&networkName="+this.networkName
         // data:{
         // "post":JSON.stringify(this.postModel)
         // "postName":this.postModel.postName,
@@ -111,6 +115,10 @@ export default {
         this.currentPage = data.data.data.networkPage.current;
         this.tabledata = data.data.data.networkPage.records;
       });
+    },
+    //查询
+    search(){
+      this.selectNetWorkList();
     },
     delnetwork(index, row) {
       this.$confirm("此操作将永久删除该网点, 是否继续?", "提示", {

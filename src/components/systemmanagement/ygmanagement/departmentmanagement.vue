@@ -68,12 +68,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="delcanvas" v-if="deldepartmentcanvas">
-      <h3>温馨提示</h3>
-      <p>部门信息删除后不可恢复，确认删除？</p>
-      <span style="background:#fff" @click="exit">取消</span>
-      <span style="background:#169bd5" @click="del">确认</span>
-    </div> -->
   </div>
 
   
@@ -267,22 +261,6 @@ export default {
       this.editdepartmentcanvas=false;
       this.deldepartmentcanvas=false;
     },
-     del(){
-       Axios(
-        {
-          method: "get",
-          url: "api/systemManager/delDepartment"+'?departmentids='+this.editId,
-          params:{
-            departmentName:this.addInput,
-          }
-        }
-      ).then(data => {
-        this.deldepartmentcanvas=false;
-        this.editId = '',
-        this.departmentList();
-      })
-    
-  },
     handleSizeChange(val) {
     },
     handleCurrentChange(val) {

@@ -33,7 +33,7 @@
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
-      @selection-change="handleSelectionChange"
+      
       stripe
     >
       <!-- stripe="true" -->
@@ -64,7 +64,7 @@
     <div class="block fr" style="margin-top: 10px;">
       <el-pagination
         @size-change="handleSizeChange"
-        
+        @current-change="handleCurrentChange"
         :current-page="currentPage"
         :page-size="pagesize"
         layout="total,  prev, pager, next, jumper"
@@ -219,7 +219,7 @@ export default {
       selectgood: {},
       timer: "",
       totalCount: 1,
-      pagesize: "",
+      pagesize: 10,
       currentPage: 1,
       //撤回弹框
       withdrawcanvas: false,
