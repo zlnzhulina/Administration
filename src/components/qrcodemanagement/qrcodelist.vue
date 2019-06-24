@@ -33,6 +33,7 @@
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
+      @selection-change="handleSelectionChange"
       stripe
     >
       <!-- stripe="true" -->
@@ -63,7 +64,7 @@
     <div class="block fr" style="margin-top: 10px;">
       <el-pagination
         @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+        
         :current-page="currentPage"
         :page-size="pagesize"
         layout="total,  prev, pager, next, jumper"
@@ -523,10 +524,18 @@ export default {
         method: "get",
         params: {
           batchId: this.row.batchId,
-          recallCount: this.withdrawnum
+          recallCount: this.withdrawnum,
+          type:"1",
+        }
+      }).then(data=>{
+        console.log(data);
+        if(data.data.code==0){
+          this.withdrawnum="";
+          this.withdrawcanvas = false;
         }
       });
     },
+    
     exit() {
       this.relationcanvas = false;
       this.withdrawcanvas = false;

@@ -34,6 +34,11 @@
         </select>
         <span>编号查询：</span>
         <input placeholder="请输入码的编号">
+        <div class="all">
+          <b>删除选中</b>
+          <b>关联选中</b>
+          <b>撤回选中</b>
+        </div>
       </div>
       <div class="searchactivity">
         <span>商品：</span>
@@ -121,7 +126,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="productsName" label="关联商品" width="182">
-        <template slot-scope="scope">{{scope.row.productsName?scope.row.productsName:"未关联商品"}}</template>
+        <template slot-scope="scope">{{scope.row.productsName==null?"未关联商品":scope.row.productsName}}</template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="260px">
         <template slot-scope="scope">
@@ -134,15 +139,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="moreoperationscanvas" v-show="moreoperationscanvas">
-      <ul>
-        <li @click="details">详情</li>
-        <li @click="download">下载</li>
-        <li @click="relation">关联</li>
-        <li @click="del">删除</li>
-        <li @click="withdraw">撤回</li>
-      </ul>
-    </div>
+
     <!-- 码详情弹窗 -->
     <div class="qrdetails" v-if="qrdetailscanvas">
       <div class="tab">
@@ -169,37 +166,34 @@
             <option v-for="(item,index) in SAactivitylist" :value="item">{{item.activityName}}</option>
           </select>
           <span>已关联消费者活动：</span>
-          <select name="useractive">
-            <option></option>
-          </select>
-          <span></span>
-          <select name="useractive">
-            <option></option>
-          </select>
+          <span style="width:404px;margin-left:20px;text-align:center;" v-show="row.qrActivityId==null?true:false">未关联消费者活动</span>
+          <span v-show="row.qrActivityId" style="display:inline-block;background:#1abc9c;color:#fff;height:30px;text-align:center;line-height:30px;width:auto;padding:0 15px 0;">{{row.qrActivityName}}</span>
           <span>关联商品：</span>
-          <select name="useractive" v-model="firstlist">
+          <!-- 如果商品已关联 显示关联的商品 -->
+          <span v-show="row.productsId==null?false:true" style="display:inline-block;background:#1abc9c;color:#fff;height:30px;text-align:center;line-height:30px;width:auto;padding:0 15px 0;">{{row.productsName}}</span>
+          <select name="useractive" v-model="firstlist" v-show="row.productsId==null?true:false">
             <option
               v-for="(firstlist,index) in goodsclasslist"
               :value="firstlist"
             >{{firstlist.productCatName}}</option>
           </select>
-          <span></span>
-          <select name="useractive" v-model="secondlist">
+          <span v-show="row.productsId==null?true:false"></span>
+          <select name="useractive" v-model="secondlist" v-show="row.productsId==null?true:false">
             <option
               v-for="(secondlist,index) in firstlist.productCatList"
               :value="secondlist"
             >{{secondlist.productCatName}}</option>
           </select>
-          <span></span>
-          <select name="useractive" v-model="threelist" @change="selectthree">
+          <span v-show="row.productsId==null?true:false"></span>
+          <select name="useractive" v-model="threelist" @change="selectthree" v-show="row.productsId==null?true:false">
             <option
               v-for="(threelist,index) in secondlist.productCatList"
               :value="threelist"
             >{{threelist.productCatName}}</option>
           </select>
           <!--     选择商品       -->
-          <span></span>
-          <select name="useractive" v-model="selectgood" @change="selegood">
+          <span v-show="row.productsId==null?true:false"></span>
+          <select name="useractive" v-model="selectgood" @change="selegood"  v-show="row.productsId==null?true:false">
             <option v-for="(item,index) in goodslist" :value="item">{{item.productSName}}</option>
           </select>
           <div style="width:152px;height:36px;margin:0px auto;clear:both;padding-top:45px;">
@@ -289,32 +283,59 @@ export default {
       this.qrdetailscanvas = true;
     },
     //下载单码
-    download(row) {
-      
-    },
+    download(row) {},
     relation(row) {
-      this.row=row;
+      console.log(row);
+      this.row = row;
       //关联
-      this.relationcanvas = true;
-      //获取活动列表
-      Axios({
-        url: "api/activityManager/activityList",
-        method: "get",
-        params: {
-          pageNo: "1"
-        }
-      }).then(data => {
-        console.log(data);
-        this.SAactivitylist = data.data.data.activityPage.records;
-      });
-      //获取商品三级列表
-      Axios({
+      // this.relationcanvas = true;
+
+      if (row.barActivityId!==null && row.productsId!==null) {
+        this.$message({
+          type: "warning",
+          message: "此码已关联!"
+        });
+          this.relationcanvas=false;
+
+      } else if (row.productsId!==null && row.barActivityId==null) {
+        //说明关联商品但并未关联SA活动
+        //获取活动列表
+        this.relationcanvas = true;
+        Axios({
+          url: "api/activityManager/activityList",
+          method: "get",
+          params: {
+            pageNo: "1"
+          }
+        }).then(data => {
+          console.log(data);
+          this.SAactivitylist = data.data.data.activityPage.records;
+        });
+
+      }else{
+        //未关联商品和SA活动
+        this.relationcanvas = true;
+         Axios({
+          url: "api/activityManager/activityList",
+          method: "get",
+          params: {
+            pageNo: "1"
+          }
+        }).then(data => {
+          console.log(data);
+          this.SAactivitylist = data.data.data.activityPage.records;
+        });
+         Axios({
         url: "api/productsManager/productCatList",
         methods: "get"
       }).then(data => {
         console.log(data);
         this.goodsclasslist = data.data.data.firstCatList;
       });
+      }
+
+      //获取商品三级列表
+     
     },
     //选择三级列表后获取商品列表
     selectthree() {
@@ -345,8 +366,8 @@ export default {
           qrIds: this.row.qrId,
           activityId: this.SAactivity.activityId,
           activityName: this.SAactivity.activityName,
-          productsId: this.selectgood.productSId,
-          productsName: this.selectgood.productSName
+          productsId: this.row.productsId==null?this.selectgood.productSId:this.row.productsId,
+          productsName: this.row.productsName==null?this.selectgood.productSName:this.row.productsName,
         }
       }).then(data => {
         console.log(data);
@@ -382,6 +403,8 @@ export default {
       this.firstlist = [];
       this.secondlist = [];
       this.threelist = [];
+      var aaa={};
+      this.row=aaa;
     },
     del() {
       //删除
@@ -390,14 +413,21 @@ export default {
     withdraw(row) {
       //撤回
       Axios({
-        url:"api/qrcode/codeManager/recallCode",
-        method:"get",
-        params:{
-          qrIds:row.qrId,
+        url: "api/qrcode/codeManager/recallCode",
+        method: "get",
+        params: {
+          qrIds: row.qrId
         }
-      }).then(data=>{
+      }).then(data => {
         console.log(data);
-      })
+        if(data.data.code==0){
+          this.$message({
+            type: "success",
+            message: "撤回成功！",
+          });
+          this.detailslist();
+        }
+      });
     }
   }
 };
@@ -454,6 +484,23 @@ export default {
         text-align: center;
         font-size: 12px;
         color: #555;
+      }
+      .all {
+        float: right;
+        margin-right: 13px;
+        height: 72px;
+        line-height: 54px;
+        vertical-align: middle;
+        b {
+          display: inline-block;
+          height: 30px;
+          padding: 0 15px 0;
+          background: darkcyan;
+          color: #fff;
+          text-align: center;
+          line-height: 30px;
+          margin-right: 15px;
+        }
       }
     }
   }

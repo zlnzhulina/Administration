@@ -14,6 +14,9 @@ module.exports = {
       "/api/qrcode": {
         
         target: "http://192.168.2.102:8101",
+        
+        // target: "http://jiefang.atscloud.cn/code",
+        
         changeOrigin: true,
         pathRewrite: {
           "^/api/qrcode": ""
@@ -21,12 +24,16 @@ module.exports = {
       },
       "/api":{
          target: "http://192.168.2.102:8001",
+        //  target: "http://jiefang.atscloud.cn/sa",
          
          changeOrigin: true,
          pathRewrite: {
            "^/api": ""
-         }
-      }
+         },
+         timeout: 1920000,
+      },
+      
+      
     },
 
       // Various Dev Server settings

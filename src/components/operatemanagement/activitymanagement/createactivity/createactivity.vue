@@ -608,7 +608,7 @@ export default {
         
       ],
       //创建成功弹窗
-      createsuccesscanvas: false
+      createsuccesscanvas: false,
     };
   },
   methods: {

@@ -17,7 +17,7 @@
       <el-table-column prop="title" label="标题" width="278px"></el-table-column>
       <el-table-column prop="coverImageUrl" label="橱窗图" width="178px">
         <template slot-scope="scope">
-          <img :src="scope.row.img" style="width:140px;height:79px;">
+          <img :src="scope.row.coverImageUrl" style="width:140px;height:79px;">
         </template>
       </el-table-column>
 
