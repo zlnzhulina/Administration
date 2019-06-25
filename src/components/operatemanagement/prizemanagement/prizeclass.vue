@@ -71,7 +71,8 @@ export default {
           butnum: 232,
           num: 365
         }
-      ]
+      ],
+      goodsName:"",
     };
   },
   methods: {

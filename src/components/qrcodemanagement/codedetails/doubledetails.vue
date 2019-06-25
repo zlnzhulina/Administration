@@ -54,21 +54,24 @@
         <select name="userw" v-model="searchfirstlist">
           <option value="">请选择商品库</option>
           <option
-            v-for="(searchfirstitem,index) in searchgoodsclasslist"
+            v-for="searchfirstitem in searchgoodsclasslist"
+            :key="searchfirstitem.productCatId"
             :value="searchfirstitem"
           >{{searchfirstitem.productCatName}}</option>
         </select>
         <select name="userw" v-model="searchsecondlist">
           <option value="">请选择商品类型</option>
           <option
-            v-for="(searchseconditem,index) in searchfirstlist.productCatList"
+            v-for="searchseconditem in searchfirstlist.productCatList"
+            :key="searchseconditem.productCatId"
             :value="searchseconditem"
           >{{searchseconditem.productCatName}}</option>
         </select>
         <select name="userw" v-model="searchthreelist" @change="searchselectthree()">
           <option value="">请选择商品品牌</option>
           <option
-            v-for="(searchthreeitem,index) in searchsecondlist.productCatList"
+            v-for="searchthreeitem in searchsecondlist.productCatList"
+            :key="searchthreeitem.productCatId"
             :value="searchthreeitem"
           >{{searchthreeitem.productCatName}}</option>
         </select>
@@ -80,7 +83,8 @@
         <select name="userw" v-model="productSId" @change="selegoodsearch">
           <option value="">请选择商品</option>
           <option
-            v-for="(goodsitem,index) in searchgoodslist"
+            v-for="goodsitem in searchgoodslist"
+            :key="goodsitem.productSId"
             :value="goodsitem.productSId"
           >{{goodsitem.productSName}}</option>
         </select>
@@ -105,10 +109,10 @@
       <el-table-column prop="type" label="批次类型" width="90">
         <template slot-scope="scope">{{scope.row.type==1?"单码":"双码"}}</template>
       </el-table-column>
-      <el-table-column prop="barActivityName" label="消费者活动" width="186">
+      <el-table-column prop="qrActivityName" label="消费者活动" width="186">
         <template
           slot-scope="scope"
-        >{{scope.row.barActivityName==null?"未关联消费者活动":scope.row.barActivityName}}</template>
+        >{{scope.row.qrActivityName==null?"未关联消费者活动":scope.row.qrActivityName}}</template>
       </el-table-column>
       <el-table-column prop="qrStatus" label="消费者状态" width="120">
         <template slot-scope="scope">
@@ -172,7 +176,7 @@
       <div class="tab">
         <div class="header">
           <span>码详情</span>
-          <img @click="exit" src="@/assets/no.png">
+          <img @click="exit" src="../../../assets/no.png">
         </div>
         <ul>
           <li><div style="width:128px; border:1px solid #555;">消费者码</div><div style="width:128px;border:1px solid #555;">扫码时间</div><div style="width:128px;border:1px solid #555;">用户姓名</div><div style="width:128px;border:1px solid #555;">用户账号</div><div style="width:53px;border:1px solid #555;">区域</div><div style="width:128px;border:1px solid #555;">奖项</div><div style="width:53px;border:1px solid #555;">状态</div></li>
@@ -189,7 +193,7 @@
       <div class="scroll">
         <h3>
           <span>关联</span>
-          <img src="@/assets/no.png" @click="exit">
+          <img src="../../../assets/no.png" @click="exit">
         </h3>
         <div class="main">
           <span>关联数量：</span>
@@ -335,7 +339,7 @@ export default {
     //详情列表
     detailslist() {
       Axios({
-        url: "api/qrcode/codeManager/batchDetail",
+        url: "qrcode/codeManager/batchDetail",
         method: "get",
         params: {
           batchId: this.batchId,
@@ -461,7 +465,7 @@ export default {
       });
     },
     searchselectthree(){
-      console.log(1)
+      console.log(this.searchgoodsclasslist)
        Axios({
         url: "api/productsManager/getProductsForCatId",
         method: "get",
@@ -487,7 +491,7 @@ export default {
       // console.log(this.SAactivity);
       // console.log(this.selectgood);
       Axios({
-        url: "api/qrcode/codeManager/joinActivity",
+        url: "qrcode/codeManager/joinActivity",
         method: "get",
         params: {
           qrIds: this.row.qrId,
@@ -546,7 +550,7 @@ export default {
     withdraw(row) {
       //撤回
       Axios({
-        url: "api/qrcode/codeManager/recallCode",
+        url: "qrcode/codeManager/recallCode",
         method: "get",
         params: {
           qrIds: row.qrId

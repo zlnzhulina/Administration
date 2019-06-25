@@ -34,9 +34,9 @@
         <el-table-column prop="goodsid" label="用户账号" width="180px"></el-table-column>
         <el-table-column prop="goodsname" label="邮寄地址" width="300px"></el-table-column>
         <el-table-column prop="goodsclass" label="奖品名称" width="180px"></el-table-column>
-        <el-table-column prop="data" label="状态"></el-table-column>
+        <el-table-column prop="type" label="状态"></el-table-column>
         <el-table-column prop="data" label="操作"></el-table-column>
-        <el-table-column prop="data" label="备注" width="334px"></el-table-column>
+        <el-table-column prop="pass" label="备注" width="334px"></el-table-column>
       </el-table>
     </div>
   </div>
@@ -46,7 +46,18 @@
 export default {
   // 中奖信息
   data() {
-    return {};
+    return {
+      tabledata:[
+        {
+          goodsid:"",
+          goodsname:"",
+          goodsclass:"",
+          type:"",
+          data:"",
+          pass:"",
+        }
+      ],
+    };
   },
   methods: {
     waitdeliver() {}

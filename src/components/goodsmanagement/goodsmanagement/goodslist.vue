@@ -3,7 +3,7 @@
     <div class="header">
       <span class="add" @click="addgoods">添加商品</span>
       <span class="add" @click="deleteall">批量删除</span>
-      <input type="text" placeholder="账号 " v-model="searchId"><img @click="searchid" src="@/assets/sousuo.png"/>
+      <input type="text" placeholder="账号 " v-model="searchId"><img @click="searchid" src="../../../assets/sousuo.png"/>
     </div>
 
     <div class="search">

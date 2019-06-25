@@ -62,7 +62,7 @@
             <img v-if="item.imageUrl" :src="item.imageUrl" class="avatar">
             <div class="removeimg" v-show="item.showremovecanvas">
               <i @click="removedetailsimg(index)">
-                <img src="@/assets/deleteIcon.png">
+                <img src="../../../../assets/deleteIcon.png">
               </i>
             </div>
           </div>

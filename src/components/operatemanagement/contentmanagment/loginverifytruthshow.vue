@@ -63,7 +63,7 @@
               >
                 <img v-if="imgurl" :src="imgurl" style="width:144px;display:block">
                 <i v-else>
-                  <img src="@/assets/tianjia.png">
+                  <img src="../../../assets/tianjia.png">
                 </i>
               </el-upload>
             </div>

@@ -56,7 +56,7 @@
               >
                 <img v-if="imageUrl" :src="imageUrl" style="width:144px;display:block">
                 <i v-else>
-                  <img src="@/assets/tianjia.png">
+                  <img src="../../../assets/tianjia.png">
                 </i>
               </el-upload>
             </div>
@@ -77,8 +77,8 @@ export default {
   //商品列表
   data() {
     return {
-      dui: require("@/assets/yes.png"),
-      cuo: require("@/assets/no.png"),
+      // dui: require("../../../assets/yes.png"),
+      // cuo: require("../../../assets/no.png"),
       delcanvas: false,
       editcanvas: false,
       name: "",

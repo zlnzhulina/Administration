@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="search">
-      <input type="text" placeholder="请输入关键字搜索" v-module="searchval">
+      <input type="text" placeholder="请输入关键字搜索" v-model="searchval">
     </div>
     <div class="tab">
       <el-table
@@ -27,7 +27,7 @@
 
         <el-table-column fixed="right" label="设置岗位权限" width="124">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="set(scope.$index,scope.row)">设置</el-button>
+            <el-button type="text" size="small" @click="set(scope.row)">设置</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -36,47 +36,38 @@
       <div class="setwrap">
         <p>
           <span>网站管理员权限设置</span>
-          <img src="@/assets/no.png">
+          <img src="../../../assets/no.png" @click="exit">
         </p>
         <div class="information">
           <span>部门名称：</span>
-          <p></p>
+          <p>{{row.departmentName}}</p>
         </div>
         <div class="information">
           <span>岗位名称：</span>
-          <p></p>
+          <p>{{row.postName}}</p>
         </div>
         <div class="information">
           <span>岗位权限：</span>
           <div class="selectpostpower">
-            <div class="header">
-
-              <el-checkbox
-                :indeterminate="isIndeterminate"
-                v-model="systemmanagementcheckAll"
-                @change="handleCheckAllChange"
-              >运营管理</el-checkbox>
-              <div style="margin: 15px 0;"></div>
-              <el-checkbox-group v-model="checkedsystemmanagement" @change="handleCheckedsystemmanagementChange">
-                <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-              </el-checkbox-group>
-              
-            </div>
-            <div></div>
-            <div class="header">
-              <span>网点用户管理</span>
-            </div>
-            <div class="header">
-              <span>二维码管理</span>
-            </div>
-            <div class="header">
-              <span>商品管理</span>
-            </div>
-            <div class="header">
-              <span>统计</span>
-            </div>
-            <div class="header">
-              <span>系统管理</span>
+            <div class="header" v-for="(firstlist,index) in menuList">
+              <el-checkbox v-model="firstlist.checked">
+                <span>{{firstlist.menuName}}</span>
+              </el-checkbox>
+              <div class="selectsecondmenu" v-for="(secondlist,index) in firstlist.secondMenuList">
+                <el-checkbox style="margin-left:13px;" @change="operatemanagementall">
+                  <span style="padding-left:13px;">{{secondlist.menuName}}</span>
+                </el-checkbox>
+                <div class="threemenuwrap">
+                  <div
+                    class="selectthreemenu"
+                    v-for="(threelist,index) in secondlist.secondMenuList"
+                  >
+                    <el-checkbox @change="operatemanagementall">
+                      <span>{{threelist.menuName}}</span>
+                    </el-checkbox>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -97,291 +88,329 @@ export default {
   data() {
     return {
       searchval: "",
-    cities:["1","2","3"],
+      cities: ["1", "2", "3"],
       canvas: false,
-       data: {
-          menuList: [
+      row: {},
+      menuList: [
+        {
+          menuId: "MENU0001",
+          menuName: "首页",
+          superMenuId: null,
+          url: null,
+          secondMenuList: [],
+          checked: false
+        },
+        {
+          menuId: "MENU0002",
+          menuName: "运营管理",
+          superMenuId: null,
+          url: null,
+          checked: false,
+          secondMenuList: [
             {
-              menuId: "MENU0001",
-              menuName: "首页",
-              superMenuId: null,
+              menuId: "MENU00021",
+              menuName: "活动管理",
+              superMenuId: "MENU0002",
               url: null,
-              secondMenuList: []
-            },
-            {
-              menuId: "MENU0002",
-              menuName: "运营管理",
-              superMenuId: null,
-              url: null,
+              checked: false,
               secondMenuList: [
                 {
-                  menuId: "MENU00021",
-                  menuName: "活动管理",
-                  superMenuId: "MENU0002",
+                  menuId: "MENU000211",
+                  menuName: "活动列表",
+                  superMenuId: "MENU00021",
                   url: null,
-                  secondMenuList: [
-                    {
-                      menuId: "MENU000211",
-                      menuName: "活动列表",
-                      superMenuId: "MENU00021",
-                      url: null,
-                      secondMenuList: null
-                    }
-                  ]
+                  secondMenuList: null,
+                  checked: false
+                }
+              ]
+            },
+            {
+              menuId: "MENU00022",
+              menuName: "奖品管理",
+              superMenuId: "MENU0002",
+              url: null,
+              checked: false,
+              secondMenuList: [
+                {
+                  menuId: "MENU000221",
+                  menuName: "奖品列表",
+                  superMenuId: "MENU00022",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
                 },
                 {
-                  menuId: "MENU00022",
-                  menuName: "奖品管理",
-                  superMenuId: "MENU0002",
+                  menuId: "MENU000222",
+                  menuName: "奖品分类",
+                  superMenuId: "MENU00022",
                   url: null,
-                  secondMenuList: [
-                    {
-                      menuId: "MENU000221",
-                      menuName: "奖品列表",
-                      superMenuId: "MENU00022",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000222",
-                      menuName: "奖品分类",
-                      superMenuId: "MENU00022",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000223",
-                      menuName: "奖品参数",
-                      superMenuId: "MENU00022",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000224",
-                      menuName: "中奖信息",
-                      superMenuId: "MENU00022",
-                      url: null,
-                      secondMenuList: null
-                    }
-                  ]
+                  checked: false,
+                  secondMenuList: null
                 },
                 {
-                  menuId: "MENU00023",
-                  menuName: "内容管理",
-                  superMenuId: "MENU0002",
+                  menuId: "MENU000223",
+                  menuName: "奖品参数",
+                  superMenuId: "MENU00022",
                   url: null,
-                  secondMenuList: [
-                    {
-                      menuId: "MENU000231",
-                      menuName: "首页banner图",
-                      superMenuId: "MENU00023",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000232",
-                      menuName: "首页扫码入口图",
-                      superMenuId: "MENU00023",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000233",
-                      menuName: "首页活动咨询",
-                      superMenuId: "MENU00023",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000234",
-                      menuName: "登录页",
-                      superMenuId: "MENU00023",
-                      url: null,
-                      secondMenuList: null
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              menuId: "MENU0003",
-              menuName: "经销商用户管理",
-              superMenuId: null,
-              url: null,
-              secondMenuList: [
-                {
-                  menuId: "MENU00031",
-                  menuName: "网点用户管理",
-                  superMenuId: "MENU0003",
-                  url: null,
-                  secondMenuList: [
-                    {
-                      menuId: "MENU000311",
-                      menuName: "用户列表",
-                      superMenuId: "MENU00031",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000312",
-                      menuName: "网点列表",
-                      superMenuId: "MENU00031",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000313",
-                      menuName: "批量维护",
-                      superMenuId: "MENU00031",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000314",
-                      menuName: "职位管理",
-                      superMenuId: "MENU00031",
-                      url: null,
-                      secondMenuList: null
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              menuId: "MENU0004",
-              menuName: "二维码管理",
-              superMenuId: null,
-              url: null,
-              secondMenuList: [
-                {
-                  menuId: "MENU00041",
-                  menuName: "二维码管理",
-                  superMenuId: "MENU0004",
-                  url: null,
-                  secondMenuList: [
-                    {
-                      menuId: "MENU000411",
-                      menuName: "二维码批次",
-                      superMenuId: "MENU00041",
-                      url: null,
-                      secondMenuList: null
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              menuId: "MENU0005",
-              menuName: "商品管理",
-              superMenuId: null,
-              url: null,
-              secondMenuList: [
-                {
-                  menuId: "MENU00051",
-                  menuName: "商品管理",
-                  superMenuId: "MENU0005",
-                  url: null,
-                  secondMenuList: [
-                    {
-                      menuId: "MENU000511",
-                      menuName: "商品列表",
-                      superMenuId: "MENU00051",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000512",
-                      menuName: "商品分类管理",
-                      superMenuId: "MENU00051",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000513",
-                      menuName: "商品参数管理",
-                      superMenuId: "MENU00051",
-                      url: null,
-                      secondMenuList: null
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              menuId: "MENU0006",
-              menuName: "统计",
-              superMenuId: null,
-              url: null,
-              secondMenuList: []
-            },
-            {
-              menuId: "MENU0007",
-              menuName: "系统管理",
-              superMenuId: null,
-              url: null,
-              secondMenuList: [
-                {
-                  menuId: "MENU00071",
-                  menuName: "员工管理",
-                  superMenuId: "MENU0007",
-                  url: null,
-                  secondMenuList: [
-                    {
-                      menuId: "MENU000711",
-                      menuName: "员工列表",
-                      superMenuId: "MENU00071",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000712",
-                      menuName: "岗位管理",
-                      superMenuId: "MENU00071",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000713",
-                      menuName: "部门管理",
-                      superMenuId: "MENU00071",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000714",
-                      menuName: "岗位权限",
-                      superMenuId: "MENU00071",
-                      url: null,
-                      secondMenuList: null
-                    },
-                    {
-                      menuId: "MENU000715",
-                      menuName: "密码管理",
-                      superMenuId: "MENU00071",
-                      url: null,
-                      secondMenuList: null
-                    }
-                  ]
+                  checked: false,
+                  secondMenuList: null
                 },
                 {
-                  menuId: "MENU00072",
-                  menuName: "日志查询",
-                  superMenuId: "MENU0007",
+                  menuId: "MENU000224",
+                  menuName: "中奖信息",
+                  superMenuId: "MENU00022",
                   url: null,
-                  secondMenuList: [
-                    {
-                      menuId: "MENU000721",
-                      menuName: "操作日志",
-                      superMenuId: "MENU00072",
-                      url: null,
-                      secondMenuList: null
-                    }
-                  ]
+                  checked: false,
+                  secondMenuList: null
+                }
+              ]
+            },
+            {
+              menuId: "MENU00023",
+              menuName: "内容管理",
+              superMenuId: "MENU0002",
+              url: null,
+              checked: false,
+              secondMenuList: [
+                {
+                  menuId: "MENU000231",
+                  menuName: "首页banner图",
+                  superMenuId: "MENU00023",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000232",
+                  menuName: "首页扫码入口图",
+                  superMenuId: "MENU00023",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000233",
+                  menuName: "首页活动咨询",
+                  superMenuId: "MENU00023",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000234",
+                  menuName: "登录页",
+                  superMenuId: "MENU00023",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
                 }
               ]
             }
           ]
         },
+        {
+          menuId: "MENU0003",
+          menuName: "经销商用户管理",
+          superMenuId: null,
+          url: null,
+          checked: false,
+          secondMenuList: [
+            {
+              menuId: "MENU00031",
+              menuName: "网点用户管理",
+              superMenuId: "MENU0003",
+              url: null,
+              checked: false,
+              secondMenuList: [
+                {
+                  menuId: "MENU000311",
+                  menuName: "用户列表",
+                  superMenuId: "MENU00031",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000312",
+                  menuName: "网点列表",
+                  superMenuId: "MENU00031",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000313",
+                  menuName: "批量维护",
+                  superMenuId: "MENU00031",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000314",
+                  menuName: "职位管理",
+                  superMenuId: "MENU00031",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          menuId: "MENU0004",
+          menuName: "二维码管理",
+          superMenuId: null,
+          url: null,
+          checked: false,
+          secondMenuList: [
+            {
+              menuId: "MENU00041",
+              menuName: "二维码管理",
+              superMenuId: "MENU0004",
+              url: null,
+              checked: false,
+              secondMenuList: [
+                {
+                  menuId: "MENU000411",
+                  menuName: "二维码批次",
+                  superMenuId: "MENU00041",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          menuId: "MENU0005",
+          menuName: "商品管理",
+          superMenuId: null,
+          url: null,
+          checked: false,
+          secondMenuList: [
+            {
+              menuId: "MENU00051",
+              menuName: "商品管理",
+              superMenuId: "MENU0005",
+              url: null,
+              checked: false,
+              secondMenuList: [
+                {
+                  menuId: "MENU000511",
+                  menuName: "商品列表",
+                  superMenuId: "MENU00051",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000512",
+                  menuName: "商品分类管理",
+                  superMenuId: "MENU00051",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000513",
+                  menuName: "商品参数管理",
+                  superMenuId: "MENU00051",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          menuId: "MENU0006",
+          menuName: "统计",
+          superMenuId: null,
+          url: null,
+          checked: false,
+          secondMenuList: []
+        },
+        {
+          menuId: "MENU0007",
+          menuName: "系统管理",
+          superMenuId: null,
+          url: null,
+          checked: false,
+          secondMenuList: [
+            {
+              menuId: "MENU00071",
+              menuName: "员工管理",
+              superMenuId: "MENU0007",
+              url: null,
+              checked: false,
+              secondMenuList: [
+                {
+                  menuId: "MENU000711",
+                  menuName: "员工列表",
+                  superMenuId: "MENU00071",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000712",
+                  menuName: "岗位管理",
+                  superMenuId: "MENU00071",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000713",
+                  menuName: "部门管理",
+                  superMenuId: "MENU00071",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000714",
+                  menuName: "岗位权限",
+                  superMenuId: "MENU00071",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                },
+                {
+                  menuId: "MENU000715",
+                  menuName: "密码管理",
+                  superMenuId: "MENU00071",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                }
+              ]
+            },
+            {
+              menuId: "MENU00072",
+              menuName: "日志查询",
+              superMenuId: "MENU0007",
+              url: null,
+              checked: false,
+              secondMenuList: [
+                {
+                  menuId: "MENU000721",
+                  menuName: "操作日志",
+                  superMenuId: "MENU00072",
+                  url: null,
+                  checked: false,
+                  secondMenuList: null
+                }
+              ]
+            }
+          ]
+        }
+      ],
+
       jurisdictionData: [
         {
           department: "研发部",
@@ -392,11 +421,10 @@ export default {
       selectjurisdictionclass: 3,
       designcheckAll: false,
       checkeddesign: [],
-      design: ["网站设计", "模块管理", "微信设置"],
       isIndeterminate: true,
       //全选
-      systemmanagementcheckAll:[],
-       checkedsystemmanagement:[],
+      systemmanagementcheckAll: [],
+      checkedsystemmanagement: []
     };
   },
   created() {
@@ -422,15 +450,16 @@ export default {
         for (var i = 0; i < this.jurisdictionData.length; i++) {}
       });
     },
-    set: function(index, row) {
+    set: function(row) {
       this.canvas = true;
+      console.log(row);
+      this.row = row;
     },
-    designAllChange: function(val) {
-      this.checkeddesign = val ? design : [];
-      this.isIndeterminate = false;
-    },
-    handleCheckedsystemmanagementChange(value) {
-     console.log(value)
+
+    operatemanagementall() {},
+    //选择权限
+    firstchange(i) {
+      console.log(i);
     },
     sure: function() {
       this.canvas = false;
@@ -486,11 +515,13 @@ li {
     z-index: 111;
     .setwrap {
       width: 802px;
-      height: auto;
+      height: 792px;
       position: absolute;
       left: 50%;
+      overflow: scroll;
       margin-left: -401px;
-      background: rgba(248, 241, 241, 1);
+      border: 1px solid #555;
+      background: #fff;
       z-index: 9999;
       p {
         width: 100%;
@@ -532,13 +563,45 @@ li {
           border: 1px solid #6f6f6f;
           .header {
             width: 100%;
-            height: 32px;
             background: #efefef;
             line-height: 32px;
-            span {
-              padding-left: 13px;
+            // span {
+            //   padding-left: 13px;
+            // }
+            .selectsecondmenu {
+              width: 100%;
+              height: auto;
+              .threemenuwrap {
+                width: 94%;
+                margin: 0 auto;
+                height: auto;
+                display: flex;
+                border: 1px solid #555;
+                .selectthreemenu {
+                  margin-left: 13px;
+
+                  .menu {
+                    display: block;
+                    padding: 3px 6px 3px;
+                  }
+                }
+              }
             }
           }
+        }
+      }
+      .but {
+        width: 40%;
+        height: 40px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-around;
+        button {
+          width: 100px;
+          height: 36px;
+          border: none;
+          background: #1abc9c;
+          color: #fff;
         }
       }
     }

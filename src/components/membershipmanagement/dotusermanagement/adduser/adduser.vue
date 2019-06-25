@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <h3>
-      <span>用户维护>{{flag?"编辑用户":"添加用户"}}</span>
+      <span>用户维护>{{flag==1?"编辑用户":"添加用户"}}</span>
     </h3>
     <ul>
       <li>
@@ -22,10 +22,10 @@
         <el-select v-model="user.networkId" placeholder="请选择所属网点">
           <el-option
             v-for="item in initNetwork"
-            :key="item.networkName"
+            :key="item.networkId"
             :label="item.networkName"
             :value="item.networkId"
-          ></el-option>
+          > </el-option>
         </el-select>
       </li>
       <li>
@@ -74,7 +74,7 @@ export default {
     init() {
       console.log(this.$route.query);
       if (this.$route.query.flag == 1) {
-        this.flag = true;
+        this.flag = this.$route.query.flag;
         this.user.userCatId = this.$route.query.networkParm.userCatId;
         this.user.networkId = this.$route.query.networkParm.networkId;
         this.user.name = this.$route.query.networkParm.name;
@@ -84,54 +84,78 @@ export default {
     },
     addUser: function() {
       console.log(this.user);
-      if (this.flag) {
+      if (this.$route.query.flag) {
         //更改员工信息
-        Axios({
-          method: "post",
-          url: "api/networkUserManager/editUser",
-          data: JSON.stringify(this.user),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }).then(data => {
-          if (data.data.code == "0") {
-            this.$message({
-              message: data.data.msg,
-              type: "success"
-            });
-            this.$router.back();
-          }
-          if (data.data.code == "-1") {
-            this.$message({
-              message: data.data.msg,
-              type: "error"
-            });
-          }
-        });
-      } else {
-        //添加员工信息
-        if (!/^1(3|4|5|7|8)\d{9}$/.test(user.phoneNumber)) {
+        if (!/^1(3|4|5|7|8)\d{9}$/.test(this.user.phoneNumber)) {
           this.$message({
             message: "手机号填写有误，请重新填写",
             type: "error"
           });
-        } else if (user.userCatId == "") {
+        } else if (this.user.userCatId == "") {
           this.$message({
             message: "请选择用户职位",
             type: "error"
           });
-        } else if ((user.networkId = "")) {
+        } else if (!this.user.networkId) {
           this.$message({
             message: "请选择所属网点",
             type: "error"
           });
-        } else if (user.name == "") {
+        } else if (this.user.name == "") {
           //
           this.$message({
             message: "请填写用户名称",
             type: "error"
           });
         } else {
+          Axios({
+            method: "post",
+            url: "api/networkUserManager/editUser",
+            data: JSON.stringify(this.user),
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }).then(data => {
+            if (data.data.code == "0") {
+              this.$message({
+                message: data.data.msg,
+                type: "success"
+              });
+              this.$router.back();
+            }
+            if (data.data.code == "-1") {
+              this.$message({
+                message: data.data.msg,
+                type: "error"
+              });
+            }
+          });
+        }
+      } else {
+        //添加员工信息
+        if (!/^1(3|4|5|7|8)\d{9}$/.test(this.user.phoneNumber)) {
+          this.$message({
+            message: "手机号填写有误，请重新填写",
+            type: "error"
+          });
+        } else if (this.user.userCatId == "") {
+          this.$message({
+            message: "请选择用户职位",
+            type: "error"
+          });
+        } else if (!this.user.networkId) {
+          this.$message({
+            message: "请选择所属网点",
+            type: "error"
+          });
+        } else if (this.user.name == "") {
+          //
+          this.$message({
+            message: "请填写用户名称",
+            type: "error"
+          });
+        } else {
+          console.log(JSON.stringify(this.user));
           Axios({
             method: "post",
             url: "api/networkUserManager/addUser",
@@ -162,10 +186,11 @@ export default {
         method: "get",
         url: "api/networkUserManager/initUserCatAndNetworkList"
       }).then(data => {
-        console.log(this.initUserCat);
+        
         this.initNetwork = data.data.data.networkList;
         this.initUserCat = data.data.data.userCatList;
-        console.log(this.initUserCat);
+        console.log(this.initNetwork);
+        console.log(this.userCatList)
       });
     }
   }

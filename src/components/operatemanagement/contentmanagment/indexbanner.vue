@@ -60,7 +60,7 @@
               >
                 <img v-if="imageUrl" :src="imageUrl" style="width:144px;display:block">
                 <i v-else>
-                  <img src="@/assets/tianjia.png">
+                  <img src="../../../assets/tianjia.png">
                 </i>
               </el-upload>
             </div>
@@ -95,7 +95,7 @@
               >
                 <img v-if="imageUrl" :src="imageUrl" style="width:144px;display:block">
                 <i v-else>
-                  <img src="@/assets/tianjia.png">
+                  <img src="../../../assets/tianjia.png">
                 </i>
               </el-upload>
             </div>
@@ -123,8 +123,8 @@ export default {
       link: "",
       //添加图片上传路径
       imgurl: "",
-      dui: require("@/assets/yes.png"),
-      cuo: require("@/assets/no.png"),
+      dui: require("../../../assets/yes.png"),
+      cuo: require("../../../assets/no.png"),
       delcanvas: false,
       addbannercanvas: false,
       editbannercanvas: false,
@@ -132,7 +132,7 @@ export default {
         {
           index: 1,
           name: "name",
-          showphoto: require("@/assets/welcome.png"),
+          showphoto: require("../../../assets/welcome.png"),
           alink: "https:www.baidu.com"
         }
       ]

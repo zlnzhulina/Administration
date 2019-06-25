@@ -49,6 +49,15 @@ module.exports = {
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
         }
       },
+      //图片转为64
+      //       {
+      //         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+      //         loader: 'url-loader',
+      //         options: {
+      //           limit: 1024,//单位为b  1024实际大小为1kb 超过1kb的图片将不进行base64转换
+      //           name: utils.assetsPath('img/[name].[hash:7].[ext]')
+      //         }
+      // },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
         loader: 'url-loader',

@@ -69,9 +69,9 @@ export default {
       }).then(data => {
         console.log(data);
         this.tableData = data.data.data.activityPage.records;
-        this.totalCount = data.data.data.batchPage.total;
-        this.pagesize = data.data.data.batchPage.size;
-        this.currentPage = data.data.data.batchPage.current;
+        this.totalCount = data.data.data.activityPage.total;
+        this.pagesize = data.data.data.activityPage.size;
+        this.currentPage = data.data.data.activityPage.current;
       });
     },
     createactivity: function() {

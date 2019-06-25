@@ -4,12 +4,12 @@
       <h2>渠道分销激励系统管理</h2>
       <form>
         <label>
-          <img src="@/assets/zhanghao.png">
+          <img src="../../assets/zhanghao.png">
           账号：
           <input type="tel" pattern="请输入账号" v-model="username">
         </label>
         <label>
-          <img src="@/assets/mima.png">
+          <img src="../../assets/mima.png">
           密码：
           <input type="password" pattern="请输入密码" v-model="userpwd">
         </label>

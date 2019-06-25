@@ -54,7 +54,7 @@ export default {
     create(){
       console.log(1)
         Axios({
-            url:"api/qrcode/codeManager/createQrCode",
+            url:"qrcode/codeManager/createQrCode",
             method:"post",
             data:{
                 batchName:this.batchname,

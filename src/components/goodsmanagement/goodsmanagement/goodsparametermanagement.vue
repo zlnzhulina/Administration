@@ -76,7 +76,7 @@
       <header>
         <span>管理值</span>
         <i>
-          <img src="@/assets/no.png" @click="exit">
+          <img src="../../../assets/no.png" @click="exit">
         </i>
       </header>
       <div class="title">

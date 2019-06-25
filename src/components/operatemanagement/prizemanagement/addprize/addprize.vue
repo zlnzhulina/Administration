@@ -78,7 +78,7 @@
             >
               <img v-if="imageUrl" :src="imageUrl" style="width:144px;display:block">
               <i v-else>
-                <img src="@/assets/tianjia.png">
+                <img src="../../../../assets/tianjia.png">
               </i>
             </el-upload>
           </div>
@@ -94,7 +94,7 @@
             >
               <img v-if="imageUrl" :src="imageUrl" style="width:144px;display:block">
               <i v-else>
-                <img src="@/assets/tianjia.png">
+                <img src="../../../../assets/tianjia.png">
               </i>
             </el-upload>
           </div>
@@ -165,6 +165,11 @@ export default {
       lpk: false,
       imageUrl:"",
       imgurl:"",
+      tabledata:[{
+        goodsid:"",
+        goodsname:"",
+        goodsclass:"",
+      }]
     }
   },
   methods:{

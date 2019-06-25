@@ -51,8 +51,8 @@ export default {
   //首页活动咨询
   data() {
     return {
-      dui: require("@/assets/yes.png"),
-      cuo: require("@/assets/no.png"),
+      // dui: require("../../../assets/yes.png"),
+      // cuo: require("../../../assets/no.png"),
       newsId: "",
       tabledata: [
         {

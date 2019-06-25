@@ -104,7 +104,7 @@
       <div class="scroll">
         <h3>
           <span>关联</span>
-          <img src="@/assets/no.png" @click="exit">
+          <img src="../../../assets/no.png" @click="exit">
         </h3>
         <div class="main">
           <span>关联数量：</span>

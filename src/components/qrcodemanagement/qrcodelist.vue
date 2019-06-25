@@ -91,7 +91,7 @@
     <!-- ----------二维码批次关联活动和商品 ---------------->
     <div class="relationcanvastwowrap" v-if="relationcanvas"></div>
     <div class="relationcanvastwo" v-if="relationcanvas">
-      <img src="@/assets/no.png" @click="exit">
+      <img src="../../assets/no.png" @click="exit">
       <div class="relationSA" style="width:100%;">
         <div class="membershow">
           <span>批次编号：</span>
@@ -256,7 +256,7 @@ export default {
     qrcodelist() {
       Axios({
         //url:"http://192.168.1.128:8101/codeManager/batchList",
-        url: "api/qrcode/codeManager/batchList",
+        url: "qrcode/codeManager/batchList",
         method: "get",
         params: {
           pageNo: this.currentPage,
@@ -303,7 +303,7 @@ export default {
     //下载批次二维码图片
     download(row) {
       Axios({
-        url: "api/qrcode/codeManager/batchDownloadFileToZIP",
+        url: "qrcode/codeManager/batchDownloadFileToZIP",
         method: "get",
         params: {
           batchId: row.batchId
@@ -314,7 +314,7 @@ export default {
           console.log(row.batchId);
           this.timer = setInterval(() => {
             Axios({
-              url: "api/qrcode/codeManager/validationZIP",
+              url: "qrcode/codeManager/validationZIP",
               method: "get",
               params: {
                 batchId: row.batchId
@@ -326,7 +326,7 @@ export default {
                 clearInterval(this.timer);
 
                 window.location.href =
-                  "api/qrcode/codeManager/downloadZIP?batchId=" + row.batchId;
+                  "qrcode/codeManager/downloadZIP?batchId=" + row.batchId;
               }
             });
           }, 3000);
@@ -341,7 +341,7 @@ export default {
       this.row = row;
       this.relationcanvas = true;
       Axios({
-        url: "api/qrcode/codeManager/beforeJoinActivity",
+        url: "qrcode/codeManager/beforeJoinActivity",
         method: "get",
         params: {
           batchId: row.batchId
@@ -429,7 +429,7 @@ export default {
         this.relationarr[i].productsName
       );
       Axios({
-        url: "api/qrcode/codeManager/joinSAActivity",
+        url: "qrcode/codeManager/joinSAActivity",
         method: "get",
         params: {
           activityId: this.relationarr[i].activity.activityId,
@@ -458,7 +458,7 @@ export default {
     residueok() {
       // console.log(this.SAactivity.activityId,this.SAactivity.activityName,this.selectgood.productCatId,this.selectgood.productSName,this.residuenum,this.row.batchId)
       Axios({
-        url: "api/qrcode/codeManager/joinSAActivity",
+        url: "qrcode/codeManager/joinSAActivity",
         method: "get",
         params: {
           activityId: this.SAactivity.activityId,
@@ -489,7 +489,7 @@ export default {
       })
         .then(() => {
           Axios({
-            url: "api/qrcode/codeManager/delBatch",
+            url: "qrcode/codeManager/delBatch",
             method: "get",
             params: {
               batchIds: row.batchId
@@ -520,7 +520,7 @@ export default {
     //确认撤回
     withdrawok() {
       Axios({
-        url: "api/qrcode/codeManager/recallCodeFromBatch",
+        url: "qrcode/codeManager/recallCodeFromBatch",
         method: "get",
         params: {
           batchId: this.row.batchId,

@@ -177,8 +177,8 @@
               <el-form :model="activity" label-width="130px">
                 <el-form-item label="消费者码状态条件">
                   <el-radio-group v-model="usercodetype">
-                    <el-radio value="-1" label="-1">否</el-radio>
-                    <el-radio value="1" label="1">是</el-radio>
+                    <el-radio label="-1">否</el-radio>
+                    <el-radio label="1">是</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item v-show="usercodetype == -1 ? false:true">
@@ -203,7 +203,7 @@
                 </el-form-item>
                 <el-form-item label="白名单">
                   <el-radio-group v-model="activity.isWhiteList">
-                    <el-radio value="0" label="0">否</el-radio>
+                    <el-radio value="-1" label="-1">否</el-radio>
                     <el-radio value="1" label="1">是</el-radio>
                   </el-radio-group>
                 </el-form-item>
@@ -429,7 +429,7 @@
                     <el-table-column fixed="right" label="操作" width="50">
                       <template slot-scope="scope">
                         <el-button
-                          @click.native.prevent="deleteRow(scope.$index, tableData4)"
+                          @click="deleteRow(scope.$index,scope.row)"
                           type="text"
                           size="small"
                         >移除</el-button>
@@ -449,10 +449,12 @@
         </h3>
         <ul>
           <li>
-            <span>活动名称：</span>{{activity.activityName}}
+            <span>活动名称：</span>
+            {{activity.activityName}}
           </li>
           <li>
-            <span>活动时效：</span>{{activity.startTime}}--{{activity.endTime}}
+            <span>活动时效：</span>
+            {{activity.startTime}}--{{activity.endTime}}
           </li>
         </ul>
 
@@ -468,7 +470,7 @@
 
           <el-table-column prop="goodsid" label="奖品名称" width="335px"></el-table-column>
           <el-table-column prop="goodsname" label="奖品分类"></el-table-column>
-        </el-table> -->
+        </el-table>-->
         <div class="btn">
           <span @click="exit">暂不关联</span>
           <span style="background:#1abc9c;color:#fff;" @click="code">关联相关码</span>
@@ -483,17 +485,16 @@ import Axios from "axios";
 export default {
   created() {
     this.goodclasslist();
-    console.log(this.$route.query);
-    this.flag=this.$route.query.flag;
-    this.activity.activityName=this.$route.query.rowdata.activityName;
-    this.imagebgUrl=this.$route.query.rowdata.backgroundUrl;
-    this.activity.endTime=this.$route.query.rowdata.endTime;
-    this.activity.startTime=this.$route.query.rowdata.startTime;
-    
+    // console.log(this.$route.query);
+    // this.flag=this.$route.query.flag;
+    // this.activity.activityName=this.$route.query.rowdata.activityName;
+    // this.imagebgUrl=this.$route.query.rowdata.backgroundUrl;
+    // this.activity.endTime=this.$route.query.rowdata.endTime;
+    // this.activity.startTime=this.$route.query.rowdata.startTime;
   },
   data() {
     return {
-      flag:"",
+      flag: "",
       one: true,
       two: false,
       three: false,
@@ -604,11 +605,9 @@ export default {
       //要提交的奖品列表
       list: [],
       //奖项列表
-      prizedata: [
-        
-      ],
+      prizedata: [],
       //创建成功弹窗
-      createsuccesscanvas: false,
+      createsuccesscanvas: false
     };
   },
   methods: {
@@ -651,7 +650,7 @@ export default {
         this.two = true;
         this.three = false;
       }
-      // console.log(this.activity);
+      //  console.log(this.activity);
     },
     nexttwo() {
       // console.log(this.activity);
@@ -748,7 +747,7 @@ export default {
             this.prizedata = [];
             this.activityPrizeList = [];
             this.prizeList = [];
-            console.log("添加另外商品是保存list", this.list);
+            // console.log("添加另外商品是保存list", this.list);
             //再次选择另外商品是，初始化商品id 和奖品列表
             this.$message({
               type: "success",
@@ -787,7 +786,18 @@ export default {
     },
     //添加奖项
     addprize() {
-      var lestnum = this.prizedata.length - 1;
+      if(this.prizedata.length==0){
+        this.prizedata.push({
+          priority: "",
+          prize: "微信红包",
+          prizename: "",
+          Amount: "",
+          prizenum: "",
+          setprize: "",
+          Tips: ""
+        });
+      }else{
+        var lestnum = this.prizedata.length - 1;
       if (
         this.prizedata[lestnum].prizename &&
         this.prizedata[lestnum].Amount &&
@@ -809,8 +819,16 @@ export default {
       } else {
         // console.log(lestnum);
       }
+      }
+      
 
       // console.log(this.prizedata);
+    },
+    //删除奖项
+    deleteRow(index, row) {
+      console.log(index);
+      console.log(row);
+      this.prizedata.splice(index, 1);
     },
     check(value) {
       if (value.name == "first") {
@@ -853,11 +871,11 @@ export default {
         this.prizedata = [];
         this.activityPrizeList = [];
         this.prizeList = [];
-        console.log(this.list);
-        console.log(this.activity);
+        // console.log(this.list);
+        // console.log(this.activity);
         this.createtype = "0";
       }
-      console.log(this.list)
+      // console.log(this.list)
       Axios({
         url: "api/activityManager/addActivity",
         method: "post",
@@ -866,9 +884,9 @@ export default {
           list: this.list
         }
       }).then(data => {
-        if(data.data.code==0){
+        if (data.data.code == 0) {
           //说明活动创建成功
-          this.createsuccesscanvas=true;
+          this.createsuccesscanvas = true;
           // this.$router.push("/operatemanagement");
         }
       });
@@ -932,47 +950,50 @@ export default {
     prizedata: {
       handler(val) {
         // console.log(val);
-        var index = val.length - 1;
-        if (!index == 0) {
-           var num=Math.round(
-            this.prizedata[0].prizenum / this.prizedata[index].prizenum
-          );
-           this.prizedata[index].setprize = num.toString()
-           console.log(this.prizedata)
+        if (!this.prizedata.length == 0) {
+          var index = val.length - 1;
+          if (!index == 0) {
+            var num = Math.round(
+              this.prizedata[0].prizenum / this.prizedata[index].prizenum
+            );
+            this.prizedata[index].setprize = num.toString();
+            //  console.log(this.prizedata)
+          }
         }
       },
       deep: true
-    }
-  },
-  // active(value) {},
-  usercodetype(val) {
-    if (val == -1) {
-      this.activity.isQrcodeStatus = "-1";
-    } else {
-      this.activity.isQrcodeStatus = "";
-    }
-  },
-  userdelayed(val) {
-    if (val == 0) {
-      this.activity.scanTime = "0";
-    } else {
-      this.activity.scanTime = "";
-    }
-  },
-  isbarTakeUpTime(val) {
-    if (val == 0) {
-      this.activity.barTakeUpTime = "0";
-    } else {
-      this.activity.barTakeUpTime = "";
-    }
-  },
-  isbarProtectTime(val) {
-    if (val == 0) {
-      this.activity.barProtectTime = "0";
-    } else {
-      this.activity.barProtectTime = "";
+    },
+    usercodetype(val) {
+      // console.log(val)
+      if (val == -1) {
+        this.activity.isQrcodeStatus = "-1";
+      } else {
+        this.activity.isQrcodeStatus = "";
+      }
+    },
+    userdelayed(val) {
+      if (val == 0) {
+        this.activity.scanTime = "-1";
+      } else {
+        this.activity.scanTime = "";
+      }
+    },
+    isbarTakeUpTime(val) {
+      if (val == 0) {
+        this.activity.barTakeUpTime = "-1";
+      } else {
+        this.activity.barTakeUpTime = "";
+      }
+    },
+    isbarProtectTime(val) {
+      if (val == 0) {
+        this.activity.barProtectTime = "-1";
+      } else {
+        this.activity.barProtectTime = "";
+      }
     }
   }
+  // active(value) {},
 };
 </script>
 

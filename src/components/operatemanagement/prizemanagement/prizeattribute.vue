@@ -8,10 +8,10 @@
     </h2>
     <el-table :data="tableData" stripe :header-cell-style="{background:'#ccd1e0',height:'32'}" style="width: 100%;background:#eee;">
           
-          <el-table-column prop="date" label="编号" ></el-table-column>
+          <el-table-column prop="id" label="编号" ></el-table-column>
           <el-table-column prop="name" label="分类名称" ></el-table-column>
           <el-table-column prop="address" label="参数名称" ></el-table-column>
-           <el-table-column prop="name" label="操作">
+           <el-table-column label="操作">
                <template>
                    <el-button>默认不可删除</el-button>
                </template>
@@ -25,7 +25,13 @@ export default {
   // 奖品参数
   data(){
     return {
-
+      tableData:[
+        {
+          id:"",
+          name:"",
+          address:"",
+        }
+      ]
     }
   },
   methods:{

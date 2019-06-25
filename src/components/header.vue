@@ -7,12 +7,12 @@
             </li>
         </ul>
         <ul class="search">
-            <li><img style="width:30px;margin-right:8px;" src="@/assets/wode.png"/>{{name}}</li>
+            <li><img style="width:30px;margin-right:8px;" src="../assets/wode.png"/>{{name}}</li>
             
-            <li><img src="@/assets/shouye.png" @click="first"/></li>
-            <li><img src="@/assets/zhedie.png"/></li>
-            <li><img src="@/assets/nitification.png"/></li>
-            <li><img src="@/assets/guanbi.png" @click="exit"/></li>
+            <li><img src="../assets/shouye.png" @click="first"/></li>
+            <li><img src="../assets/zhedie.png"/></li>
+            <li><img src="../assets/nitification.png"/></li>
+            <li><img src="../assets/guanbi.png" @click="exit"/></li>
         </ul>
     </div>
 </template>

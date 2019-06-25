@@ -11,26 +11,26 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      "/api/qrcode": {
+      "/qrcode": {
         
-        target: "http://192.168.2.102:8101",
+        // target: "http://192.168.2.102:8101",
         
-        // target: "http://jiefang.atscloud.cn/code",
+        target: "https://jiefang.atscloud.cn/JF_SA/code",
         
         changeOrigin: true,
         pathRewrite: {
-          "^/api/qrcode": ""
+          "^/qrcode": ""
         }
       },
       "/api":{
-         target: "http://192.168.2.102:8001",
-        //  target: "http://jiefang.atscloud.cn/sa",
+        //  target: "http://192.168.2.102:8001",
+         target: "http://jiefang.atscloud.cn/JF_SA/sa",
          
          changeOrigin: true,
          pathRewrite: {
            "^/api": ""
          },
-         timeout: 1920000,
+          timeout: 1920000,
       },
       
       
@@ -67,7 +67,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps
