@@ -114,7 +114,6 @@ export default {
       //商品参数列表
       tabledata: [],
       selectlist: [],
-
       dialogImageUrl: "",
       dialogVisible: false,
       //商品图片集合
@@ -123,10 +122,18 @@ export default {
   },
   created() {
     this.goodclasslist();
+    console.log(this.$route.query)
+    if(this.$route.query.flag=="1"){
+      this.productS.productSName=this.$route.query.data.productSName;
+      this.productS.status=this.$route.query.data.status;
+      this.productS.cityName=this.$route.query.data.cityName;
+      this.productS.productCatId=this.$route.query.data.productCatId;
+      this.productS.productImgUrl=this.$route.query.data.productImgUrl;
+    }
   },
   methods: {
     cccc(){
-      console.log(333)
+      // console.log(333)
     },
     //商品分类列表
     goodclasslist() {
@@ -143,7 +150,7 @@ export default {
     },
     //商品参数列表
     goodsparameterlist() {
-      console.log(this.threelist);
+      // console.log(this.threelist);
       this.productS.productCatId=this.threelist.productCatId;
       Axios({
         url: "api/productsManager/productParamSetList",
@@ -187,9 +194,9 @@ export default {
       // console.log(val)
        this.selectitemlist.push(val)
       //  console.log(this.selectlist);
-       console.log(this.selectlist[i]["selectedI"]);
+      //  console.log(this.selectlist[i]["selectedI"]);
        this.productParamSetSelectList.push(this.selectlist[i]["selectedI"]);
-       console.log(this.productParamSetSelectList)
+      //  console.log(this.productParamSetSelectList)
       //  console.log("iiii",this.selectlist[i].selectedI);
     //   console.log("productCatList",this.productCatList[0]);
 	  // console.log("productCatList",this.productCatList[1]);
@@ -207,7 +214,7 @@ export default {
           productParamSetSelectList: this.productParamSetSelectList,
         },
       }).then(data=>{
-        console.log(data)
+        // console.log(data)
         if(data.data.code==0){
            this.$message({
             type: 'success',
@@ -219,10 +226,10 @@ export default {
     },
 
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      // console.log(file, fileList);
     },
     handlePictureCardPreview(file) {
-      console.log(file);
+      // console.log(file);
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },

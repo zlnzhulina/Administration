@@ -67,7 +67,7 @@ export default {
           pageSize: this.pagesize,
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.tableData = data.data.data.activityPage.records;
         this.totalCount = data.data.data.activityPage.total;
         this.pagesize = data.data.data.activityPage.size;
@@ -80,7 +80,11 @@ export default {
     //查看活动详情
     details(row) {
       this.$router.push({
-        path: "/activitydetails"
+        path: "/activitydetails",
+        query:{
+          flag:1,
+          data:row,
+        }
       });
     },
     //编辑
@@ -93,7 +97,7 @@ export default {
     //分页功能
     handleSizeChange(val) {},
     handleCurrentChange(val) {
-      console.log(val);
+      // console.log(val);
       this.currentPage = val;
       this.activitylist();
     }

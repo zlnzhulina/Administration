@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query);
+      // console.log(this.$route.query);
       if (this.$route.query.flag == 1) {
         this.flag = this.$route.query.flag;
         this.user.userCatId = this.$route.query.networkParm.userCatId;
@@ -83,7 +83,7 @@ export default {
       }
     },
     addUser: function() {
-      console.log(this.user);
+      // console.log(this.user);
       if (this.$route.query.flag) {
         //更改员工信息
         if (!/^1(3|4|5|7|8)\d{9}$/.test(this.user.phoneNumber)) {
@@ -155,7 +155,7 @@ export default {
             type: "error"
           });
         } else {
-          console.log(JSON.stringify(this.user));
+          // console.log(JSON.stringify(this.user));
           Axios({
             method: "post",
             url: "api/networkUserManager/addUser",
@@ -189,8 +189,8 @@ export default {
         
         this.initNetwork = data.data.data.networkList;
         this.initUserCat = data.data.data.userCatList;
-        console.log(this.initNetwork);
-        console.log(this.userCatList)
+        // console.log(this.initNetwork);
+        // console.log(this.userCatList)
       });
     }
   }

@@ -246,7 +246,7 @@
               </el-form>
             </div>
           </el-tab-pane>
-
+          <!------------------------------------- 派奖设置 ----------------------------------------------------------->
           <el-tab-pane label="派奖设置" name="second">
             <div class="send">
               <div
@@ -259,7 +259,7 @@
                   <input
                     type="number"
                     placeholder="设置数量"
-                    style="width:98px;height:24px;border:1px solid #ccc"
+                    style="width:98px;height:24px;border:1px solid #ccc;color:#666;"
                     v-model="activity.personCount"
                   >个
                 </p>
@@ -269,18 +269,8 @@
                   <input
                     type="number"
                     placeholder="设置数量"
-                    style="width:98px;height:24px;border:1px solid #ccc"
+                    style="width:98px;height:24px;border:1px solid #ccc;color:#666;"
                     v-model="activity.personDayCount"
-                  >个
-                </p>
-                <p style="height:52px;line-height:52px;">
-                  <span style="display:inline-block;width:86px;font-weight:bold;">每辆车可领</span>
-                  <el-checkbox>不限</el-checkbox>
-                  <input
-                    type="number"
-                    placeholder="设置数量"
-                    style="width:98px;height:24px;border:1px solid #ccc"
-                    v-model="activity.catCount"
                   >个
                 </p>
               </div>
@@ -290,13 +280,34 @@
               <div class="receive" style="width:97%;">
                 <p>
                   <span style="font-weight:bold;text-align:right">1.是否需要添加车辆</span>
-                  <el-radio v-model="activity.needCar" label="1" value="1">是</el-radio>
-                  <el-radio v-model="activity.needCar" label="0" value="0">否</el-radio>
+                  <el-radio v-model="needCar" label="1" value="1">是</el-radio>
+                  <el-radio v-model="needCar" label="0" value="0">否</el-radio>
                 </p>
                 <p>
                   <span style="text-align:right">是否需认证</span>
-                  <el-radio v-model="activity.needAuthentication" label="1" value="1">是</el-radio>
-                  <el-radio v-model="activity.needAuthentication" label="0" value="0">否</el-radio>
+                  <el-radio
+                    v-model="activity.needAuthentication"
+                    :disabled="needCar==0?true:false"
+                    label="1"
+                    value="1"
+                  >是</el-radio>
+                  <el-radio
+                    v-model="activity.needAuthentication"
+                    :disabled="needCar==0?true:false"
+                    label="0"
+                    value="0"
+                  >否</el-radio>
+                </p>
+                <p>
+                  <span style="text-align:right">每辆车可领</span>
+                  <el-checkbox :disabled="needCar==0?true:false">不限</el-checkbox>
+                  <input
+                    type="number"
+                    placeholder="设置数量"
+                    style="width:98px;height:24px;border:1px solid #ccc;color:#666;"
+                    v-model="activity.catCount"
+                    :disabled="needCar==0?'disabled':false"
+                  >个
                 </p>
                 <p
                   style="width:350px;height:80px;border:2px dashed #ccc;margin:10px 0 0 80px;"
@@ -304,7 +315,7 @@
               </div>
               <div class="receive" style="width:97%;">
                 <p>
-                  <span style="font-weight:bold;text-align:right">1.是否需要实名认证</span>
+                  <span style="font-weight:bold;text-align:right">2.是否需要实名认证</span>
                   <el-radio v-model="activity.isRealName" label="1" value="1">是</el-radio>
                   <el-radio v-model="activity.isRealName" label="0" value="0">否</el-radio>
                 </p>
@@ -323,6 +334,7 @@
                 <span
                   v-for="(item,index) in relationgoods"
                   style="width:auto;padding:0 4px 0 4px;"
+                  @click="checkgoods(index)"
                 >{{item.productSName}}</span>
                 <span @click="addgoods">添加</span>
               </div>
@@ -330,7 +342,7 @@
               <div class="selectgoods" v-if="selectgoods">
                 <p style="height:40px;">
                   <span>选择商品</span>
-                  <a>添加商品</a>
+                  <a @click="addgood">添加商品</a>
                 </p>
                 <p>
                   <select v-model="firstlist">
@@ -355,7 +367,7 @@
                     >{{threelist.productCatName}}</option>
                   </select>
 
-                  <select v-model="selectgood" @change="addgood">
+                  <select v-model="selectgood">
                     <option>选择商品</option>
                     <option
                       v-for="(goodsitem,index) in goodslist"
@@ -364,7 +376,8 @@
                   </select>
                 </p>
               </div>
-              <div class="setprize">
+
+              <div class="setprize" :style="{display:oldgoodssetprize?'none':'block'}">
                 <p style="height:40px;">
                   <span>设置奖项</span>
                   <span
@@ -404,6 +417,7 @@
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.prizenum"
+                          @keyup="countnum(scope.$index,scope.row.prizenum)"
                         >
                       </template>
                     </el-table-column>
@@ -419,11 +433,12 @@
                     </el-table-column>
                     <el-table-column prop="Tips" label="提示信息" width="188">
                       <template slot-scope="scope">
+                        恭喜您获得
                         <input
                           type="text"
-                          style="width:68%;height:26px;outline:none;font-size:12px;"
+                          style="width:58%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.Tips"
-                        >现金红包
+                        >
                       </template>
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="50">
@@ -438,6 +453,87 @@
                   </el-table>
                 </div>
                 <div class="addreq" @click="preservationsub">保存 关联码</div>
+              </div>
+              
+              <!-- 添加完成的商品奖品信息 -->
+              <div class="oldgoodssetprize" v-show="oldgoodssetprize">
+                <p style="height:40px;">
+                  <span>设置奖项</span>
+                  <span
+                    @click="addoldprize"
+                    style="height:30px;margin-top:5px;margin-right:10px;line-height:30px;background:#1abc9c;color:#fff;float:right; border-radius:5px;"
+                  >添加奖项</span>
+                </p>
+                <div class="tab">
+                  <el-table :data="oldgoodssetprizelist" stripe style="width: 100%;font-size:12px;">
+                    <el-table-column prop="probability" label="优先级" width="68">
+                      <!-- <template slot-scoped="scoped">
+                        <div>{{scoped.row}}</div>
+                      </template>-->
+                    </el-table-column>
+                    <el-table-column  label="奖品" width="100"><template>微信红包</template></el-table-column>
+                    <el-table-column label="奖品名称" width="100">
+                      <template slot-scope="scope">
+                        <input
+                          type="text"
+                          style="width:100%;height:26px;outline:none;font-size:12px;"
+                          v-model="scope.row.activityPrizeName"
+                        >
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="prizeList" label="金额" width="68">
+                      <template slot-scope="scope">
+                        <input
+                          type="text"
+                          style="width:100%;height:26px;outline:none;font-size:12px;"
+                          v-model="scope.row.prizeList.price"
+                        >
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="activityPrizeCount" label="奖品数量" width="100">
+                      <template slot-scope="scope">
+                        <input
+                          type="text"
+                          style="width:100%;height:26px;outline:none;font-size:12px;"
+                          v-model="scope.row.activityPrizeCount"
+                          @keyup="oldcountnum(scope.$index,scope.row.activityPrizeCount)"
+                        >
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="probability" label="出奖设置" width="78">
+                      <template slot-scope="scope">
+                        <input
+                          type="text"
+                          style="width:30%;height:26px;outline:none;font-size:12px;"
+                          v-model="scope.row.probability"
+                        >
+                        <span>:1</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="activityPrizeInfo" label="提示信息" width="188">
+                      <template slot-scope="scope">
+                        恭喜您获得
+                        <input
+                          type="text"
+                          style="width:58%;height:26px;outline:none;font-size:12px;"
+                          v-model="scope.row.activityPrizeInfo"
+                        >
+                      </template>
+                    </el-table-column>
+                    <el-table-column fixed="right" label="操作" width="50">
+                      <template slot-scope="scope">
+                        <el-button
+                          @click="olddeleteRow(scope.$index,scope.row)"
+                          type="text"
+                          size="small"
+                        >移除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  
+                </div>
+                <div style="width:100%;height:60px;background:#fff;padding-top:20px;">
+                  <span style="width:100px;display:block;height:40px;background:#409eff;border-radius: 6px;color:#fff;margin:10px auto;line-height:40px;text-align:center" @click="preservationoldprize()">保存</span></div>
               </div>
             </div>
           </el-tab-pane>
@@ -477,6 +573,9 @@
         </div>
       </div>
     </div>
+    <div class="createloding" v-if="createlodingcanvas">
+      <p>活动正在创建中,请稍后...</p>
+    </div>
   </div>
 </template>
 
@@ -494,6 +593,13 @@ export default {
   },
   data() {
     return {
+      //创建活动加载中
+      createlodingcanvas: false,
+      //添加完成的商品奖品信息
+      oldgoodssetprize:false,
+
+      oldgoodssetprizelist:[],
+      index:"",
       flag: "",
       one: true,
       two: false,
@@ -517,9 +623,11 @@ export default {
       //领奖活动标题
       imageactivitytitleUrl: "",
       //消费者码状态
-      usercodetype: "",
+      usercodetype: "1",
       //消费者延迟扫码
       userdelayed: "1",
+      // 是否需要认证车辆
+      needCar: "1",
       isbarTakeUpTime: "1",
       isbarProtectTime: "1",
       selectgoods: false,
@@ -574,19 +682,19 @@ export default {
         //每辆车可领ok
         catCount: "",
         //是否需要车
-        needCar: "",
+        needCar: "1",
         //是否需要认证
-        needAuthentication: "",
-        //身份认证
-        isRealName: "",
+        needAuthentication: "1",
+        //实名认证
+        isRealName: "1",
         //活动类型ok
         activityType: "",
-        //页面路径ok
+        //页面路径
         page: "",
         //消费者扫码状态ok
         isQrcodeStatus: "",
         //是否开启白名单ok
-        isWhiteList: "",
+        isWhiteList: "1",
         //扫码延迟时间ok
         scanTime: "",
         //条码占用时间ok
@@ -621,7 +729,7 @@ export default {
       });
     },
     startime(val) {
-      console.log(val);
+      // console.log(val);
     },
     handleClick() {
       alert("button click");
@@ -637,35 +745,63 @@ export default {
       this.type = 2;
     },
     next() {
-      if (this.active == 0) {
-        this.active = 1;
-        this.activeName = "second";
-        this.one = false;
-        this.two = true;
-        this.three = false;
+      if (
+        this.activity.activityName &&
+        this.activity.startTime &&
+        this.activity.endTime &&
+        this.activity.page &&
+        this.activity.isQrcodeStatus &&
+        this.activity.scanTime &&
+        this.activity.isWhiteList &&
+        this.activity.barTakeUpTime &&
+        this.activity.barProtectTime
+      ) {
+        if (this.active == 0) {
+          this.active = 1;
+          this.activeName = "second";
+          this.one = false;
+          this.two = true;
+          this.three = false;
+        } else {
+          this.active = this.active;
+          this.activeName = "second";
+          this.one = false;
+          this.two = true;
+          this.three = false;
+        }
       } else {
-        this.active = this.active;
-        this.activeName = "second";
-        this.one = false;
-        this.two = true;
-        this.three = false;
+        this.$message.error("请完善基本设置！");
       }
+
       //  console.log(this.activity);
     },
     nexttwo() {
       // console.log(this.activity);
-      if (this.active == 1) {
-        this.active = 2;
-        this.activeName = "third";
-        this.one = false;
-        this.two = false;
-        this.three = true;
-      } else {
-        this.active = this.active;
-        this.activeName = "third";
-        this.one = false;
-        this.two = false;
-        this.three = true;
+      if (
+        this.activity.personCount &&
+        this.activity.personDayCount &&
+        this.activity.isRealName
+      ) {
+        if (
+          (this.activity.needCar == 1 && this.active.catCount) ||
+          this.activity.needCar == 0
+        ) {
+          if (this.active == 1) {
+            this.active = 2;
+            this.activeName = "third";
+            this.one = false;
+            this.two = false;
+            this.three = true;
+          } else {
+            this.active = this.active;
+            this.activeName = "third";
+            this.one = false;
+            this.two = false;
+            this.three = true;
+          }
+        } else {
+          this.$message.error("请完善派奖设置！");
+        }
       }
     },
     addgoods() {
@@ -687,6 +823,7 @@ export default {
         this.goodslist = data.data.data.productList;
       });
     },
+
     //选择商品后弹出添加关联商品框
     addgood() {
       // console.log(this.selectgood);
@@ -705,7 +842,7 @@ export default {
             //记录添加的商品的id
             this.productsId = this.selectgood.productSId;
             this.relationgoods.push(this.selectgood);
-            // console.log(this.selectgood);
+            console.log(this.selectgood);
             this.selectgoods = false;
             this.firstlist = [];
             this.secondlist = [];
@@ -786,7 +923,7 @@ export default {
     },
     //添加奖项
     addprize() {
-      if(this.prizedata.length==0){
+      if (this.prizedata.length == 0) {
         this.prizedata.push({
           priority: "",
           prize: "微信红包",
@@ -796,38 +933,37 @@ export default {
           setprize: "",
           Tips: ""
         });
-      }else{
-        var lestnum = this.prizedata.length - 1;
-      if (
-        this.prizedata[lestnum].prizename &&
-        this.prizedata[lestnum].Amount &&
-        this.prizedata[lestnum].prizenum &&
-        this.prizedata[lestnum].Tips
-      ) {
-        this.prizedata.push({
-          priority: "",
-          prize: "微信红包",
-          prizename: "",
-          Amount: "",
-          prizenum: "",
-          setprize: "",
-          Tips: ""
-        });
-        // this.prizeList.push({
-        //   prizeName:""
-        // })
       } else {
-        // console.log(lestnum);
+        var lestnum = this.prizedata.length - 1;
+        if (
+          this.prizedata[lestnum].prizename &&
+          this.prizedata[lestnum].Amount &&
+          this.prizedata[lestnum].prizenum &&
+          this.prizedata[lestnum].Tips
+        ) {
+          this.prizedata.push({
+            priority: "",
+            prize: "微信红包",
+            prizename: "",
+            Amount: "",
+            prizenum: "",
+            setprize: "",
+            Tips: ""
+          });
+          // this.prizeList.push({
+          //   prizeName:""
+          // })
+        } else {
+          this.$message.error("请补充奖项信息！");
+        }
       }
-      }
-      
 
       // console.log(this.prizedata);
     },
     //删除奖项
     deleteRow(index, row) {
-      console.log(index);
-      console.log(row);
+      // console.log(index);
+      // console.log(row);
       this.prizedata.splice(index, 1);
     },
     check(value) {
@@ -845,8 +981,77 @@ export default {
         this.three = true;
       }
     },
+    //查看添加好的活动
+    checkgoods(index) {
+      console.log(this.list);
+      if(index==this.relationgoods.length-1){
+        this.oldgoodssetprize=false;
+      }else{
+        this.index=index;
+      this.oldgoodssetprize=true;
+      this.oldgoodssetprizelist=[];
+      // console.log(index);
+      console.log(this.list[index]);
+      this.oldgoodssetprizelist=this.list[index].activityPrizeList;
+      for (var i=0;i<this.list[index].activityPrizeList.length;i++){
+        this.oldgoodssetprizelist[i].prizeList=this.list[index].prizeList[i];
+
+      }
+      }
+      
+      console.log(this.oldgoodssetprizelist);
+    },
+    //添加新的奖项
+    addoldprize(){
+      if(this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.count==""){
+        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.count=this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].activityPrizeCount;
+        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.prizeName= this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].activityPrizeName;
+
+      }
+      this.oldgoodssetprizelist.push(
+        {
+          activityPrizeCount:"",
+          activityPrizeInfo:"",
+          activityPrizeName:"",
+          probability:"",
+          productsId:this.oldgoodssetprizelist[0].productsId,
+          prizeList:{
+            count:"",
+            price:"",
+            prizeName:"",
+          }
+        }
+      );
+      
+    },
+    //删除添加好的奖项
+    olddeleteRow(index,row){
+      console.log(index)
+      this.oldgoodssetprizelist.splice(index, 1);
+    },
+    //保存更改后的商品奖项
+    preservationoldprize(){
+      if(this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.count==""){
+        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.count=this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].activityPrizeCount;
+        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.prizeName= this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].activityPrizeName;
+
+      }
+      this.list[this.index].prizeList=[];
+      for(var i=0;i<this.oldgoodssetprizelist.length;i++){
+        this.list[this.index].prizeList.push(this.oldgoodssetprizelist[i].prizeList);
+      }
+      for(var i=0;i<this.oldgoodssetprizelist.length;i++){
+        // this.oldgoodssetprizelist[i].prizeList
+        delete(this.oldgoodssetprizelist[i]["prizeList"])
+      }
+     
+      this.list[this.index].activityPrizeList=this.oldgoodssetprizelist;
+      console.log(this.list[this.index]);
+    },
+    
     //提交创建活动
     preservationsub() {
+      this.createlodingcanvas = true;
       if (this.createtype == 1) {
         for (let i = 0; i < this.prizedata.length; i++) {
           this.activityPrizeList.push({
@@ -876,6 +1081,7 @@ export default {
         this.createtype = "0";
       }
       // console.log(this.list)
+
       Axios({
         url: "api/activityManager/addActivity",
         method: "post",
@@ -886,6 +1092,7 @@ export default {
       }).then(data => {
         if (data.data.code == 0) {
           //说明活动创建成功
+          this.createlodingcanvas = false;
           this.createsuccesscanvas = true;
           // this.$router.push("/operatemanagement");
         }
@@ -902,6 +1109,27 @@ export default {
           message: "网络延迟请稍后再试！",
           type: "warning"
         });
+      }
+    },
+    countnum(index,row){
+      console.log(index);
+      console.log(this.prizedata[0].prizenum);
+      console.log(this.prizedata[index].prizenum);
+      if (!index == 0) {
+            var num = Math.round(
+              this.prizedata[0].prizenum / this.prizedata[index].prizenum
+            );
+            this.prizedata[index].setprize = num.toString();
+              console.log(this.prizedata)
+          }
+    },
+    oldcountnum(index,row){
+      console.log(this.oldgoodssetprizelist)
+      if(!index==0){
+        var num = Math.round(
+              this.oldgoodssetprizelist[0].activityPrizeCount / this.oldgoodssetprizelist[index].activityPrizeCount
+            );
+            this.oldgoodssetprizelist[index].probability = num.toString();
       }
     },
     //标题图片上传成功
@@ -947,22 +1175,22 @@ export default {
     }
   },
   watch: {
-    prizedata: {
-      handler(val) {
-        // console.log(val);
-        if (!this.prizedata.length == 0) {
-          var index = val.length - 1;
-          if (!index == 0) {
-            var num = Math.round(
-              this.prizedata[0].prizenum / this.prizedata[index].prizenum
-            );
-            this.prizedata[index].setprize = num.toString();
-            //  console.log(this.prizedata)
-          }
-        }
-      },
-      deep: true
-    },
+    // 'prizedata[1].prizenum': {
+    //   handler(val) {
+    //     // console.log(val);
+    //     if (!this.prizedata.length == 0) {
+    //       var index = val.length - 1;
+    //       if (!index == 0) {
+    //         var num = Math.round(
+    //           this.prizedata[0].prizenum / this.prizedata[index].prizenum
+    //         );
+    //         this.prizedata[index].setprize = num.toString();
+    //         //  console.log(this.prizedata)
+    //       }
+    //     }
+    //   },
+    //   // deep: true
+    // },
     usercodetype(val) {
       // console.log(val)
       if (val == -1) {
@@ -990,6 +1218,17 @@ export default {
         this.activity.barProtectTime = "-1";
       } else {
         this.activity.barProtectTime = "";
+      }
+    },
+    //是否需要认证车辆
+    needCar(val) {
+      // console.log(val)
+      if (val == "0") {
+        this.activity.needAuthentication = "0";
+        this.activity.needCar = "0";
+      } else if (val == "1") {
+        this.activity.needAuthentication = "1";
+        this.activity.needCar = "1";
       }
     }
   }
@@ -1397,8 +1636,11 @@ export default {
           }
         }
       }
+
       .prizeset {
         width: 764px;
+        position: relative;
+       
         .relation {
           width: 100%;
           height: 58px;
@@ -1448,6 +1690,7 @@ export default {
         }
         .setprize {
           width: 100%;
+         
           p {
             span {
               display: block;
@@ -1485,6 +1728,41 @@ export default {
             margin: 20px auto;
             border-radius: 6px;
           }
+        }
+        .oldgoodssetprize {
+          width: 100%;
+       
+          background: #eee;
+          z-index: 111;
+        margin-top: 59px;
+          p {
+            span {
+              display: block;
+              width: 76px;
+              height: 40px;
+              float: left;
+              text-align: center;
+              line-height: 40px;
+              font-size: 12px;
+              color: #555;
+            }
+            a {
+              display: block;
+              float: right;
+              width: 76px;
+              height: 40px;
+              line-height: 40px;
+              text-align: center;
+            }
+          }
+          .tab {
+            .el-table {
+              th > .cell {
+                text-align: center;
+              }
+            }
+          }
+          
         }
       }
     }
@@ -1548,6 +1826,21 @@ export default {
           border: 1px solid #ddd;
         }
       }
+    }
+  }
+  .createloding {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgba($color: #aaa, $alpha: 0.8);
+    z-index: 111;
+    p {
+      font-size: 40px;
+      color: #fff;
+      text-align: center;
+      padding-top: 340px;
     }
   }
 }

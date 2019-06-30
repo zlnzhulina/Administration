@@ -56,7 +56,7 @@ this.activityexplainlist();
           type:3
         }
       }).then(data=>{
-        console.log(data)
+        // console.log(data)
         this.tabledata=data.data.data.pageSetList;
       })
     },

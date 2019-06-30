@@ -9,6 +9,7 @@ import store from "./store";
 import axios from "axios";
 import BaiduMap from 'vue-baidu-map';
 import VueResource from 'vue-resource'
+import 'default-passive-events'
 
 Vue.prototype.axios = axios;
 

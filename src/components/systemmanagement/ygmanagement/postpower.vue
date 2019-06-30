@@ -21,6 +21,7 @@
             <span
               style="padding:0 8px 0;"
               v-for="(item,index) in scope.row.menuList"
+              :key="index"
             >{{item.menuName}}</span>
           </template>
         </el-table-column>
@@ -49,11 +50,11 @@
         <div class="information">
           <span>岗位权限：</span>
           <div class="selectpostpower">
-            <div class="header" v-for="(firstlist,index) in menuList">
+            <div class="header" v-for="(firstlist,index) in menuList" :key="index">
               <el-checkbox v-model="firstlist.checked">
                 <span>{{firstlist.menuName}}</span>
               </el-checkbox>
-              <div class="selectsecondmenu" v-for="(secondlist,index) in firstlist.secondMenuList">
+              <div class="selectsecondmenu" v-for="(secondlist,index) in firstlist.secondMenuList" :key="index">
                 <el-checkbox style="margin-left:13px;" @change="operatemanagementall">
                   <span style="padding-left:13px;">{{secondlist.menuName}}</span>
                 </el-checkbox>
@@ -61,6 +62,7 @@
                   <div
                     class="selectthreemenu"
                     v-for="(threelist,index) in secondlist.secondMenuList"
+                    :key="index"
                   >
                     <el-checkbox @change="operatemanagementall">
                       <span>{{threelist.menuName}}</span>
@@ -445,21 +447,21 @@ export default {
           pageSize: "10"
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.jurisdictionData = data.data.data.postPage.records;
         for (var i = 0; i < this.jurisdictionData.length; i++) {}
       });
     },
     set: function(row) {
       this.canvas = true;
-      console.log(row);
+      // console.log(row);
       this.row = row;
     },
 
     operatemanagementall() {},
     //选择权限
     firstchange(i) {
-      console.log(i);
+      // console.log(i);
     },
     sure: function() {
       this.canvas = false;

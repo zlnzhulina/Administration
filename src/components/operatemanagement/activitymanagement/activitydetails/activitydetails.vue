@@ -24,9 +24,9 @@
           <p>活动时间</p>
         </div>
         <div class="tdthree">
-          <p>活动名称</p>
+          <p>{{activeName}}</p>
           <p>已关联小程序码</p>
-          <p>活动时间</p>
+          <p>{{activityTime}}</p>
         </div>
         <div class="tdtwo">
           <p>活动状态</p>
@@ -44,10 +44,10 @@
           <b>活动规则</b>
           <span>修改</span>
         </h3>
-        <el-table :data="tableData" stripe style="width: 100%;">
+        <el-table :data="activityrule" stripe style="width: 100%;">
           
-          <el-table-column prop="date" label="规则类型" width="327"></el-table-column>
-          <el-table-column prop="name" label="规则名称" width="327"></el-table-column>
+          <el-table-column prop="ruletype" label="规则类型" width="327"></el-table-column>
+          <el-table-column prop="rulename" label="规则名称" width="327"></el-table-column>
           <el-table-column prop="address" label="结果"></el-table-column>
         </el-table>
 
@@ -87,8 +87,79 @@
 <script>
 //活动详情
 export default {
+  created(){
+    console.log(this.$route.query);
+    this.activeName=this.$route.query.data.activityName;
+    this.activityId=this.$route.query.data.activityId;
+    this.activityTime=this.$route.query.data.startTime+"-"+this.$route.query.data.endTime;
+    if(this.$route.query.data.isQrcodeStatus=="5"){
+      this.activityrule[0].Result="是"
+    }else{
+      this.activityrule[0].Result="否"
+    }
+  },
     data(){
         return{
+          tableData:[],
+          //活动名称
+          activeName:"",
+          //活动id
+          activityId:"",
+          //活动时间
+          activityTime:"",
+          //活动规则
+          activityrule:[
+            {
+              ruletype:"基础规则",
+              rulename:"消费者状态",
+              Result:""
+            },
+            {
+              ruletype:"基础规则",
+              rulename:"是否开启白名单",
+              Result:""
+            },
+            {
+              ruletype:"基础规则",
+              rulename:"是否开启保护期",
+              Result:""
+            },
+            {
+              ruletype:"基础规则",
+              rulename:"是否开启占用期",
+              Result:""
+            },
+            {
+              ruletype:"派奖规则",
+              rulename:"每人可参与活动次数",
+              Result:""
+            },
+            {
+              ruletype:"派奖规则",
+              rulename:"消费每人每天可参与活动次数者激活",
+              Result:""
+            },
+            {
+              ruletype:"派奖规则",
+              rulename:"每车可参与活动次数",
+              Result:""
+            },
+            {
+              ruletype:"领奖规则 ",
+              rulename:"是否需要添加车辆",
+              Result:""
+            },
+             {
+              ruletype:"领奖规则 ",
+              rulename:"是否需要认证车辆",
+              Result:""
+            },
+             {
+              ruletype:"领奖规则 ",
+              rulename:"消费者激活",
+              Result:""
+            },
+          ]
 
         }
     },

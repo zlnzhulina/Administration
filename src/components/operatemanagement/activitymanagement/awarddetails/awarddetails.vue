@@ -111,7 +111,15 @@
 //出奖详情
 export default {
   data() {
-    return {};
+    return {
+      tableData:[
+        {
+          data:"",
+          name:"",
+          address:"",
+        }
+      ],
+    };
   },
   methods: {
     back() {

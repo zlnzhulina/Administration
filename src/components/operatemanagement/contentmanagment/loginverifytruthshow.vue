@@ -105,19 +105,19 @@ export default {
           type: 2
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.tabledata = data.data.data.pageSetList;
       });
     },
     replace(row) {
-      console.log(row);
+      // console.log(row);
       this.name = row.title;
       this.url = row.url;
       this.id = row.id;
       (this.imageUrl = row.imageUrl), (this.editcanvas = true);
     },
     handleAvatarSuccess(res, file) {
-      console.log(res);
+      // console.log(res);
       if (res.code == 0) {
         //图片显示的本地路径
         this.imageUrl = URL.createObjectURL(file.raw);

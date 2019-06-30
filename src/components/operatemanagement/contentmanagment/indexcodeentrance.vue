@@ -99,7 +99,7 @@ export default {
           type: 1
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.tabledata = data.data.data.pageSetList;
       });
     },
@@ -107,12 +107,12 @@ export default {
     replace(row) {
       this.id = row.id;
       this.editcanvas = true;
-      console.log(row);
+      // console.log(row);
       this.name = row.title;
       this.alink = row.url;
     },
     handleAvatarSuccess(res, file) {
-      console.log(res);
+      // console.log(res);
       if (res.code == 0) {
         //图片显示的本地路径
         this.imageUrl = URL.createObjectURL(file.raw);

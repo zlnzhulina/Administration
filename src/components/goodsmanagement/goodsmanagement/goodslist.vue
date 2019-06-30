@@ -124,7 +124,7 @@ export default {
           productSName:"",
         }
       }).then(data=>{
-        console.log(data)
+        // console.log(data)
         this.tabledata=data.data.data.productSPage.records;
       })
     },
@@ -132,12 +132,20 @@ export default {
     searchid(){
       
     },
-    //查看
+    //编辑
     seedetails(row) {
-      console.log(row);
-      this.goodsName=row.goodsname;
-      this.goodsId=row.goodsid
-      this.editgoodlistcanvas=true;
+       console.log(row);
+       this.$router.push({
+         path:"/addgoods",
+         query:{flag:"1",data:row}
+       })
+      //  this.productSName=row.productSName;
+      //  this.productSId=row.productSId;
+      //  this.status=row.status;
+      //  this.cityName=row.cityName;
+      //  this.productCatId=row.productCatId;
+      //  this.productImgUrl=row.productImgUrl;
+      //  this.editgoodlistcanvas=true;
     },
     //添加
     addgoods() {
@@ -151,7 +159,7 @@ export default {
     },
     //批量选中
     handleSelectionChange(val){
-      console.log(val)
+      // console.log(val)
       this.goodsidarr.length=0;
       for(var i=0;i<val.length;i++){
          this.goodsidarr.push(val[i].productSId)
@@ -173,7 +181,7 @@ export default {
               productSId:this.degoodsids,
             }
           }).then(data=>{
-            console.log(data);
+            // console.log(data);
             if(data.data.code==0){
               this.$message({
             type: 'success',
@@ -209,7 +217,7 @@ export default {
               productSId:val.degoodsids,
             }
           }).then(data=>{
-            console.log(data);
+            // console.log(data);
             if(data.data.code==0){
               this.$message({
             type: 'success',

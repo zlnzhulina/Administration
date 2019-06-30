@@ -174,7 +174,7 @@ export default {
   },
   methods:{
     handleAvatarSuccess(res, file) {
-      console.log(res);
+      // console.log(res);
       if (res.code == 0) {
         //图片显示的本地路径
         this.imageUrl = URL.createObjectURL(file.raw);
@@ -185,7 +185,7 @@ export default {
   },
   watch: {
     prizetype(val) {
-        console.log(val)
+        // console.log(val)
       switch (val) {
         case "jdk": {
           this.jdk = true;

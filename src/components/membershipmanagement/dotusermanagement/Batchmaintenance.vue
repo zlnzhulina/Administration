@@ -152,7 +152,7 @@ export default {
             userList: this.tabledata
           }
         }).then(data => {
-          console.log(data);
+          // console.log(data);
           if (data.data.code == 0) {
             this.$message.success("批量添加成功！");
             // this.$router.push();
@@ -168,7 +168,7 @@ export default {
         //文件上传成功，弹框编辑
 
         this.tabledata = file.data.userList;
-        console.log(file);
+        // console.log(file);
       }
     }
   }

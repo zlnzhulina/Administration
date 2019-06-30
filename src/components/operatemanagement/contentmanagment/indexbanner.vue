@@ -152,7 +152,7 @@ export default {
   },
   methods: {
     handleAvatarSuccess(res, file) {
-      console.log(res);
+      // console.log(res);
       if (res.code == 0) {
         //图片显示的本地路径
         this.imageUrl = URL.createObjectURL(file.raw);
@@ -165,18 +165,18 @@ export default {
         url: "api/contentManager/bannerList",
         method: "get"
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.tabledata = data.data.data.bannerList;
       });
     },
     //编辑
     edit(row) {
-      console.log(row);
+      // console.log(row);
       this.bannerId = row.bannerId;
       this.name = row.bannerName;
       this.link = row.url;
       this.editbannercanvas = true;
-      console.log(this.imgUrl);
+      // console.log(this.imgUrl);
     },
     //确认修改banner
     editok() {
@@ -207,7 +207,7 @@ export default {
             orderNum: 5
           }
         }).then(data => {
-          console.log(data);
+          // console.log(data);
           if (data.data.code == 0) {
             this.$message({
               type: "success",
@@ -255,7 +255,7 @@ export default {
             orderNum: 5
           }
         }).then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.data.code == 0) {
             this.$message({
               type: "success",
@@ -282,7 +282,7 @@ export default {
     },
 
     delbanner(row) {
-      console.log(row);
+      // console.log(row);
       this.bannerId = row.bannerId;
       this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
         confirmButtonText: "确定",

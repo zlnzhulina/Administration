@@ -64,9 +64,9 @@ export default {
           }
         })
           .then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.data.code == 0) {
-              console.log(1);
+              // console.log(1);
               // this.set("ADMINLOGINTOKEN",data.data.data.userInfo.nickName,1)
               localStorage.setItem(
                 "ADMINLOGINTOKEN",
@@ -80,7 +80,7 @@ export default {
                   ADMINLOGINTOKEN: data.data.data.ADMINLOGINTOKEN
                 }
               }).then(data => {
-                console.log(data);
+                // console.log(data);
                 this.$router.push("/index");
               });
               // this.$router.push("/index")
@@ -89,7 +89,7 @@ export default {
             }
           })
           .catch(err => {
-            console.log(err);
+            // console.log(err);
           });
       }
     }

@@ -124,7 +124,7 @@ export default {
   methods: {
     init: function() {
       this.demp = this.$route.query.networkParm;
-      console.log(this.$route.query.networkParm)
+      // console.log(this.$route.query.networkParm)
       if (this.$route.query.flag == 1) {
         this.flag=true;
         //编辑
@@ -142,7 +142,7 @@ export default {
         // this.networkdata.networkId = this.demp.networkId;
       
       }
-      console.log(this.networkdata.networkId);
+      // console.log(this.networkdata.networkId);
     },
     saveNetwork: function() {
       this.networkdata.networkCode = this.networkCode;
@@ -154,8 +154,8 @@ export default {
       this.networkdata.province = this.prov;
       this.networkdata.city = this.city;
       this.networkdata.area = this.district;
-      console.log(this.networkdata);
-      console.log(JSON.stringify(this.networkdata));
+      // console.log(this.networkdata);
+      // console.log(JSON.stringify(this.networkdata));
       // var jsondata = JSON.stringify(this.networkdata);
       if (this.$route.query.flag == 1) {
         //编辑
@@ -217,7 +217,7 @@ export default {
     },
     //选择区域
     onSelected(data) {
-      console.log(data);
+      // console.log(data);
       this.area = data.area.value;
       this.city = data.city.value;
       this.province = data.province.value;
@@ -233,9 +233,9 @@ export default {
   },
   watch: {
     addressdetails(value) {
-       console.log(value);
+      //  console.log(value);
        this.site=this.address+value;
-       console.log(this.site)
+      //  console.log(this.site)
      
     }
   }

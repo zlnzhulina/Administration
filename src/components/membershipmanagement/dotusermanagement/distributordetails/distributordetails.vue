@@ -46,7 +46,7 @@ export default {
         this.networkId = this.$route.query.networkId;
         this.networkDetail(this.networkId);
       }else if(this.$route.query.flag == 2){
-        console.log(this.$route.query.data)
+        // console.log(this.$route.query.data)
       }
       
     },
@@ -57,7 +57,7 @@ export default {
             url: "api/networkUserManager/networkDetail"+'?networkId='+netId,
             }
         ).then(data => {
-          console.log(data)
+          // console.log(data)
             this.tableData = data.data.data.userList;
         })
     },

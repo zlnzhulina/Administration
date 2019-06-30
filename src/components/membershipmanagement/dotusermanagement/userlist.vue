@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     deleteUser(index, row) {
-      console.log(row);
+      // console.log(row);
       this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -95,7 +95,7 @@ export default {
             url: "api/networkUserManager/delUser" + "?userIds=" + row.userId
           }).then(data => {
             this.init();
-            console.log(data);
+            // console.log(data);
             if (data.data.code == "0") {
               this.$message({
                 message: data.data.msg,
@@ -131,10 +131,10 @@ export default {
           url: "api/networkUserManager/UserCatList"+'?pageNo=1&pageSize=10',
         }
       ).then(data => {
-          console.log(data)
+          // console.log(data)
           
         this.position = data.data.data.userCatPage.records;
-        console.log(this.position)
+        // console.log(this.position)
       })
     },
     init: function() {
@@ -147,7 +147,7 @@ export default {
           "&pageSize=" +
           this.pagesize+"&phoneNumber="+this.phoneNumber+"&userCatId="+this.userCatId
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.totalCount = data.data.data.userPage.total;
         this.pagesize = data.data.data.userPage.size;
         this.currentPage = data.data.data.userPage.current;
@@ -194,7 +194,7 @@ export default {
               userIds: this.deluserids
             }
           }).then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.data.code == 0) {
               this.$message({
                 type: "success",
@@ -218,7 +218,7 @@ export default {
     },
     //批量选中
     handleSelectionChange(val) {
-      console.log(val)
+      // console.log(val)
       this.useridarr.length = 0;
       for (var i = 0; i < val.length; i++) {
         this.useridarr.push(val[i].userId);

@@ -104,12 +104,12 @@ methods:{
           url: "api/networkUserManager/UserCatList"+'?pageNo='+this.currentPage+'&pageSize='+this.pagesize,
         }
       ).then(data => {
-          console.log(data)
+        //   console.log(data)
           this.totalCount = data.data.data.userCatPage.total;
         this.pagesize = data.data.data.userCatPage.size;
         this.currentPage = data.data.data.userCatPage.current;
         this.position = data.data.data.userCatPage.records;
-        console.log(this.position)
+        // console.log(this.position)
       })
     },
     deleteUserCat(userCatId){
@@ -125,7 +125,7 @@ methods:{
                         }
                     ).then(data => {
                         this.selectUserCatList();
-                        console.log(data)
+                        // console.log(data)
                         if(data.data.code == '0'){
                             this.$message({
                                 message: data.data.msg,
@@ -156,7 +156,7 @@ showinput(){
 },
 ok(){
     
-    console.log(this.addcontent);
+    // console.log(this.addcontent);
     Axios(
         {
           method: "post",
@@ -173,7 +173,7 @@ ok(){
                             message: '添加成功!!!',
                             type: 'success'
                             });
-          console.log(data)
+        //   console.log/(data)
         
       })
     

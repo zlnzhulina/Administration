@@ -70,7 +70,7 @@ export default {
         url: "api/contentManager/newsList",
         method: "get"
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.tabledata = data.data.data.newsList;
       });
     },
@@ -80,7 +80,7 @@ export default {
     },
     //编辑
     replic(row) {
-      console.log(row)
+      // console.log(row)
     },
     edit(val) {
       // this.cl = true;
@@ -88,7 +88,7 @@ export default {
     },
     //删除
     deldata(row){
-      console.log(row);
+      // console.log(row);
       this.newId = row.newId;
       this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -103,7 +103,7 @@ export default {
               newsId: this.newId
             }
           }).then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.data.code == 0) {
               this.$message({
                 type: "success",

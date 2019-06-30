@@ -15,7 +15,7 @@ module.exports = {
         
         // target: "http://192.168.2.102:8101",
         
-        target: "https://jiefang.atscloud.cn/JF_SA/code",
+        target: "http://jiefang.atscloud.cn/JF_SA/qrcode/",
         
         changeOrigin: true,
         pathRewrite: {
@@ -24,7 +24,7 @@ module.exports = {
       },
       "/api":{
         //  target: "http://192.168.2.102:8001",
-         target: "http://jiefang.atscloud.cn/JF_SA/sa",
+         target: "http://jiefang.atscloud.cn/JF_SA/api/",
          
          changeOrigin: true,
          pathRewrite: {
@@ -67,7 +67,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps

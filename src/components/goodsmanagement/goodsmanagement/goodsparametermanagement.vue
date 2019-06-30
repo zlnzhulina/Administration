@@ -165,7 +165,7 @@ export default {
         url: "api/productsManager/productCatList",
         method: "get"
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.goodsclasslist = data.data.data.firstCatList;
       });
     },
@@ -180,7 +180,7 @@ export default {
         }
       }).then(data => {
         this.tabledata = data.data.data.productParamSetList;
-        console.log(data);
+        // console.log(data);
       });
     },
     //选中商品品牌
@@ -197,7 +197,7 @@ export default {
     },
     edit(val) {
       this.cl = true;
-      console.log(val);
+      // console.log(val);
     },
     //添加参数
     addparameter() {
@@ -206,8 +206,8 @@ export default {
     add() {
       //确定添加参数
       if (this.threelist.productCatId) {
-        console.log(this.threelist);
-
+        // console.log(this.threelist);
+// 
         Axios({
           url: "api/productsManager/addProductParamSet",
           method: "post",
@@ -219,7 +219,7 @@ export default {
             productCatId: this.threelist.productCatId
           }
         }).then(data => {
-          console.log(data);
+          // console.log(data);
           this.parametername = "";
           if (data.data.code == 0) {
             this.addparametercanvas = false;
@@ -231,7 +231,7 @@ export default {
     //管理值
     //管理值列表
     metermagevaluelist() {
-      console.log(this.productParamSetId)
+      // console.log(this.productParamSetId)
 
       Axios({
         url: "api/productsManager/productParamValueList",
@@ -240,13 +240,13 @@ export default {
           productParamSetId: this.productParamSetId
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.metermagevallist=data.data.data.productParamValueList;
       });
     },
     metermageval(val) {
       this.metermagevalcanvas = true;
-      console.log(val);
+      // console.log(val);
       this.productParamSetName = val.productParamSetName;
       this.productParamSetId = val.productParamSetId;
       this.metermagevaluelist();
@@ -268,7 +268,7 @@ export default {
         }
       }).then(data => {
         this.addvaluecanvas = false;
-        console.log(data);
+        // console.log(data);
         if (data.data.code == 0) {
           this.metermagevaluelist();
         }

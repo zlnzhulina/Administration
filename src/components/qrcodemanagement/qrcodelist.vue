@@ -246,12 +246,12 @@ export default {
   },
   methods: {
     aaa(i, val) {
-      console.log(i);
-      console.log(val);
+      // console.log(i);
+      // console.log(val);
       this.relationarr[i].productsId = val.productsId;
       this.relationarr[i].productsName = val.productsName;
 
-      console.log(this.relationarr);
+      // console.log(this.relationarr);
     },
     qrcodelist() {
       Axios({
@@ -265,7 +265,7 @@ export default {
           from: "2"
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.totalCount = data.data.data.batchPage.total;
         this.pagesize = data.data.data.batchPage.size;
         this.currentPage = data.data.data.batchPage.current;
@@ -309,9 +309,9 @@ export default {
           batchId: row.batchId
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         if (data.data.code == 0) {
-          console.log(row.batchId);
+          // console.log(row.batchId);
           this.timer = setInterval(() => {
             Axios({
               url: "qrcode/codeManager/validationZIP",
@@ -320,7 +320,7 @@ export default {
                 batchId: row.batchId
               }
             }).then(res => {
-              console.log(res);
+              // console.log(res);
               if (res.data.code == 0) {
                 //表示压缩包压缩完成 开始下载
                 clearInterval(this.timer);
@@ -334,7 +334,7 @@ export default {
       });
     },
     con() {
-      console.log(1);
+      // console.log(1);
     },
     relation(row) {
       //关联
@@ -347,11 +347,11 @@ export default {
           batchId: row.batchId
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.memberrelationlist=[];
         this.memberrelationlist = data.data.data.list;
         this.residueCount = data.data.data.residueCount;
-        console.log(this.memberrelationlist);
+        // console.log(this.memberrelationlist);
         for (var i = 0; i < this.memberrelationlist.length; i++) {
           this.productsIds.push(this.memberrelationlist[i].productsId);
         }
@@ -364,7 +364,7 @@ export default {
               productsIds: this.productsIds.toString()
             }
           }).then(res => {
-            console.log(res);
+            // console.log(res);
             this.productsIds.length = 0;
             if (res.data.code == 0) {
               this.SAactivityarr = res.data.data;
@@ -419,15 +419,15 @@ export default {
     },
     //选择商品之后
     selegood() {
-      // console.log(this.selectgood);
+       console.log(this.selectgood);
     },
     //确认关联
 
     subrelation(i) {
-      console.log(
-        this.relationarr[i].productsId,
-        this.relationarr[i].productsName
-      );
+      // console.log(
+      //   this.relationarr[i].productsId,
+      //   this.relationarr[i].productsName
+      // );
       Axios({
         url: "qrcode/codeManager/joinSAActivity",
         method: "get",
@@ -441,7 +441,7 @@ export default {
           type:"",
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         if (data.data.code == 0) {
           this.$message({
             type: "success",
@@ -449,35 +449,37 @@ export default {
           });
           this.relationcanvas=false;
           this.relationarr.length = 0;
-          console.log(this.relationarr)
+          // console.log(this.relationarr)
           
         }
       });
     },
     //确认关联裸码
     residueok() {
-      // console.log(this.SAactivity.activityId,this.SAactivity.activityName,this.selectgood.productCatId,this.selectgood.productSName,this.residuenum,this.row.batchId)
+        console.log("SA活动id"+this.SAactivity.activityId,"SA活动name"+this.SAactivity.activityName,"商品id"+this.selectgood.productSId,"商品名称"+this.selectgood.productSName,"数量"+this.residuenum,this.row.batchId)
       Axios({
         url: "qrcode/codeManager/joinSAActivity",
         method: "get",
         params: {
           activityId: this.SAactivity.activityId,
           activityName: this.SAactivity.activityName,
-          productsId: this.selectgood.productCatId,
+          productsId: this.selectgood.productSId,
           productsName: this.selectgood.productSName,
           joinCount: this.residuenum,
           batchId: this.row.batchId,
           type:"1",
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         if (data.data.code == 0) {
           this.$message({
             type: "success",
             message: "关联成功!"
           });
           this.relationcanvas=false;
+          
         }
+        
       });
     },
     del(row) {
@@ -495,7 +497,7 @@ export default {
               batchIds: row.batchId
             }
           }).then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.data.code == 0) {
               this.$message({
                 type: "success",
@@ -528,7 +530,7 @@ export default {
           type:"1",
         }
       }).then(data=>{
-        console.log(data);
+        // console.log(data);
         if(data.data.code==0){
           this.withdrawnum="";
           this.withdrawcanvas = false;
@@ -569,7 +571,7 @@ export default {
     //分页功能
     handleSizeChange(val) {},
     handleCurrentChange(val) {
-      console.log(val);
+      // console.log(val);
       this.currentPage = val;
       this.qrcodelist();
     }

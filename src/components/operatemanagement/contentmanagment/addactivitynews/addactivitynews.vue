@@ -48,12 +48,13 @@
           <el-progress
             v-if="videoFlag == true"
             type="circle"
-            width="50"
+            :width="50"
+            :height="50"
             style="position: absolute;left: 65px;top: 25px;z-index:111"
             :percentage="videoUploadPercent"
           ></el-progress>
         </el-upload>
-        <div class="previewdetailsimg" v-for="(item,index) in newsdetailsimglist">
+        <div class="previewdetailsimg" v-for="(item,index) in newsdetailsimglist" :key="index">
           <div
             class="mouseover"
             @mouseover="removepreviewimg(index)"
@@ -82,8 +83,9 @@
           :src="showVideoPath"
           class="avatar video-avatar"
           controls="controls"
+          poster="../../../../assets/video.jpg"
         >您的浏览器不支持视频播放</video>
-        <div v-for="(item,index) in newsdetailsimglist">
+        <div v-for="(item,index) in newsdetailsimglist" :key="index">
           <img :src="item.imageUrl" style="width:100%;">
         </div>
       </div>
@@ -146,7 +148,7 @@ export default {
     },
     //视频上传成功回调
     handleVideoSuccess(res, file) {
-      console.log(file);
+      // console.log(file);
       this.isShowUploadVideo = true;
       this.videoFlag = false;
       this.videoUploadPercent = 0;
@@ -158,7 +160,7 @@ export default {
     },
     //资讯图片上传成功
     handleAvatarSuccess(res, file) {
-      console.log(file);
+      // console.log(file);
       this.imageUrl = URL.createObjectURL(file.raw);
       this.newsdetailsimg = file.response.data.fileUrl;
       this.newsdetailsimglist.push({
@@ -179,11 +181,11 @@ export default {
     },
     //保存，添加资讯
     addnews() {
-      console.log(this.newsdetailsimglist);
+      // console.log(this.newsdetailsimglist);
       for (var i = 0; i < this.newsdetailsimglist.length; i++) {
         this.imgurlarr.push(this.newsdetailsimglist[i].newsdetailsimg);
       }
-      console.log(this.imgurlarr);
+      // console.log(this.imgurlarr);
       Axios({
         url: "api/contentManager/addInformation",
         method: "post",
@@ -201,7 +203,7 @@ export default {
         if(data.data.code==0){
           this.$router.push("/operatemanagement/indexactivityinformation")
         }
-        console.log(data)
+        // console.log(data)
       });
     }
   }

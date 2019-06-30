@@ -351,7 +351,7 @@ export default {
           productSId: this.productSId,
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.totalCount = data.data.data.codePage.total;
         this.pagesize = data.data.data.codePage.size;
         this.currentPage = data.data.data.codePage.current;
@@ -460,12 +460,12 @@ export default {
           productCatId: this.threelist.productCatId
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.goodslist = data.data.data.productList;
       });
     },
     searchselectthree(){
-      console.log(this.searchgoodsclasslist)
+      // console.log(this.searchgoodsclasslist)
        Axios({
         url: "api/productsManager/getProductsForCatId",
         method: "get",
@@ -473,7 +473,7 @@ export default {
           productCatId: this.searchthreelist.productCatId
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.searchgoodslist = data.data.data.productList;
       });
     },
@@ -556,7 +556,7 @@ export default {
           qrIds: row.qrId
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         if (data.data.code == 0) {
           this.$message({
             type: "success",

@@ -112,7 +112,7 @@ export default {
     },
     //查看
     seedetails(row) {
-      console.log(row);
+      // console.log(row);
       this.goodsName=row.goodsname;
       this.goodsId=row.goodsid
       this.editgoodlistcanvas=true;

@@ -28,29 +28,48 @@
       <span style="display:block;height:32px;line-height:32px;float:right;margin-right:124px;">操作</span>
     </div>
     <div class="tabbody">
-      <el-collapse :v-model="firstitem.productCatId" accordion v-for="(firstitem,index) in classlist" @expand-on-click-node=false>
+      <el-collapse 
+        :v-model="firstitem.productCatId"
+        accordion
+        v-for="(firstitem,index) in classlist"
+        :key="index"
+        @expand-on-click-node="false"
+      >
         <el-collapse-item>
           <template slot="title">
             {{firstitem.productCatName}}
-            <span style="right:120px" @click="addnextclass(firstitem.productCatId,$event)">添加下级分类</span>
+            <span
+              style="right:120px"
+              @click="addnextclass(firstitem.productCatId,$event)"
+            >添加下级分类</span>
             <span style="right:70px">编辑</span>
             <span style="right:26px;" @click="deleteclass(firstitem.productCatId)">删除</span>
           </template>
           <div>
-            <el-collapse v-model="seconditem.productCatId" v-for="(seconditem,index) in firstitem.productCatList">
+            <el-collapse
+              v-model="seconditem.productCatId"
+              v-for="(seconditem,index) in firstitem.productCatList"
+              :key="index"
+            >
               <el-collapse-item>
                 <template slot="title">
                   {{seconditem.productCatName}}
-                  <span style="right:120px" @click="addnextclass(seconditem.productCatId,$event)">添加下级分类</span>
+                  <span
+                    style="right:120px"
+                    @click="addnextclass(seconditem.productCatId,$event)"
+                  >添加下级分类</span>
                   <span style="right:70px">编辑</span>
                   <span style="right:26px;" @click="deleteclass(seconditem.productCatId)">删除</span>
                 </template>
-                <div v-for="(threeitem,index) in seconditem.productCatList">
+                <div v-for="(threeitem,index) in seconditem.productCatList" :key="index">
                   <b style="font-weight: normal;margin-left:30px;">{{threeitem.productCatName}}</b>
                   <span
                     style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:50px"
                   >编辑</span>
-                  <span @click="deleteclass(threeitem.productCatId)" style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:6px;">删除</span>
+                  <span
+                    @click="deleteclass(threeitem.productCatId)"
+                    style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:6px;"
+                  >删除</span>
                 </div>
               </el-collapse-item>
             </el-collapse>
@@ -61,13 +80,16 @@
     </div>
     <div class="addcanvas" v-if="addcanvas">
       <h3>添加商品库</h3>
-      <p>名称<input type="text" v-model="classname"></p>
+      <p>
+        名称
+        <input type="text" v-model="classname">
+      </p>
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="ok">确认</span>
     </div>
     <div class="btn">
-        <span style="background:#169bd5;border:1px solid #169bd5;color:#fff;">保存</span>
-        <span>取消</span>
+      <span style="background:#169bd5;border:1px solid #169bd5;color:#fff;">保存</span>
+      <span>取消</span>
     </div>
   </div>
 </template>
@@ -78,48 +100,8 @@ export default {
   //商品分类管理
   data() {
     return {
-      classlist: [
-        {
-          id: 1,
-          title: "一级菜单分类1",
-          children: [
-            {
-              id: 11,
-              title: "二级菜单分类1",
-              children: [
-                { title: "三级菜单1" },
-                { title: "三级菜单2" },
-                { title: "三级菜单3" }
-              ]
-            },
-            {
-              id: 12,
-              title: "二级菜单分类2",
-              children: [
-                { title: "三级菜单1" },
-                { title: "三级菜单2" },
-                { title: "三级菜单3" }
-              ]
-            }
-          ]
-        },
-        {
-          id: 2,
-          title: "一级菜单分类2",
-          children: [
-            {
-              id: 22,
-              title: "二级菜单分类1",
-              children: [
-                { title: "三级菜单1" },
-                { title: "三级菜单2" },
-                { title: "三级菜单3" }
-              ]
-            }
-          ]
-        }
-      ],
-      classname:"",
+      classlist: [],
+      classname: "",
       addcanvas: false,
       first: 1,
       second: 2,
@@ -131,7 +113,7 @@ export default {
           data: "2019-3-4"
         }
       ],
-      superior:"",
+      superior: ""
     };
   },
   created() {
@@ -143,8 +125,8 @@ export default {
         url: "api/productsManager/productCatList",
         methods: "get"
       }).then(data => {
-        console.log(data);
-        this.classlist=data.data.data.firstCatList;
+        // console.log(data);
+        this.classlist = data.data.data.firstCatList;
       });
     },
 
@@ -159,11 +141,15 @@ export default {
     addgoodsbank() {
       this.addcanvas = true;
     },
-    addnextclass(val,e){
-      console.log(val);
-      console.log(e);
-      e.stopPropagation ? e.stopPropagation(): e.cancelBubble = true;
-      this.superior=val;
+    addnextclass(val, e) {
+      e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
+      // console.log(val);
+      // console.log(e);
+      if (typeof val == "object") {
+        this.superior = val[0];
+      } else {
+        this.superior = val;
+      }
       this.addcanvas = true;
     },
     //编辑
@@ -171,66 +157,98 @@ export default {
       this.addcanvas = true;
     },
     //删除
-    deleteclass(val){
-      console.log(val)
-      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-           Axios({
-        url:"api/productsManager/delProductCat",
-        methods:"get",
-        params:{
-          productCatIds:val,
-        }
-      }).then(data=>{
-        console.log(data)
-        if(data.data.code==0){
-          this.goodsclasslist();
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
+    deleteclass(val) {
+      console.log(val);
+      if (typeof val == "object") {
+        this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            Axios({
+              url: "api/productsManager/delProductCat",
+              methods: "get",
+              params: {
+                productCatIds: val[0],
+              }
+            }).then(data => {
+              // console.log(data)
+              if (data.data.code == 0) {
+                this.goodsclasslist();
+                this.$message({
+                  type: "success",
+                  message: "删除成功!"
+                });
+              }
+            });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
           });
-        }
+      }else if(typeof val=="string"){
+        
+        this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
-          
-        }).catch(() => {
+        .then(() => {
+          Axios({
+            url: "api/productsManager/delProductCat",
+            methods: "get",
+            params: {
+              productCatIds: val
+            }
+          }).then(data => {
+            // console.log(data)
+            if (data.data.code == 0) {
+              this.goodsclasslist();
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+            }
+          });
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除"
+          });
         });
-     
-
+      }
     },
     exit() {
-      
       this.addcanvas = false;
     },
 
     ok() {
-      console.log(this.classname)
+      // console.log(this.classname, this.superCatId);
+
       Axios({
-        url:"api/productsManager/addProductCat",
-        method:"post",
-        data:{
-          productCatId:"",
-          productCatName:this.classname,
-          superCatId:this.superior,
+        url: "api/productsManager/addProductCat",
+        method: "post",
+        data: {
+          productCatId: "",
+          productCatName: this.classname,
+          superCatId: this.superior
         }
-      }).then(data=>{
-        this.classname=""
-        this.superior="";
-        console.log(data);
-        if(data.data.code==0){
+      }).then(data => {
+        this.classname = "";
+        this.superior = "";
+        // console.log(data);
+        if (data.data.code == 0) {
           this.goodsclasslist();
           this.$message({
-            type: 'success',
-            message: '添加成功!'
+            type: "success",
+            message: "添加成功!"
           });
         }
-      })
+      });
       this.addcanvas = false;
     }
   }
@@ -239,8 +257,8 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-   width: 100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
   position: relative;
   .header {
     width: 100%;
@@ -250,7 +268,7 @@ export default {
       width: 122px;
       height: 36px;
       margin-top: 10px;
-      
+
       border: 1px solid #555;
       color: #7f7f7f;
       text-align: center;
@@ -325,7 +343,6 @@ export default {
     }
   }
   .tabhand {
-
     width: 958px;
     height: 32px;
     background: #ccd1e0;
@@ -339,7 +356,6 @@ export default {
     margin: 0 auto;
     border: 1px solid #797979;
     .el-collapse-item__header {
-      
       span {
         display: block;
         position: absolute;

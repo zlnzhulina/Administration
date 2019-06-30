@@ -135,7 +135,7 @@ export default {
               departmentids:this.editId,
             }
           }).then(data=>{
-            console.log(data);
+            // console.log(data);
             if(data.data.code==0){
               this.$message({
             type: 'success',
@@ -159,7 +159,7 @@ export default {
         });
     },
     handleSelectionChange(val){
-      console.log(val);
+      // console.log(val);
       this.departmentidarr=[];
       for(var i=0;i<val.length;i++){
         this.departmentidarr.push(val[i].departmentId)
@@ -179,7 +179,7 @@ export default {
               departmentids:this.departmentidarr.toString(),
             }
           }).then(data=>{
-            console.log(data);
+            // console.log(data);
             if(data.data.code==0){
               this.$message({
             type: 'success',
@@ -226,7 +226,7 @@ export default {
       })
     },
     editDepartment(index,row){
-      console.log(row.departmentId);
+      // console.log(row.departmentId);
       this.addInput = row.departmentName;
       this.editId=row.departmentId;
       this.editdepartmentcanvas=true;
@@ -242,7 +242,7 @@ export default {
           // }
         }
       ).then(data => {
-        console.log(data.data.code)
+        // console.log(data.data.code)
         if(data.data.code == '-1'){
           this.$message({
                     type: 'error',

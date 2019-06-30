@@ -86,7 +86,7 @@ export default {
   watch:{
     fileList:{
       handle(val){
-        console.log(val)
+        // console.log(val)
       },
       deep:true
     },
@@ -109,7 +109,7 @@ export default {
         // "departmentId":this.postModel.departmentId
         // }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.totalCount = data.data.data.networkPage.total;
         this.pagesize = data.data.data.networkPage.size;
         this.currentPage = data.data.data.networkPage.current;
@@ -135,7 +135,7 @@ export default {
               row.networkId
           }).then(data => {
             this.selectNetWorkList();
-            console.log(data);
+            // console.log(data);
             if (data.data.code == "0") {
               this.$message({
                 message: data.data.msg,
@@ -184,7 +184,7 @@ export default {
     },
     //批量选中
     handleSelectionChange(val) {
-      console.log(val)
+      // console.log(val)
       this.dotidarr.length = 0;
       for (var i = 0; i < val.length; i++) {
         this.dotidarr.push(val[i].networkId);
@@ -207,7 +207,7 @@ export default {
               networkIds: this.deldotids
             }
           }).then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.data.code == 0) {
               this.$message({
                 type: "success",
@@ -247,7 +247,7 @@ export default {
         this.$message.success("文件上传成功！");
         //文件上传成功，弹框编辑
         this.$refs.upload.clearFiles();
-        console.log(file);
+        // console.log(file);
       }
     }
   }

@@ -52,7 +52,7 @@ export default {
       this.$router.back();
     },
     create(){
-      console.log(1)
+      // console.log(1)
         Axios({
             url:"qrcode/codeManager/createQrCode",
             method:"post",
@@ -63,7 +63,7 @@ export default {
             }
 
         }).then(data=>{
-          console.log(data)
+          // console.log(data)
           if(data.data.code==0){
             this.$router.push("/qrcodemanagement")
           }

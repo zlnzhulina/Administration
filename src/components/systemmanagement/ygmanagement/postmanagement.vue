@@ -152,7 +152,7 @@ export default {
           "&postName=" +
           this.postName
       }).then(data => {
-        console.log(data)
+        // console.log(data)
         this.totalCount = data.data.data.postPage.total;
         this.pagesize = data.data.data.postPage.size;
         this.currentPage = data.data.data.postPage.current;
@@ -162,12 +162,12 @@ export default {
     },
     //批量选中
     handleSelectionChange(val){
-      console.log(val)
+      // console.log(val)
       this.postidarr=[];
       for(var i=0;i<val.length;i++){
         this.postidarr.push(val[i].postId)
       }
-      console.log(this.postidarr);
+      // console.log(this.postidarr);
 
     },
     addpost() {
@@ -294,7 +294,7 @@ export default {
               postIds:this.postidarr.toString(),
             }
           }).then(data=>{
-            console.log(data);
+            // console.log(data);
             if(data.data.code==0){
               this.$message({
             type: 'success',

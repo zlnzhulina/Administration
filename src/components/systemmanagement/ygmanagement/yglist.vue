@@ -177,7 +177,7 @@ export default {
       this.yglist();
     },
     checkList(val){
-      console.log(val);
+      // console.log(val);
     }
   },
   methods: {
@@ -204,7 +204,7 @@ export default {
         }
       }).then(data => {
         this.tableData = data.data.data.userPage.records;
-        console.log(data);
+        // console.log(data);
       });
     },
     // postlist() {
@@ -238,7 +238,7 @@ export default {
         }
       }).then(data => {
         this.department = data.data.data.departmentPage.records;
-        console.log(data);
+        // console.log(data);
       });
     },
     //选择部门之后查询岗位
@@ -250,7 +250,7 @@ export default {
           departmentId:this.departmentmodle.departmentid,
         }
       }).then(data=>{
-        console.log(data)
+        // console.log(data)
               this.post = data.data.data.postList;
       })
     },
@@ -270,7 +270,7 @@ export default {
           phoneNumber: this.departmentmodle.phoneNumber
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         if(data.data.code==0){
            this.$message({
             type: 'success',
@@ -288,7 +288,7 @@ export default {
     },
     //编辑员工
     edityg(index, row) {
-      console.log(row);
+      // console.log(row);
       
       this.editmodle.departmentid = row.departmentId;
       this.editmodle.postId=row.postId;
@@ -324,7 +324,7 @@ export default {
             message: '编辑失败!'
           });
         }
-        console.log(data);
+        // console.log(data);
       })
     },
     exit() {
@@ -376,7 +376,7 @@ export default {
               adminUserIds:this.deluserids,
             }
           }).then(data=>{
-            console.log(data);
+            // console.log(data);
             if(data.data.code==0){
               this.$message({
             type: 'success',
