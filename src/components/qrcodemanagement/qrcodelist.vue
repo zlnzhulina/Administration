@@ -44,10 +44,10 @@
         <template slot-scope="scope">{{scope.row.type==2?"双码":"单码"}}</template>
       </el-table-column>
       <el-table-column prop="count" label="批次数量"></el-table-column>
-      <el-table-column prop="Occupy" label="占用"></el-table-column>
+      <el-table-column  label="占用">
+        <template slot-scope="scope">{{scope.row.count-scope.row.residueCount}}</template>
+      </el-table-column>
       <el-table-column prop="residueCount" label="未占用"></el-table-column>
-      <el-table-column prop="consumeractivity" label="消费者活动"></el-table-column>
-      <el-table-column prop="activity" label="渠道活动"></el-table-column>
 
       <el-table-column fixed="right" label="操作" width="300px">
         <template slot-scope="scope">
@@ -55,7 +55,8 @@
           <el-button type="text" size="small" @click="details(scope.row)">详情</el-button>
           <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
           <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
-          <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
+          <el-button type="text" size="small">删除</el-button>
+          <!--  @click="del(scope.row)" -->
           <el-button type="text" size="small" @click="withdraw(scope.row)">撤回</el-button>
         </template>
       </el-table-column>
@@ -265,7 +266,7 @@ export default {
           from: "2"
         }
       }).then(data => {
-        // console.log(data);
+        console.log(data);
         this.totalCount = data.data.data.batchPage.total;
         this.pagesize = data.data.data.batchPage.size;
         this.currentPage = data.data.data.batchPage.current;
@@ -278,12 +279,7 @@ export default {
         path: "/addqrcode"
       });
     },
-    //更多操作
-    // moreoperations(row) {
-    //   console.log(row);
-    //   this.moreoperationscanvas = true;
-    //   this.row = row;
-    // },
+    
     details(row) {
       // console.log(1)
       if (row.type == 2) {
@@ -347,7 +343,7 @@ export default {
           batchId: row.batchId
         }
       }).then(data => {
-        // console.log(data);
+        //  console.log(data);
         this.memberrelationlist=[];
         this.memberrelationlist = data.data.data.list;
         this.residueCount = data.data.data.residueCount;
@@ -389,7 +385,7 @@ export default {
           pageNo: "1"
         }
       }).then(data => {
-        // console.log(data);
+         console.log(data);
         this.SAactivitylist = data.data.data.activityPage.records;
       });
       this.goodclasslist();
@@ -532,8 +528,17 @@ export default {
       }).then(data=>{
         // console.log(data);
         if(data.data.code==0){
+          this.$message({
+                type: "success",
+                message: "撤回成功!"
+              });
           this.withdrawnum="";
           this.withdrawcanvas = false;
+        }else{
+          this.$message({
+                type: "error",
+                message: data.data.msg
+              });
         }
       });
     },
@@ -574,10 +579,10 @@ export default {
       // console.log(val);
       this.currentPage = val;
       this.qrcodelist();
-    }
-    // getTable(){
+    },
+    getTable(){
 
-    // }
+    }
   }
 };
 //二维码列表

@@ -157,7 +157,7 @@ export default {
     handleSizeChange(val) {},
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.getTable();
+      this.init();
     },
     //查看
     seedetails(row) {

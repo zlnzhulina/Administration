@@ -61,14 +61,14 @@
                   <span style="right:70px">编辑</span>
                   <span style="right:26px;" @click="deleteclass(seconditem.productCatId)">删除</span>
                 </template>
-                <div v-for="(threeitem,index) in seconditem.productCatList" :key="index">
+                <div v-for="(threeitem,index) in seconditem.productCatList" :key="index" style="position:relative;">
                   <b style="font-weight: normal;margin-left:30px;">{{threeitem.productCatName}}</b>
                   <span
-                    style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:50px"
+                    style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:50px;top:0;"
                   >编辑</span>
                   <span
                     @click="deleteclass(threeitem.productCatId)"
-                    style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:6px;"
+                    style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:6px;top:0;"
                   >删除</span>
                 </div>
               </el-collapse-item>

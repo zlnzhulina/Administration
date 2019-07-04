@@ -12,63 +12,86 @@
     <div class="main">
       <h3>
         <span>创建批次码</span>
-        
       </h3>
       <ul>
         <li>
-          <span><i>*</i> 码的类型：</span>
-          <p style="width:176px;height:40px;display:inline-block;color:#fff;background:#1abc9c;border-radius: 0;">双码</p>
+          <span>
+            <i>*</i> 码的类型：
+          </span>
+          <p
+            style="width:176px;height:40px;display:inline-block;color:#fff;background:#1abc9c;border-radius: 0;"
+          >双码</p>
         </li>
         <li>
-          <span><i>*</i> 批次名称：</span>
-          <input type="text" placeholder="请输入批次名称" v-model="batchname">
+          <span>
+            <i>*</i> 批次名称：
+          </span>
+          <input type="text" placeholder="请输入批次名称" v-model="batchname" />
         </li>
         <li>
-          <span><i>*</i> 批次数量：</span>
-          <input type="text" placeholder="请输入批次数量" v-model="batchnum">
+          <span>
+            <i>*</i> 批次数量：
+          </span>
+          <input type="text" placeholder="请输入批次数量" v-model="batchnum" />
         </li>
         <li style="margin-top:80px;">
-            <p @click="create">创建</p>
+          <p @click="create">创建</p>
         </li>
       </ul>
+    </div>
+    <div class="createnow" v-show="createnowcanvas">
+      <p>批次创建中 请稍后 ...</p>
     </div>
   </div>
 </template>
 
 <script>
-import Axios from 'axios';
+import Axios from "axios";
 //添加二维码批次
 export default {
   data() {
     return {
-        batchname:"",
-        batchnum:"",
-        //创建二维码类型
-        type:""
+      batchname: "",
+      batchnum: "",
+      //创建二维码类型
+      type: "",
+      //创建中的弹窗
+      createnowcanvas: false,
     };
   },
   methods: {
     back() {
       this.$router.back();
     },
-    create(){
+    create() {
+      this.createnowcanvas = true;
       // console.log(1)
-        Axios({
-            url:"qrcode/codeManager/createQrCode",
-            method:"post",
-            data:{
-                batchName:this.batchname,
-                count:this.batchnum,
-                type:"2",
-            }
-
-        }).then(data=>{
-          // console.log(data)
-          if(data.data.code==0){
-            this.$router.push("/qrcodemanagement")
-          }
-
-        })
+      Axios({
+        url: "qrcode/codeManager/createQrCode",
+        method: "post",
+        data: {
+          batchName: this.batchname,
+          count: this.batchnum,
+          type: "2"
+        }
+      }).then(data => {
+        // console.log(data)
+        if (data.data.code == 0) {
+          this.$message({
+            message: "批次创建成功！",
+            type: "success"
+          });
+          
+          this.$router.push("/qrcodemanagement");
+          
+        }
+      }).catch(error=>{
+        this.$message({
+            message: "批次创建失败，请稍后再试！",
+            type: "error"
+          });
+          this.createnowcanvas = false;
+      })
     }
   }
 };
@@ -97,42 +120,57 @@ export default {
         padding-left: 20px;
       }
     }
-    ul{
-        width: 80%;
+    ul {
+      width: 80%;
+      margin: 0 auto;
+      li {
+        list-style: none;
+        width: 870px;
+        height: 86px;
+        line-height: 86px;
         margin: 0 auto;
-        li{
-            list-style: none;
-            width: 870px;
-            height: 86px;
-            line-height: 86px;
-            margin: 0 auto;
-            span{
-                display: inline-block;
-                width: 164px;
-                height: 46px;
-                text-align: right;
-                font-size: 16px;
-                color: #7f7f7f;
-                i{
-                    color: red;
-                }
-            }
-            input{
-                width: 598px;
-                height:46px; 
-                color: darkgray;
-            }
-            p{
-                width: 216px;
-                height: 40px;
-                text-align: center;
-                line-height: 40px;
-                font-size: 12px;
-                margin: 0 auto;
-                border: 1px solid #ccc;
-                border-radius: 8px;
-            }
+        span {
+          display: inline-block;
+          width: 164px;
+          height: 46px;
+          text-align: right;
+          font-size: 16px;
+          color: #7f7f7f;
+          i {
+            color: red;
+          }
         }
+        input {
+          width: 598px;
+          height: 46px;
+          color: darkgray;
+        }
+        p {
+          width: 216px;
+          height: 40px;
+          text-align: center;
+          line-height: 40px;
+          font-size: 12px;
+          margin: 0 auto;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+        }
+      }
+    }
+  }
+  .createnow {
+    width: 100%;
+    height: 100%;
+    background: rgba(107, 107, 107, 0.5);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 111;
+    p {
+      color: #fff;
+      font-size: 38px;
+      text-align: center;
+      padding-top: 340px;
     }
   }
 }

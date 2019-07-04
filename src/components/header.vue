@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <p class="logo">解放渠道产品分销系统</p>
+        <p class="logo">壳家人-福田戴姆勒管理端</p>
         <ul>
             <li v-for="(item,index) in navlist">
                 <router-link :to="{name:item.name}">{{item.title}}</router-link>
@@ -79,7 +79,7 @@ export default {
     position: absolute;
     top: 0;
     .logo{
-        width: 250px;
+        width: 280px;
         height: 60px;
         text-align: center;
         line-height: 60px;

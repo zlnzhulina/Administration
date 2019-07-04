@@ -13,19 +13,19 @@ module.exports = {
     proxyTable: {
       "/qrcode": {
         
-        // target: "http://192.168.2.102:8101",
+        // target: "http://192.168.2.108:8001",
         
-        target: "http://jiefang.atscloud.cn/JF_SA/qrcode/",
-        
+        target: "http://futian.atscloud.cn/FT_SA/qrcode/",
+        // target: "http://jiefang.atscloud.cn/JF_SA/qrcode/",
         changeOrigin: true,
         pathRewrite: {
           "^/qrcode": ""
         }
       },
       "/api":{
-        //  target: "http://192.168.2.102:8001",
-         target: "http://jiefang.atscloud.cn/JF_SA/api/",
-         
+        //  target: "http://192.168.2.108:8001",
+         target: "http://futian.atscloud.cn/FT_SA/api",
+        // target: "http://jiefang.atscloud.cn/JF_SA/api/",
          changeOrigin: true,
          pathRewrite: {
            "^/api": ""

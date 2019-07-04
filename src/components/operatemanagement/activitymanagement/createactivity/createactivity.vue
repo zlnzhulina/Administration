@@ -19,7 +19,7 @@
               :show-file-list="false"
               :on-success="handlebgimgSuccess"
             >
-              <img v-if="imagebgUrl" :src="imagebgUrl" class="avatar">
+              <img v-if="imagebgUrl" :src="imagebgUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -30,7 +30,7 @@
               :show-file-list="false"
               :on-success="handletitleimgSuccess"
             >
-              <img v-if="imagetitleUrl" :src="imagetitleUrl" class="avatar">
+              <img v-if="imagetitleUrl" :src="imagetitleUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -42,7 +42,7 @@
               :show-file-list="false"
               :on-success="handlecodebtnSuccess"
             >
-              <img v-if="imagecodebtnUrl" :src="imagecodebtnUrl" class="avatar">
+              <img v-if="imagecodebtnUrl" :src="imagecodebtnUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -54,7 +54,7 @@
               :show-file-list="false"
               :on-success="handlebonusSuccess"
             >
-              <img v-if="imagebonusUrl" :src="imagebonusUrl" class="avatar">
+              <img v-if="imagebonusUrl" :src="imagebonusUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -67,7 +67,7 @@
               :show-file-list="false"
               :on-success="handlereceivebgimgSuccess"
             >
-              <img v-if="imagereceivebgUrl" :src="imagereceivebgUrl" class="avatar">
+              <img v-if="imagereceivebgUrl" :src="imagereceivebgUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -78,7 +78,7 @@
               :show-file-list="false"
               :on-success="handlereceivetitleimgSuccess"
             >
-              <img v-if="imagereceivetitleUrl" :src="imagereceivetitleUrl" class="avatar">
+              <img v-if="imagereceivetitleUrl" :src="imagereceivetitleUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -89,7 +89,7 @@
               :show-file-list="false"
               :on-success="handlereceiveamountimgSuccess"
             >
-              <img v-if="imagereceiveamountUrl" :src="imagereceiveamountUrl" class="avatar">
+              <img v-if="imagereceiveamountUrl" :src="imagereceiveamountUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -100,7 +100,7 @@
               :show-file-list="false"
               :on-success="handlereceivedrawimgSuccess"
             >
-              <img v-if="imagereceivedrawUrl" :src="imagereceivedrawUrl" class="avatar">
+              <img v-if="imagereceivedrawUrl" :src="imagereceivedrawUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -113,7 +113,7 @@
               :show-file-list="false"
               :on-success="handleactivitytitleSuccess"
             >
-              <img v-if="imageactivitytitleUrl" :src="imageactivitytitleUrl" class="avatar">
+              <img v-if="imageactivitytitleUrl" :src="imageactivitytitleUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -190,7 +190,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="消费者延时扫码">
-                  <el-radio-group v-model="userdelayed">
+                  <el-radio-group v-model="userdelayed" :disabled="usercodetype == -1 ?true:false">
                     <el-radio value="0" label="0">否</el-radio>
                     <el-radio value="1" label="1">是</el-radio>
                   </el-radio-group>
@@ -203,12 +203,15 @@
                 </el-form-item>
                 <el-form-item label="白名单">
                   <el-radio-group v-model="activity.isWhiteList">
-                    <el-radio value="-1" label="-1">否</el-radio>
+                    <el-radio value="0" label="0">否</el-radio>
                     <el-radio value="1" label="1">是</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="条码占用期">
-                  <el-radio-group v-model="isbarTakeUpTime">
+                  <el-radio-group
+                    v-model="isbarTakeUpTime"
+                    :disabled="usercodetype == -1 ?true:false"
+                  >
                     <el-radio label="0">否</el-radio>
                     <el-radio label="1">是</el-radio>
                   </el-radio-group>
@@ -224,7 +227,10 @@
                   </template>
                 </el-form-item>
                 <el-form-item label="条码保护期">
-                  <el-radio-group v-model="isbarProtectTime">
+                  <el-radio-group
+                    v-model="isbarProtectTime"
+                    :disabled="usercodetype == -1 ?true:false"
+                  >
                     <el-radio label="0">否</el-radio>
                     <el-radio label="1">是</el-radio>
                   </el-radio-group>
@@ -254,24 +260,28 @@
               >派奖规则</div>
               <div style="width:646px;heigth:90px;margin-left:30px;">
                 <p style="height:52px;line-height:52px;">
-                  <span style="display:inline-block;width:86px; font-weight:bold;">每人可领</span>
-                  <el-checkbox>不限</el-checkbox>
+                  <span style="display:inline-block;width:110px; font-weight:bold;">每人可领</span>
+                  <el-checkbox @change="personCount">不限</el-checkbox>
                   <input
                     type="number"
                     placeholder="设置数量"
                     style="width:98px;height:24px;border:1px solid #ccc;color:#666;"
                     v-model="activity.personCount"
-                  >个
+                    v-show="activity.personCount=='0'?false:true"
+                  />
+                  <i v-show="activity.personCount=='0'?false:true">个</i>
                 </p>
                 <p style="height:52px;line-height:52px;">
-                  <span style="display:inline-block;width:86px;font-weight:bold;">每人每天可领</span>
-                  <el-checkbox>不限</el-checkbox>
+                  <span style="display:inline-block;width:110px;font-weight:bold;">每人每天可领</span>
+                  <el-checkbox @change="personDayCount">不限</el-checkbox>
                   <input
                     type="number"
                     placeholder="设置数量"
                     style="width:98px;height:24px;border:1px solid #ccc;color:#666;"
                     v-model="activity.personDayCount"
-                  >个
+                    v-show="activity.personDayCount==0?false:true"
+                  />
+                  <i v-show="activity.personDayCount==0?false:true">个</i>
                 </p>
               </div>
               <div
@@ -287,13 +297,13 @@
                   <span style="text-align:right">是否需认证</span>
                   <el-radio
                     v-model="activity.needAuthentication"
-                    :disabled="needCar==0?true:false"
+                    :disabled="needCar=='0'?true:false"
                     label="1"
                     value="1"
                   >是</el-radio>
                   <el-radio
                     v-model="activity.needAuthentication"
-                    :disabled="needCar==0?true:false"
+                    :disabled="needCar=='0'?true:false"
                     label="0"
                     value="0"
                   >否</el-radio>
@@ -307,10 +317,10 @@
                     style="width:98px;height:24px;border:1px solid #ccc;color:#666;"
                     v-model="activity.catCount"
                     :disabled="needCar==0?'disabled':false"
-                  >个
+                  />个
                 </p>
                 <p
-                  style="width:350px;height:80px;border:2px dashed #ccc;margin:10px 0 0 80px;"
+                  style="width:350px;height:100px;border:2px dashed #ccc;margin:10px 0 0 80px;"
                 >开启车辆信息，用户需填写：车牌号、车型、排量、年款、当前历程、拥有量、发动机号、发动机型号、VIN等信息</p>
               </div>
               <div class="receive" style="width:97%;">
@@ -335,14 +345,21 @@
                   v-for="(item,index) in relationgoods"
                   style="width:auto;padding:0 4px 0 4px;"
                   @click="checkgoods(index)"
-                >{{item.productSName}}</span>
+                >
+                  {{item.productSName}}
+                  <img
+                    src="../../../../assets/no.png"
+                    style="width:12px;height:12px;float:right;margin-right:-4px;"
+                    @click="deletegoods(index,$event)"
+                  />
+                </span>
                 <span @click="addgoods">添加</span>
               </div>
 
               <div class="selectgoods" v-if="selectgoods">
                 <p style="height:40px;">
                   <span>选择商品</span>
-                  <a @click="addgood">添加商品</a>
+                  <!-- <a @click="addgood">添加商品</a> -->
                 </p>
                 <p>
                   <select v-model="firstlist">
@@ -374,6 +391,7 @@
                       :value="goodsitem"
                     >{{goodsitem.productSName}}</option>
                   </select>
+                  <a @click="addgood">添加商品</a>
                 </p>
               </div>
 
@@ -399,7 +417,7 @@
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.prizename"
-                        >
+                        />
                       </template>
                     </el-table-column>
                     <el-table-column prop="Amount " label="金额" width="68">
@@ -408,7 +426,7 @@
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.Amount"
-                        >
+                        />
                       </template>
                     </el-table-column>
                     <el-table-column prop="prizenum" label="奖品数量" width="100">
@@ -418,7 +436,7 @@
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.prizenum"
                           @keyup="countnum(scope.$index,scope.row.prizenum)"
-                        >
+                        />
                       </template>
                     </el-table-column>
                     <el-table-column prop="setprize" label="出奖设置" width="78">
@@ -427,7 +445,7 @@
                           type="text"
                           style="width:30%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.setprize"
-                        >
+                        />
                         <span>:1</span>
                       </template>
                     </el-table-column>
@@ -438,7 +456,7 @@
                           type="text"
                           style="width:58%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.Tips"
-                        >
+                        />
                       </template>
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="50">
@@ -452,9 +470,8 @@
                     </el-table-column>
                   </el-table>
                 </div>
-                <div class="addreq" @click="preservationsub">保存 关联码</div>
               </div>
-              
+
               <!-- 添加完成的商品奖品信息 -->
               <div class="oldgoodssetprize" v-show="oldgoodssetprize">
                 <p style="height:40px;">
@@ -466,19 +483,24 @@
                 </p>
                 <div class="tab">
                   <el-table :data="oldgoodssetprizelist" stripe style="width: 100%;font-size:12px;">
-                    <el-table-column prop="probability" label="优先级" width="68">
+                    <el-table-column label="优先级" width="68">
                       <!-- <template slot-scoped="scoped">
                         <div>{{scoped.row}}</div>
                       </template>-->
+                      <template slot-scope="scope">
+                        <div>{{scope.$index==0?"基础奖":""}}</div>
+                      </template>
                     </el-table-column>
-                    <el-table-column  label="奖品" width="100"><template>微信红包</template></el-table-column>
+                    <el-table-column label="奖品" width="100">
+                      <template>微信红包</template>
+                    </el-table-column>
                     <el-table-column label="奖品名称" width="100">
                       <template slot-scope="scope">
                         <input
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.activityPrizeName"
-                        >
+                        />
                       </template>
                     </el-table-column>
                     <el-table-column prop="prizeList" label="金额" width="68">
@@ -487,7 +509,7 @@
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.prizeList.price"
-                        >
+                        />
                       </template>
                     </el-table-column>
                     <el-table-column prop="activityPrizeCount" label="奖品数量" width="100">
@@ -497,7 +519,7 @@
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.activityPrizeCount"
                           @keyup="oldcountnum(scope.$index,scope.row.activityPrizeCount)"
-                        >
+                        />
                       </template>
                     </el-table-column>
                     <el-table-column prop="probability" label="出奖设置" width="78">
@@ -506,7 +528,7 @@
                           type="text"
                           style="width:30%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.probability"
-                        >
+                        />
                         <span>:1</span>
                       </template>
                     </el-table-column>
@@ -517,7 +539,7 @@
                           type="text"
                           style="width:58%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.activityPrizeInfo"
-                        >
+                        />
                       </template>
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="50">
@@ -530,11 +552,18 @@
                       </template>
                     </el-table-column>
                   </el-table>
-                  
                 </div>
                 <div style="width:100%;height:60px;background:#fff;padding-top:20px;">
-                  <span style="width:100px;display:block;height:40px;background:#409eff;border-radius: 6px;color:#fff;margin:10px auto;line-height:40px;text-align:center" @click="preservationoldprize()">保存</span></div>
+                  <span
+                    style="width:100px;display:block;height:40px;background:#409eff;border-radius: 6px;color:#fff;margin:10px auto;line-height:40px;text-align:center;"
+                    @click="preservationoldprize()"
+                  >保存</span>
+                </div>
               </div>
+              <div
+                @click="preservationsub"
+                style="width:90px;height:30px; float:right;text-align:center;line-height:30px;border-radius: 6px;color:#fff;background:#1abc9c;"
+              >保存 关联码</div>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -574,7 +603,7 @@
       </div>
     </div>
     <div class="createloding" v-if="createlodingcanvas">
-      <p>活动正在创建中,请稍后...</p>
+      <p>{{flag==1?"活动正在修改中,请稍后...":"活动正在创建中,请稍后..."}}</p>
     </div>
   </div>
 </template>
@@ -585,21 +614,80 @@ export default {
   created() {
     this.goodclasslist();
     // console.log(this.$route.query);
-    // this.flag=this.$route.query.flag;
-    // this.activity.activityName=this.$route.query.rowdata.activityName;
-    // this.imagebgUrl=this.$route.query.rowdata.backgroundUrl;
-    // this.activity.endTime=this.$route.query.rowdata.endTime;
-    // this.activity.startTime=this.$route.query.rowdata.startTime;
+    if (this.$route.query.flag == 1) {
+      this.activityId = this.$route.query.rowdata.activityId;
+      delete this.$route.query.rowdata.winningCount;
+      delete this.$route.query.rowdata.reset;
+      delete this.$route.query.rowdata.finish;
+      delete this.$route.query.rowdata.activityId;
+
+      // console.log(this.$route.query.rowdata);
+      this.flag = this.$route.query.flag;
+      this.activity = this.$route.query.rowdata;
+      this.activity.needAuthentication = this.activity.needAuthentication.toString();
+      //处理商品奖项
+      var arr = [];
+      arr.push([]);
+      for (let i = 0; i < this.$route.query.rowlist.length; i++) {
+        if (i == 0) {
+          arr[0].push(this.$route.query.rowlist[0]);
+        } else {
+          if (
+            this.$route.query.rowlist[i].productsId ==
+            arr[arr.length - 1][0].productsId
+          ) {
+            arr[arr.length - 1].push(this.$route.query.rowlist[i]);
+          } else {
+            arr.push([]);
+            arr[arr.length - 1].push(this.$route.query.rowlist[i]);
+          }
+        }
+      }
+      console.log(arr);
+      for (let i = 0; i < arr.length; i++) {
+        this.relationgoods.push(arr[i][0]);
+      }
+      for (var i = 0; i < this.relationgoods.length; i++) {
+        this.relationgoods[i].productSName = this.relationgoods[i].productName;
+      }
+      for (var i = 0; i < arr.length; i++) {
+        this.list.push({
+          activityPrizeList: [],
+          prizeList: []
+        });
+        //  console.log(this.list);
+
+        for (let j = 0; j < arr[i].length; j++) {
+          this.list[i].activityPrizeList.push({
+            activityPrizeId: arr[i][j].activityPrizeId,
+            activityPrizeName: arr[i][j].activityPrizeName,
+            activityPrizeCount: arr[i][j].activityPrizeCount,
+            activityPrizeInfo: arr[i][j].activityPrizeInfo,
+            probability: arr[i][j].probability,
+            productsId: arr[i][j].productsId
+          });
+          // console.log("111")
+          this.list[i].prizeList.push({
+            prizeName: arr[i][j].activityPrizeName,
+
+            count: arr[i][j].activityPrizeCount,
+            price: arr[i][j].prize.price
+          });
+        }
+      }
+      // console.log(this.list);
+      // console.log(this.relationgoods);
+    }
   },
   data() {
     return {
       //创建活动加载中
       createlodingcanvas: false,
       //添加完成的商品奖品信息
-      oldgoodssetprize:false,
+      oldgoodssetprize: false,
 
-      oldgoodssetprizelist:[],
-      index:"",
+      oldgoodssetprizelist: [],
+      index: "",
       flag: "",
       one: true,
       two: false,
@@ -676,9 +764,9 @@ export default {
         //结束时间ok
         endTime: "",
         //每人可领ok
-        personCount: "",
+        personCount: "1",
         //每人每天可领ok
-        personDayCount: "",
+        personDayCount: "1",
         //每辆车可领ok
         catCount: "",
         //是否需要车
@@ -749,7 +837,6 @@ export default {
         this.activity.activityName &&
         this.activity.startTime &&
         this.activity.endTime &&
-        this.activity.page &&
         this.activity.isQrcodeStatus &&
         this.activity.scanTime &&
         this.activity.isWhiteList &&
@@ -775,6 +862,24 @@ export default {
 
       //  console.log(this.activity);
     },
+    //每人可领不限
+    personCount(val) {
+      // console.log(val);
+      if (val == true) {
+        this.activity.personCount = "0";
+      } else {
+        this.activity.personCount = "1";
+      }
+    },
+    //
+    personDayCount(val) {
+      // console.log(val);
+      if (val == true) {
+        this.activity.personDayCount = "0";
+      } else {
+        this.activity.personDayCount = "1";
+      }
+    },
     nexttwo() {
       // console.log(this.activity);
       if (
@@ -783,7 +888,7 @@ export default {
         this.activity.isRealName
       ) {
         if (
-          (this.activity.needCar == 1 && this.active.catCount) ||
+          (this.activity.needCar == 1 && this.activity.catCount) ||
           this.activity.needCar == 0
         ) {
           if (this.active == 1) {
@@ -840,7 +945,9 @@ export default {
               message: "添加成功!"
             });
             //记录添加的商品的id
+            this.oldgoodssetprize = false;
             this.productsId = this.selectgood.productSId;
+
             this.relationgoods.push(this.selectgood);
             console.log(this.selectgood);
             this.selectgoods = false;
@@ -874,13 +981,10 @@ export default {
                 count: this.prizedata[i].prizenum,
                 price: this.prizedata[i].Amount
               });
-              // console.log("列表二：",this.prizeList)
+              //  console.log("列表二：",this.prizeList)
             }
             // console.log(this.list)
-            this.list.push({
-              activityPrizeList: this.activityPrizeList,
-              prizeList: this.prizeList
-            });
+
             this.prizedata = [];
             this.activityPrizeList = [];
             this.prizeList = [];
@@ -962,9 +1066,16 @@ export default {
     },
     //删除奖项
     deleteRow(index, row) {
+      if (index == 0) {
+        this.$message({
+          type: "error",
+          message: "基础奖不可移除!"
+        });
+      } else {
+        this.prizedata.splice(index, 1);
+      }
       // console.log(index);
       // console.log(row);
-      this.prizedata.splice(index, 1);
     },
     check(value) {
       if (value.name == "first") {
@@ -984,119 +1095,225 @@ export default {
     //查看添加好的活动
     checkgoods(index) {
       console.log(this.list);
-      if(index==this.relationgoods.length-1){
-        this.oldgoodssetprize=false;
-      }else{
-        this.index=index;
-      this.oldgoodssetprize=true;
-      this.oldgoodssetprizelist=[];
-      // console.log(index);
-      console.log(this.list[index]);
-      this.oldgoodssetprizelist=this.list[index].activityPrizeList;
-      for (var i=0;i<this.list[index].activityPrizeList.length;i++){
-        this.oldgoodssetprizelist[i].prizeList=this.list[index].prizeList[i];
+      if (index == this.relationgoods.length - 1) {
+        console.log("最后一个span");
+        console.log(this.relationgoods.length);
+        console.log(this.list.length);
+        if (this.relationgoods.length == this.list.length) {
+          //说明没有新添加的商品
+          console.log("list里的最后一个span，没有新添加的商品");
+          this.index = index;
+          this.oldgoodssetprize = true;
+          this.oldgoodssetprizelist = [];
+          // console.log(index);
+          // console.log(this.list[index]);
+          this.oldgoodssetprizelist = this.list[index].activityPrizeList;
+          for (var i = 0; i < this.list[index].activityPrizeList.length; i++) {
+            this.oldgoodssetprizelist[i].prizeList = this.list[index].prizeList[
+              i
+            ];
+          }
+        } else if (this.relationgoods.length > this.list.length) {
+          console.log("最后一个span，新的span,未存入list中");
+          this.oldgoodssetprize = false;
+        }
+      } else if (index < this.relationgoods.length - 1) {
+        console.log("未点击最后一个span");
+        this.index = index;
+        this.oldgoodssetprize = true;
+        this.oldgoodssetprizelist = [];
+        console.log(index);
+        console.log(this.list[index]);
+        this.oldgoodssetprizelist = this.list[index].activityPrizeList;
+        for (var i = 0; i < this.list[index].activityPrizeList.length; i++) {
+          this.oldgoodssetprizelist[i].prizeList = this.list[index].prizeList[
+            i
+          ];
+        }
+      }
 
-      }
-      }
-      
-      console.log(this.oldgoodssetprizelist);
+      // console.log(this.oldgoodssetprizelist);
     },
     //添加新的奖项
-    addoldprize(){
-      if(this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.count==""){
-        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.count=this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].activityPrizeCount;
-        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.prizeName= this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].activityPrizeName;
-
+    addoldprize() {
+      if (
+        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length - 1]
+          .prizeList.count == ""
+      ) {
+        this.oldgoodssetprizelist[
+          this.oldgoodssetprizelist.length - 1
+        ].prizeList.count = this.oldgoodssetprizelist[
+          this.oldgoodssetprizelist.length - 1
+        ].activityPrizeCount;
+        this.oldgoodssetprizelist[
+          this.oldgoodssetprizelist.length - 1
+        ].prizeList.prizeName = this.oldgoodssetprizelist[
+          this.oldgoodssetprizelist.length - 1
+        ].activityPrizeName;
       }
-      this.oldgoodssetprizelist.push(
-        {
-          activityPrizeCount:"",
-          activityPrizeInfo:"",
-          activityPrizeName:"",
-          probability:"",
-          productsId:this.oldgoodssetprizelist[0].productsId,
-          prizeList:{
-            count:"",
-            price:"",
-            prizeName:"",
-          }
-        }
-      );
-      
-    },
-    //删除添加好的奖项
-    olddeleteRow(index,row){
-      console.log(index)
-      this.oldgoodssetprizelist.splice(index, 1);
-    },
-    //保存更改后的商品奖项
-    preservationoldprize(){
-      if(this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.count==""){
-        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.count=this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].activityPrizeCount;
-        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].prizeList.prizeName= this.oldgoodssetprizelist[this.oldgoodssetprizelist.length-1].activityPrizeName;
-
-      }
-      this.list[this.index].prizeList=[];
-      for(var i=0;i<this.oldgoodssetprizelist.length;i++){
-        this.list[this.index].prizeList.push(this.oldgoodssetprizelist[i].prizeList);
-      }
-      for(var i=0;i<this.oldgoodssetprizelist.length;i++){
-        // this.oldgoodssetprizelist[i].prizeList
-        delete(this.oldgoodssetprizelist[i]["prizeList"])
-      }
-     
-      this.list[this.index].activityPrizeList=this.oldgoodssetprizelist;
-      console.log(this.list[this.index]);
-    },
-    
-    //提交创建活动
-    preservationsub() {
-      this.createlodingcanvas = true;
-      if (this.createtype == 1) {
-        for (let i = 0; i < this.prizedata.length; i++) {
-          this.activityPrizeList.push({
-            activityPrizeName: this.prizedata[i].prizename,
-            activityPrizeCount: this.prizedata[i].prizenum,
-            activityPrizeInfo: this.prizedata[i].Tips,
-            probability: this.prizedata[i].setprize,
-            productsId: this.productsId
-          });
-
-          this.prizeList.push({
-            prizeName: this.prizedata[i].prizename,
-            count: this.prizedata[i].prizenum,
-            price: this.prizedata[i].Amount
-          });
-        }
-
-        this.list.push({
-          activityPrizeList: this.activityPrizeList,
-          prizeList: this.prizeList
-        });
-        this.prizedata = [];
-        this.activityPrizeList = [];
-        this.prizeList = [];
-        // console.log(this.list);
-        // console.log(this.activity);
-        this.createtype = "0";
-      }
-      // console.log(this.list)
-
-      Axios({
-        url: "api/activityManager/addActivity",
-        method: "post",
-        data: {
-          activity: this.activity,
-          list: this.list
-        }
-      }).then(data => {
-        if (data.data.code == 0) {
-          //说明活动创建成功
-          this.createlodingcanvas = false;
-          this.createsuccesscanvas = true;
-          // this.$router.push("/operatemanagement");
+      this.oldgoodssetprizelist.push({
+        activityPrizeCount: "",
+        activityPrizeInfo: "",
+        activityPrizeName: "",
+        probability: "",
+        productsId: this.oldgoodssetprizelist[0].productsId,
+        prizeList: {
+          count: "",
+          price: "",
+          prizeName: ""
         }
       });
+    },
+    //删除添加好的奖项
+    olddeleteRow(index, row) {
+      console.log(index);
+      if (index == 0) {
+        this.$message({
+          type: "error",
+          message: "基础奖不可移除!"
+        });
+      } else {
+        this.oldgoodssetprizelist.splice(index, 1);
+      }
+    },
+    //保存更改后的商品奖项
+    preservationoldprize() {
+      if (
+        this.oldgoodssetprizelist[this.oldgoodssetprizelist.length - 1]
+          .prizeList.count == ""
+      ) {
+        this.oldgoodssetprizelist[
+          this.oldgoodssetprizelist.length - 1
+        ].prizeList.count = this.oldgoodssetprizelist[
+          this.oldgoodssetprizelist.length - 1
+        ].activityPrizeCount;
+        this.oldgoodssetprizelist[
+          this.oldgoodssetprizelist.length - 1
+        ].prizeList.prizeName = this.oldgoodssetprizelist[
+          this.oldgoodssetprizelist.length - 1
+        ].activityPrizeName;
+      }
+      this.list[this.index].prizeList = [];
+      for (var i = 0; i < this.oldgoodssetprizelist.length; i++) {
+        this.list[this.index].prizeList.push(
+          this.oldgoodssetprizelist[i].prizeList
+        );
+      }
+      for (var i = 0; i < this.oldgoodssetprizelist.length; i++) {
+        // this.oldgoodssetprizelist[i].prizeList
+        delete this.oldgoodssetprizelist[i]["prizeList"];
+      }
+
+      this.list[this.index].activityPrizeList = this.oldgoodssetprizelist;
+      // console.log(this.list[this.index]);
+    },
+    //删除添加好的商品
+    deletegoods(index, e) {
+      e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
+      console.log(this.relationgoods);
+      if (index == this.relationgoods.length - 1) {
+        e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
+        console.log(this.relationgoods);
+        console.log(this.list);
+        if (this.relationgoods.length == this.list.length) {
+          this.relationgoods.splice(index, 1);
+          this.list.splice(index, 1);
+        } else {
+          this.relationgoods.splice(index, 1);
+          this.prizedata = [];
+          console.log(this.prizedata);
+        }
+      } else {
+        e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
+        this.relationgoods.splice(index, 1);
+        this.list.splice(index, 1);
+      }
+
+      console.log(this.list);
+    },
+    //提交创建活动
+    preservationsub() {
+      this.active = 3;
+      this.createlodingcanvas = true;
+      if (!this.prizedata.length == 0) {
+        if (this.createtype == 1) {
+          for (let i = 0; i < this.prizedata.length; i++) {
+            this.activityPrizeList.push({
+              activityPrizeName: this.prizedata[i].prizename,
+              activityPrizeCount: this.prizedata[i].prizenum,
+              activityPrizeInfo: this.prizedata[i].Tips,
+              probability: this.prizedata[i].setprize,
+              productsId: this.productsId
+            });
+
+            this.prizeList.push({
+              prizeName: this.prizedata[i].prizename,
+              count: this.prizedata[i].prizenum,
+              price: this.prizedata[i].Amount
+            });
+          }
+
+          this.list.push({
+            activityPrizeList: this.activityPrizeList,
+            prizeList: this.prizeList
+          });
+          this.prizedata = [];
+          this.activityPrizeList = [];
+          this.prizeList = [];
+          // console.log(this.list);
+          // console.log(this.activity);
+          this.createtype = "0";
+        }
+        //
+      }
+      console.log(this.list);
+      if (this.flag) {
+        console.log("修改活动");
+        
+          Axios({
+            url: "api/activityManager/editActivity",
+            method: "post",
+            data: {
+              activity: this.activity,
+              list: this.list
+            }
+          }).then(data => {
+            console.log(data)
+            if (data.data.code == 0) {
+              //说明活动创建成功
+              this.$message({
+                message: "修改成功！",
+                type: "success"
+              });
+              this.createlodingcanvas = false;
+              this.createsuccesscanvas = true;
+              this.$router.push("/operatemanagement");
+            }
+          });
+        
+      } else {
+        console.log("创建活动");
+        Axios({
+            url: "api/activityManager/addActivity",
+            method: "post",
+            data: {
+              activity: this.activity,
+              list: this.list
+            }
+          }).then(data => {
+            console.log(data)
+            if (data.data.code == 0) {
+              //说明活动创建成功
+              this.$message({
+                message: "创建成功！",
+                type: "success"
+              });
+              this.createlodingcanvas = false;
+              this.createsuccesscanvas = true;
+              this.$router.push("/operatemanagement");
+            }
+          });
+      }
     },
     //背景图片上传成功
     handlebgimgSuccess(res, file) {
@@ -1111,25 +1328,26 @@ export default {
         });
       }
     },
-    countnum(index,row){
-      console.log(index);
-      console.log(this.prizedata[0].prizenum);
-      console.log(this.prizedata[index].prizenum);
+    countnum(index, row) {
+      // console.log(index);
+      // console.log(this.prizedata[0].prizenum);
+      // console.log(this.prizedata[index].prizenum);
       if (!index == 0) {
-            var num = Math.round(
-              this.prizedata[0].prizenum / this.prizedata[index].prizenum
-            );
-            this.prizedata[index].setprize = num.toString();
-              console.log(this.prizedata)
-          }
-    },
-    oldcountnum(index,row){
-      console.log(this.oldgoodssetprizelist)
-      if(!index==0){
         var num = Math.round(
-              this.oldgoodssetprizelist[0].activityPrizeCount / this.oldgoodssetprizelist[index].activityPrizeCount
-            );
-            this.oldgoodssetprizelist[index].probability = num.toString();
+          this.prizedata[0].prizenum / this.prizedata[index].prizenum
+        );
+        this.prizedata[index].setprize = num.toString();
+        // console.log(this.prizedata);
+      }
+    },
+    oldcountnum(index, row) {
+      // console.log(this.oldgoodssetprizelist);
+      if (!index == 0) {
+        var num = Math.round(
+          this.oldgoodssetprizelist[0].activityPrizeCount /
+            this.oldgoodssetprizelist[index].activityPrizeCount
+        );
+        this.oldgoodssetprizelist[index].probability = num.toString();
       }
     },
     //标题图片上传成功
@@ -1175,28 +1393,20 @@ export default {
     }
   },
   watch: {
-    // 'prizedata[1].prizenum': {
-    //   handler(val) {
-    //     // console.log(val);
-    //     if (!this.prizedata.length == 0) {
-    //       var index = val.length - 1;
-    //       if (!index == 0) {
-    //         var num = Math.round(
-    //           this.prizedata[0].prizenum / this.prizedata[index].prizenum
-    //         );
-    //         this.prizedata[index].setprize = num.toString();
-    //         //  console.log(this.prizedata)
-    //       }
-    //     }
-    //   },
-    //   // deep: true
-    // },
     usercodetype(val) {
       // console.log(val)
       if (val == -1) {
         this.activity.isQrcodeStatus = "-1";
+        this.userdelayed = "0";
+
+        this.isbarTakeUpTime = "0";
+        this.isbarProtectTime = "0";
       } else {
         this.activity.isQrcodeStatus = "";
+        this.userdelayed = "1";
+
+        this.isbarTakeUpTime = "1";
+        this.isbarProtectTime = "1";
       }
     },
     userdelayed(val) {
@@ -1631,7 +1841,7 @@ export default {
             line-height: 32px;
             span {
               display: inline-block;
-              width: 130px;
+              width: 140px;
             }
           }
         }
@@ -1640,7 +1850,7 @@ export default {
       .prizeset {
         width: 764px;
         position: relative;
-       
+
         .relation {
           width: 100%;
           height: 58px;
@@ -1679,18 +1889,16 @@ export default {
               color: #555;
             }
             a {
-              display: block;
-              float: right;
-              width: 76px;
-              height: 40px;
-              line-height: 40px;
+              display: inline-block;
+              margin-left: 20px;
+              line-height: 30px;
               text-align: center;
             }
           }
         }
         .setprize {
           width: 100%;
-         
+
           p {
             span {
               display: block;
@@ -1731,10 +1939,10 @@ export default {
         }
         .oldgoodssetprize {
           width: 100%;
-       
+
           background: #eee;
           z-index: 111;
-        margin-top: 59px;
+          margin-top: 59px;
           p {
             span {
               display: block;
@@ -1762,7 +1970,6 @@ export default {
               }
             }
           }
-          
         }
       }
     }

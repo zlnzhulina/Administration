@@ -25,7 +25,7 @@
         </span>
         <input type="text" v-model="networkName">
         <span>
-          <i>*</i>网点电话
+          网点电话
         </span>
         <input type="text" v-model="phoneNumber">
       </li>
@@ -37,7 +37,7 @@
       </li>
       <li>
         <span>
-          <i>*</i>详细地址
+          详细地址
         </span>
         <div style="display:inline-block;">
           <v-distpicker @selected="onSelected" :province="prov" :city="city" :area="district"></v-distpicker>
@@ -183,7 +183,7 @@ export default {
       }
       if (this.$route.query.flag == 0) {
         //添加网点
-        if(networkCode=="" && networkName=="" && phoneNumber==""){
+        if(networkCode=="" && networkName==""){
           this.$message({
               message: "必填项未填写",
               type: "error"

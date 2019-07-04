@@ -15,15 +15,15 @@
       <el-table-column prop="endTime" label="有效时间"></el-table-column>
       <el-table-column prop="activityType" label="活动状态">
         <template slot-scope="scope">
-          {{scope.row.activityType==0?"未结束":""}}
-          {{scope.row.activityType==1?"已结束":""}}
-          {{scope.row.activityType==2?"已取消":""}}
+          {{scope.row.finish==0?"未结束":""}}
+          {{scope.row.finish==1?"已结束":""}}
+          {{scope.row.finish==2?"已取消":""}}
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="310">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="details(scope.row)">查看</el-button>
-          <el-button type="text" size="small" @click="edit(scope.row)">修改</el-button>
+          <el-button type="text" size="small" @click="details(scope.$index,scope.row)">查看</el-button>
+          <el-button type="text" size="small" @click="edit(scope.$index,scope.row)">修改</el-button>
           <el-button type="text" size="small">结束</el-button>
         </template>
       </el-table-column>
@@ -51,7 +51,8 @@ export default {
       tableData: [],
       totalCount: 1,
       pagesize: 10,
-      currentPage: 1
+      currentPage: 1,
+      list:[],
     };
   },
   created() {
@@ -67,8 +68,9 @@ export default {
           pageSize: this.pagesize,
         }
       }).then(data => {
-        // console.log(data);
+         console.log(data);
         this.tableData = data.data.data.activityPage.records;
+        this.list=data.data.data.list;
         this.totalCount = data.data.data.activityPage.total;
         this.pagesize = data.data.data.activityPage.size;
         this.currentPage = data.data.data.activityPage.current;
@@ -78,20 +80,21 @@ export default {
       this.$router.push("/createactivity");
     },
     //查看活动详情
-    details(row) {
+    details(index,row) {
       this.$router.push({
         path: "/activitydetails",
         query:{
           flag:1,
-          data:row,
+          rowdata:row,
+          rowlist:this.list[index],
         }
       });
     },
-    //编辑
-    edit(row){
+    //修改活动
+    edit(index,row){
       this.$router.push({
         path:"/createactivity",
-        query:{flag:1,rowdata:row}
+        query:{flag:1,rowdata:row,rowlist:this.list[index]}
       })
     },
     //分页功能

@@ -16,7 +16,7 @@
     <div class="content">
       <div class="tab">
         <div class="activitytype">
-          <img>
+          <img />
           <p>类型：扫码领红包</p>
         </div>
         <div class="tdtwo">
@@ -25,9 +25,9 @@
           <p>活动时间</p>
         </div>
         <div class="tdthree">
-          <p>活动名称</p>
+          <p>{{activitydetails.activityName}}</p>
           <p>54543组</p>
-          <p>yy--mm--dd至yy--mm--dd</p>
+          <p>{{activitydetails.startTime}}至{{activitydetails.endTime}}</p>
         </div>
         <div class="tdtwo">
           <p>活动状态</p>
@@ -48,24 +48,30 @@
           <ul>
             <li class="left">
               <span>用户账号：</span>
-              <input type="text" placeholder="请输入用户账号">
+              <input type="text" placeholder="请输入用户账号" v-model="phoneNumber" />
             </li>
             <li class="right">
-              <span>活动时间：</span>
-              <el-date-picker style="width:153px;" v-model="gotime" type="date" placeholder="选择日期"></el-date-picker>至
+              <span>领取时间：</span>
               <el-date-picker
                 style="width:153px;"
-                v-model="overtime"
+                v-model="Receivetime"
+                type="date"
+                placeholder="选择日期"
+              ></el-date-picker>
+              <span>扫码时间：</span>
+              <el-date-picker
+                style="width:153px;"
+                v-model="codetime"
                 type="date"
                 placeholder="选择日期"
               ></el-date-picker>
             </li>
             <li class="left">
               <span>领取状态：</span>
-              <select name="receivetype">
-                <option>全部</option>
-                <option>已领取</option>
-                <option>未领取</option>
+              <select name="receivetype" v-model="status">
+                <option value="">全部</option>
+                <option value="1">已领取</option>
+                <option value="0">未领取</option>
               </select>
             </li>
             <li class="right">
@@ -77,11 +83,13 @@
             </li>
             <li class="left">
               <span>奖品类型：</span>
-              <select></select>
+              <select>
+                <option>微信红包</option>
+              </select>
             </li>
             <li class="right">
-              <span>奖项查询：</span>
-              <select></select>
+              <span>奖项名称：</span>
+              <input type="text" v-model="activityPrizeName" />
             </li>
           </ul>
         </div>
@@ -92,38 +100,112 @@
           >导出</span>
         </h2>
         <el-table :data="tableData" stripe style="width: 100%;">
-          <el-table-column prop="date" label="用户账号" width="110"></el-table-column>
-          <el-table-column prop="name" label="奖项名称" width="110"></el-table-column>
-          <el-table-column prop="address" label="奖品名称" width="110"></el-table-column>
-          <el-table-column prop="name" label="数量/剩余" width="110"></el-table-column>
-          <el-table-column prop="name" label="数量/剩余" width="110"></el-table-column>
-          <el-table-column prop="name" label="网点名称" width="112"></el-table-column>
-          <el-table-column prop="name" label="领取时间" width="110"></el-table-column>
-          <el-table-column prop="name" label="扫码时间" width="110"></el-table-column>
-          <el-table-column prop="name" label="领取状态" width="110"></el-table-column>
+          <el-table-column prop="phoneNumber" label="用户账号" width="130"></el-table-column>
+          <el-table-column prop="activityPrizeName" label="奖项名称" width="110">
+            <template>{{"微信红包"}}</template>
+          </el-table-column>
+          <el-table-column prop="activityPrizeName" label="奖品名称" width="110"></el-table-column>
+          <el-table-column prop="activityPrizeCount" label="数量/全部" width="110"></el-table-column>
+          <el-table-column prop="activityPrizeResidueCount" label="数量/剩余" width="110"></el-table-column>
+          <el-table-column prop="networkName" label="网点名称" width="112"></el-table-column>
+          <el-table-column prop="recevideDate" label="领取时间" width="160"></el-table-column>
+          <el-table-column prop="scanDate" label="扫码时间" width="160"></el-table-column>
+          <el-table-column prop="status" label="领取状态" >
+            <template slot-scope="scope">
+              {{scope.row.status==1?"已领取":scope.row.status==0?"未领取":""}}
+            </template>
+          </el-table-column>
         </el-table>
+        <div class="block fr" style="margin-top: 10px;">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="pagesize"
+        layout="total,  prev, pager, next, jumper"
+        :total="totalCount"
+      ></el-pagination>
+    </div>
       </div>
+      
     </div>
   </div>
 </template>
 
 <script>
 //出奖详情
+import Axios from "axios";
 export default {
+  created() {
+    this.activitydetails = this.$route.query.activitydetails;
+    this.activityId= this.$route.query.activitydetails.activityId;
+    console.log(this.activitydetails);
+    this.awardlist();
+  },
   data() {
     return {
-      tableData:[
+      tableData: [
         {
-          data:"",
-          name:"",
-          address:"",
+          data: "",
+          name: "",
+          address: ""
         }
       ],
+      pagesize: 10,
+      currentPage: 1,
+      activitydetails: {},
+      //活动id
+      activityId:"",
+      pageNo:"1",
+      //筛选查询
+      
+      //用户账号
+      
+      phoneNumber: "",
+
+      //扫码时间
+      codetime: "",
+      //领取时间
+      Receivetime: "",
+      //领取状态
+      status: "",
+      activityPrizeName: "",
+      networkCode:"",
+      totalCount:Number,
     };
   },
   methods: {
+    awardlist() {
+      Axios({
+        url: "api/activityManager/activityDetail",
+        method: "get",
+        params: {
+          pageNo: this.currentPage,
+          // pageSize: this.pagesize,
+          activityId:this.activityId,
+          phoneNumber:this.phoneNumber,
+          status:this.status,
+          activityPrizeName:this.activityPrizeName,
+          networkCode:this.networkCode,
+
+        }
+      }).then(data => {
+         console.log(data);
+         this.tableData = data.data.data.map;
+        this.totalCount = data.data.data.activityPage.total;
+        this.pagesize = data.data.data.activityPage.size;
+        this.currentPage = data.data.data.activityPage.current;
+      });
+    },
     back() {
       this.$router.back();
+    },
+    //分页功能
+    handleSizeChange(val) {},
+    handleCurrentChange(val) {
+      // console.log(val);
+      this.currentPage = val;
+      this.awardlist();
     }
   }
 };
@@ -188,11 +270,12 @@ export default {
       }
     }
     .activityrule {
-      width: 992px;
+      width: 1100px;
       border: 1px solid #ccc;
       padding: 4px 68px 0 68px;
+     
       .search {
-        width: 930px;
+        width: 1038px;
         height: 236px;
         padding: 0 30px 0;
         border: 1px solid #ddd;

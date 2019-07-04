@@ -155,7 +155,8 @@
           <el-button type="text" size="small" @click="details(scope.row)">详情</el-button>
           <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
           <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
-          <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
+          <el-button type="text" size="small">删除</el-button>
+          <!--  @click="del(scope.row)" -->
           <el-button type="text" size="small" @click="withdraw(scope.row)">撤回</el-button>
         </template>
       </el-table-column>

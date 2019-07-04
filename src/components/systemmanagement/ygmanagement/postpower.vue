@@ -50,21 +50,21 @@
         <div class="information">
           <span>岗位权限：</span>
           <div class="selectpostpower">
-            <div class="header" v-for="(firstlist,index) in menuList" :key="index">
-              <el-checkbox v-model="firstlist.checked">
+            <div class="header" v-for="(firstlist,firstindex) in menuList" :key="firstindex">
+              <el-checkbox v-model="firstlist.checked" @change="handlechange(firstindex,firstlist.checked)">
                 <span>{{firstlist.menuName}}</span>
               </el-checkbox>
-              <div class="selectsecondmenu" v-for="(secondlist,index) in firstlist.secondMenuList" :key="index">
-                <el-checkbox style="margin-left:13px;" @change="operatemanagementall">
+              <div class="selectsecondmenu" v-for="(secondlist,secondindex) in firstlist.secondMenuList" :key="secondindex">
+                <el-checkbox style="margin-left:13px;" v-model="secondlist.checked" @change="handlechangesecondlist(firstindex,secondindex,secondlist.checked)">
                   <span style="padding-left:13px;">{{secondlist.menuName}}</span>
                 </el-checkbox>
                 <div class="threemenuwrap">
                   <div
                     class="selectthreemenu"
-                    v-for="(threelist,index) in secondlist.secondMenuList"
-                    :key="index"
+                    v-for="(threelist,threeindex) in secondlist.secondMenuList"
+                    :key="threeindex"
                   >
-                    <el-checkbox @change="operatemanagementall">
+                    <el-checkbox v-model="threelist.checked" @change="handlechangethreelist(firstindex,secondindex,threeindex,threelist.checked)">
                       <span>{{threelist.menuName}}</span>
                     </el-checkbox>
                   </div>
@@ -90,37 +90,28 @@ export default {
   data() {
     return {
       searchval: "",
-      cities: ["1", "2", "3"],
       canvas: false,
       row: {},
       menuList: [
         {
           menuId: "MENU0001",
           menuName: "首页",
-          superMenuId: null,
-          url: null,
           secondMenuList: [],
           checked: false
         },
         {
           menuId: "MENU0002",
           menuName: "运营管理",
-          superMenuId: null,
-          url: null,
           checked: false,
           secondMenuList: [
             {
               menuId: "MENU00021",
               menuName: "活动管理",
-              superMenuId: "MENU0002",
-              url: null,
               checked: false,
               secondMenuList: [
                 {
                   menuId: "MENU000211",
                   menuName: "活动列表",
-                  superMenuId: "MENU00021",
-                  url: null,
                   secondMenuList: null,
                   checked: false
                 }
@@ -129,39 +120,29 @@ export default {
             {
               menuId: "MENU00022",
               menuName: "奖品管理",
-              superMenuId: "MENU0002",
-              url: null,
               checked: false,
               secondMenuList: [
                 {
                   menuId: "MENU000221",
                   menuName: "奖品列表",
-                  superMenuId: "MENU00022",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000222",
                   menuName: "奖品分类",
-                  superMenuId: "MENU00022",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000223",
                   menuName: "奖品参数",
-                  superMenuId: "MENU00022",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000224",
                   menuName: "中奖信息",
-                  superMenuId: "MENU00022",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 }
@@ -170,39 +151,29 @@ export default {
             {
               menuId: "MENU00023",
               menuName: "内容管理",
-              superMenuId: "MENU0002",
-              url: null,
               checked: false,
               secondMenuList: [
                 {
                   menuId: "MENU000231",
                   menuName: "首页banner图",
-                  superMenuId: "MENU00023",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000232",
                   menuName: "首页扫码入口图",
-                  superMenuId: "MENU00023",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000233",
                   menuName: "首页活动咨询",
-                  superMenuId: "MENU00023",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000234",
                   menuName: "登录页",
-                  superMenuId: "MENU00023",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 }
@@ -213,46 +184,34 @@ export default {
         {
           menuId: "MENU0003",
           menuName: "经销商用户管理",
-          superMenuId: null,
-          url: null,
           checked: false,
           secondMenuList: [
             {
               menuId: "MENU00031",
               menuName: "网点用户管理",
-              superMenuId: "MENU0003",
-              url: null,
               checked: false,
               secondMenuList: [
                 {
                   menuId: "MENU000311",
                   menuName: "用户列表",
-                  superMenuId: "MENU00031",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000312",
                   menuName: "网点列表",
-                  superMenuId: "MENU00031",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000313",
                   menuName: "批量维护",
-                  superMenuId: "MENU00031",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000314",
                   menuName: "职位管理",
-                  superMenuId: "MENU00031",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 }
@@ -263,22 +222,16 @@ export default {
         {
           menuId: "MENU0004",
           menuName: "二维码管理",
-          superMenuId: null,
-          url: null,
           checked: false,
           secondMenuList: [
             {
               menuId: "MENU00041",
               menuName: "二维码管理",
-              superMenuId: "MENU0004",
-              url: null,
               checked: false,
               secondMenuList: [
                 {
                   menuId: "MENU000411",
                   menuName: "二维码批次",
-                  superMenuId: "MENU00041",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 }
@@ -289,38 +242,28 @@ export default {
         {
           menuId: "MENU0005",
           menuName: "商品管理",
-          superMenuId: null,
-          url: null,
           checked: false,
           secondMenuList: [
             {
               menuId: "MENU00051",
               menuName: "商品管理",
-              superMenuId: "MENU0005",
-              url: null,
               checked: false,
               secondMenuList: [
                 {
                   menuId: "MENU000511",
                   menuName: "商品列表",
-                  superMenuId: "MENU00051",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000512",
                   menuName: "商品分类管理",
-                  superMenuId: "MENU00051",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000513",
                   menuName: "商品参数管理",
-                  superMenuId: "MENU00051",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 }
@@ -331,62 +274,46 @@ export default {
         {
           menuId: "MENU0006",
           menuName: "统计",
-          superMenuId: null,
-          url: null,
           checked: false,
           secondMenuList: []
         },
         {
           menuId: "MENU0007",
           menuName: "系统管理",
-          superMenuId: null,
-          url: null,
           checked: false,
           secondMenuList: [
             {
               menuId: "MENU00071",
               menuName: "员工管理",
-              superMenuId: "MENU0007",
-              url: null,
               checked: false,
               secondMenuList: [
                 {
                   menuId: "MENU000711",
                   menuName: "员工列表",
-                  superMenuId: "MENU00071",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000712",
                   menuName: "岗位管理",
-                  superMenuId: "MENU00071",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000713",
                   menuName: "部门管理",
-                  superMenuId: "MENU00071",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000714",
                   menuName: "岗位权限",
-                  superMenuId: "MENU00071",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 },
                 {
                   menuId: "MENU000715",
                   menuName: "密码管理",
-                  superMenuId: "MENU00071",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 }
@@ -395,15 +322,11 @@ export default {
             {
               menuId: "MENU00072",
               menuName: "日志查询",
-              superMenuId: "MENU0007",
-              url: null,
               checked: false,
               secondMenuList: [
                 {
                   menuId: "MENU000721",
                   menuName: "操作日志",
-                  superMenuId: "MENU00072",
-                  url: null,
                   checked: false,
                   secondMenuList: null
                 }
@@ -457,8 +380,77 @@ export default {
       // console.log(row);
       this.row = row;
     },
+    //一级全选
+    handlechange(index,val){
+      console.log(index);
+     if(val==true){
+       for(var i=0;i<this.menuList[index].secondMenuList.length;i++){
+         this.menuList[index].secondMenuList[i].checked=true;
+         if(this.menuList[index].secondMenuList[i].secondMenuList){
+           for(var j=0;j<this.menuList[index].secondMenuList[i].secondMenuList.length;j++){
+             this.menuList[index].secondMenuList[i].secondMenuList[j].checked=true;
+           }
+         }
+       }
+       console.log(this.menuList[index].secondMenuList);
+     }else if(val==false){
+        for(var i=0;i<this.menuList[index].secondMenuList.length;i++){
+         this.menuList[index].secondMenuList[i].checked=false;
+         if(this.menuList[index].secondMenuList[i].secondMenuList){
+           for(var j=0;j<this.menuList[index].secondMenuList[i].secondMenuList.length;j++){
+             this.menuList[index].secondMenuList[i].secondMenuList[j].checked=false;
+           }
+         }
+       }
+     }
+      
+    },
+    //二级全选
+    handlechangesecondlist(firstindex,index,val){
+      console.log(firstindex,index,val)
+      if(val==true){
+        for(var i=0;i<this.menuList[firstindex].secondMenuList[index].secondMenuList.length;i++){
+          this.menuList[firstindex].secondMenuList[index].secondMenuList[i].checked=true;
+        }
+        // this.menuList[firstindex].secondMenuList[index]
+      }else if(val==false){
+          for(var i=0;i<this.menuList[firstindex].secondMenuList[index].secondMenuList.length;i++){
+          this.menuList[firstindex].secondMenuList[index].secondMenuList[i].checked=false;
+        }
+        }
+        console.log(this.menuList[firstindex])
+    },
+    //三级选择
+    handlechangethreelist(firstindex,secondindex,threeindex,val){
+      if(val==true){
+        this.menuList[firstindex].checked=true;
+        this.menuList[firstindex].secondMenuList[secondindex].checked=true;
+        this.menuList[firstindex].secondMenuList[secondindex].secondMenuList[threeindex].checked=true;
+      }else if(val==false){
+        this.menuList[firstindex].secondMenuList[secondindex].secondMenuList[threeindex].checked=false;
+        for(var i=0;i<this.menuList[firstindex].secondMenuList[secondindex].secondMenuList.length;i++){
+          if(this.menuList[firstindex].secondMenuList[secondindex].secondMenuList[i].checked==true){
+             this.menuList[firstindex].secondMenuList[secondindex].checked=true;
+             return;
+            //  for(var j=0;j< this.menuList[firstindex].secondMenuList.length;j++){
+            //    if(this.menuList[firstindex].secondMenuList[j].checked==true){
+            //      this.menuList[firstindex].checked=true;
+            //      return;
+            //    }else{
+            //      this.menuList[firstindex].checked=false;
+            //    }
+            //  }
 
-    operatemanagementall() {},
+          }else{
+            this.menuList[firstindex].checked=false;
+        this.menuList[firstindex].secondMenuList[secondindex].checked=false;
+        this.menuList[firstindex].secondMenuList[secondindex].secondMenuList[threeindex].checked=false;
+       
+          }
+        }
+      }
+    },
+  
     //选择权限
     firstchange(i) {
       // console.log(i);

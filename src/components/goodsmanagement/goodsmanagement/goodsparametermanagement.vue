@@ -36,38 +36,47 @@
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
-      @row-click="editrow"
       stripe
     >
       <!-- stripe="true" -->
       <el-table-column prop="productParamSetName" label="参数名称" width="362px"></el-table-column>
       <el-table-column prop="start" label="启用" width="194px">
         <template slot-scope="scope">
-          <img :src="scope.row.start==1?dui:cuo" style="width:25px;height:25px;">
+          <img :src="scope.row.start==1?dui:cuo" style="width:25px;height:25px;" />
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="edit(rowdata)">编辑</el-button>
-          <el-button type="text" size="small" @click="del">删除</el-button>
+          <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
           <el-button type="text" size="small" @click="metermageval(scope.row)">管理值</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <!-- -------------------添加参数 -->
     <div class="addparametercanvas" v-if="addparametercanvas">
       <h3>添加参数</h3>
       <p>
         参数名称：
-        <input type="text" v-model="parametername">
+        <input type="text" v-model="parametername" />
       </p>
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="add">确认</span>
     </div>
-    <div class="addparametercanvas" v-if="addvaluecanvas" style="z-index:33;">
+    <div class="editparametercanvas" v-if="editparametercanvas">
+      <h3>修改参数</h3>
+      <p>
+        参数名称：
+        <input type="text" v-model="parametername" />
+      </p>
+      <span style="background:#fff" @click="exit">取消</span>
+      <span style="background:#169bd5" @click="editok">确认</span>
+    </div>
+    <div class="editparametercanvas" v-if="editparametercanvas" style="z-index:33;">
       <h3>添加值</h3>
       <p>
         值名称：
-        <input type="text" v-model="valuename">
+        <input type="text" v-model="valuename" />
       </p>
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="addvalok">确认</span>
@@ -76,7 +85,7 @@
       <header>
         <span>管理值</span>
         <i>
-          <img src="../../../assets/no.png" @click="exit">
+          <img src="../../../assets/no.png" @click="exit" />
         </i>
       </header>
       <div class="title">
@@ -93,7 +102,7 @@
         :data="metermagevallist"
         tooltip-effect="dark"
         style="width: 100%"
-        stripe 
+        stripe
       >
         <!-- stripe="true" -->
         <el-table-column type="selection" width="55"></el-table-column>
@@ -105,8 +114,10 @@
           </template>
         </el-table-column>-->
         <el-table-column fixed="right" label="操作">
-          <el-button type="text" size="small" @click="editval(rowdata)">编辑</el-button>
-          <el-button type="text" size="small" @click="delval">删除</el-button>
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="editval(scope.rpw)">编辑</el-button>
+            <el-button type="text" size="small" @click="delval(scope.row)">删除</el-button>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -122,7 +133,11 @@ export default {
       dui: require("@/assets/yes.png"),
       cuo: require("@/assets/no.png"),
       delcanvas: false,
+      row: {},
+      //添加参数的弹窗
       addparametercanvas: false,
+      //编辑值弹窗：
+      editparametercanvas: false,
       //管理值弹窗
       metermagevalcanvas: false,
       //添加值弹框
@@ -188,16 +203,50 @@ export default {
       this.productCatId = productCatId;
       this.goodsparameterlist();
     },
-    //编辑
-    editrow(row) {
-      this.rowdata = row;
-      if (this.cl) {
-        this.edit(row);
-      }
+    //编辑参数
+
+    edit(row) {
+      this.row = row;
+      this.editparametercanvas = true;
+      this.parametername = row.productParamSetName;
+      console.log(row);
     },
-    edit(val) {
-      this.cl = true;
-      // console.log(val);
+    //确定修改参数
+    editok() {
+      if(this.parametername){
+          Axios({
+        url: "api/productsManager/updateProductParamSet",
+        method: "post",
+        data: {
+          productParamSetId: this.row.productParamSetId,
+          productParamSetName: this.parametername,
+          isEdit: this.isEdit,
+          isUse: this.isUse,
+          productCatId: this.productCatId
+        }
+      }).then(data=>{
+        if(data.data.code==0){
+          this.$message({
+          message: '修改成功！',
+          type: 'success'
+        });
+        this.goodsparameterlist();
+        }else{
+           this.$message({
+          message: '修改失败！',
+          type: 'error'
+        });
+        }
+        this.editparametercanvas = false;
+      });
+      }else{
+        this.$message({
+          message: '参数名称不能为空',
+          type: 'warning'
+        });
+      }
+    
+
     },
     //添加参数
     addparameter() {
@@ -205,9 +254,9 @@ export default {
     },
     add() {
       //确定添加参数
-      if (this.threelist.productCatId) {
+      if (this.threelist.productCatId && this.parametername) {
         // console.log(this.threelist);
-// 
+
         Axios({
           url: "api/productsManager/addProductParamSet",
           method: "post",
@@ -222,9 +271,18 @@ export default {
           // console.log(data);
           this.parametername = "";
           if (data.data.code == 0) {
+            this.$message({
+                type: "success",
+                message: "添加成功!"
+              });
             this.addparametercanvas = false;
             this.goodsparameterlist();
           }
+        });
+      }else{
+        this.$message({
+          message: '参数名称不能为空',
+          type: 'warning'
         });
       }
     },
@@ -241,7 +299,7 @@ export default {
         }
       }).then(data => {
         // console.log(data);
-        this.metermagevallist=data.data.data.productParamValueList;
+        this.metermagevallist = data.data.data.productParamValueList;
       });
     },
     metermageval(val) {
@@ -257,7 +315,8 @@ export default {
     },
     //确定添加
     addvalok() {
-      Axios({
+      if(this.valuename){
+         Axios({
         url: "api/productsManager/addProductParamValue",
         method: "post",
         data: {
@@ -273,11 +332,20 @@ export default {
           this.metermagevaluelist();
         }
       });
+      }else{
+        this.$message({
+          message: '参数名称不能为空',
+          type: 'warning'
+        });
+      }
+     
     },
     //编辑值
-    editval() {},
+    editval(val) {},
     //删除值
-    delval() {},
+    delval(val) {
+      console.log("aaa");
+    },
     //编辑
     deleteall() {
       this.delcanvas = true;
@@ -285,12 +353,43 @@ export default {
     exit() {
       this.delcanvas = false;
       this.addparametercanvas = false;
-      this.metermagevalcanvas=false;
+      this.metermagevalcanvas = false;
       this.addvaluecanvas = false;
     },
-
-    del() {}
-  },
+    //删除参数
+    del(val) {
+      console.log(val.productParamSetId);
+      this.$confirm("此操作将永久删除该参数, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          Axios({
+            url: "api/productsManager/delProductParamSet",
+            method: "get",
+            params: {
+              productParamSetId: val.productParamSetId
+            }
+          }).then(data => {
+            console.log(data);
+            if (data.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.goodsparameterlist();
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    }
+  }
   // watch: {
   //   firstlist(val) {
   //     console.log(val);
@@ -306,7 +405,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-   width: 100%;
+  width: 100%;
   height: 100%;
   position: relative;
   .add {
@@ -353,6 +452,46 @@ export default {
     margin-top: 13px;
   }
   .addparametercanvas {
+    width: 360px;
+    height: 240px;
+    position: absolute;
+    left: 50%;
+    margin-left: -180px;
+    top: 190px;
+    background: #eff1f5;
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 99;
+    border: 1px solid #dfdfdf;
+    h3 {
+      width: 100%;
+      height: 60px;
+      font-size: 18px;
+      text-align: center;
+      line-height: 60px;
+    }
+    p {
+      width: 100%;
+      height: 114px;
+      margin-top: 16px;
+      text-align: center;
+      font-size: 12px;
+      input {
+        width: 200px;
+        height: 30px;
+      }
+    }
+    span {
+      display: block;
+      width: 180px;
+      font-size: 12px;
+      float: left;
+      height: 50px;
+      text-align: center;
+      line-height: 50px;
+    }
+  }
+  .editparametercanvas {
     width: 360px;
     height: 240px;
     position: absolute;

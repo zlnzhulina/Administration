@@ -239,7 +239,7 @@ export default {
     handleSizeChange(val) {},
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.getTable();
+      this.selectNetWorkList();
     },
     //批量上传成功
     handlePreview(file) {

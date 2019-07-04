@@ -124,8 +124,8 @@ export default {
           productSName:"",
         }
       }).then(data=>{
-        // console.log(data)
-        this.tabledata=data.data.data.productSPage.records;
+         console.log(data)
+        // this.tabledata=data.data.data.productSPage.records;
       })
     },
     //搜索账号

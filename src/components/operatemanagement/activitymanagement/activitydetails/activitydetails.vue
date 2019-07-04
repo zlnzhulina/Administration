@@ -34,7 +34,11 @@
           <p>活动区域</p>
         </div>
         <div class="tdthree">
-          <p>进行中</p>
+          <p>
+          {{activitydetails.finish==0?"未结束":""}}
+          {{activitydetails.finish==1?"已结束":""}}
+          {{activitydetails.finish==2?"已取消":""}}
+       </p>
           <p>2362组</p>
           <p>全国</p>
         </div>
@@ -48,22 +52,29 @@
           
           <el-table-column prop="ruletype" label="规则类型" width="327"></el-table-column>
           <el-table-column prop="rulename" label="规则名称" width="327"></el-table-column>
-          <el-table-column prop="address" label="结果"></el-table-column>
+          <el-table-column prop="Result" label="结果">
+          </el-table-column>
         </el-table>
 
         <h3 style="margin-top:80px;">
           <b>奖项与奖品信息</b>
           <span>修改</span>
         </h3>
-        <el-table :data="tableData" stripe style="width: 100%;">
+        <el-table :data="activityprizelist" stripe style="width: 100%;">
           
-          <el-table-column prop="date" label="奖品名称" width="142"></el-table-column>
-          <el-table-column prop="name" label="奖项名称" width="142"></el-table-column>
-          <el-table-column prop="address" label="奖项属性" width="142"></el-table-column>
-           <el-table-column prop="name" label="奖品类型" width="142"></el-table-column>
-            <el-table-column prop="name" label="奖品名称" width="142"></el-table-column>
-             <el-table-column prop="name" label="数量/剩余" width="141"></el-table-column>
-              <el-table-column prop="name" label="中奖概率"></el-table-column>
+          <el-table-column prop="productName" label="商品名称" ></el-table-column>
+          <el-table-column prop="name" label="奖项名称" width="142">
+            <template>微信红包</template>
+          </el-table-column>
+          <el-table-column prop="activityPrizeName" label="奖项属性" width="142"></el-table-column>
+           <el-table-column prop="activityPrizeInfo" label="奖品类型" width="142"></el-table-column>
+            <el-table-column prop="activityPrizeName" label="奖品名称" width="142"></el-table-column>
+             <el-table-column prop="activityPrizeCount" label="数量/剩余" width="141"></el-table-column>
+              <el-table-column prop="probability" label="中奖概率">
+                <template slot-scope="scope">
+                  <span>{{scope.row.probability}}:1</span>
+                </template>
+              </el-table-column>
         </el-table>
         <h2 style="width:100%;height:60px;background:#ddd;line-height:60px;margin-top:30px;"><span style="margin-left:20px;font-size:14px;">关联条码</span></h2>
         <el-table :data="tableData" stripe style="width: 100%;">
@@ -89,17 +100,31 @@
 export default {
   created(){
     console.log(this.$route.query);
-    this.activeName=this.$route.query.data.activityName;
-    this.activityId=this.$route.query.data.activityId;
-    this.activityTime=this.$route.query.data.startTime+"-"+this.$route.query.data.endTime;
-    if(this.$route.query.data.isQrcodeStatus=="5"){
+    this.activitydetails=this.$route.query.rowdata;
+    this.activityprizelist.push(this.$route.query.rowlist);
+    this.activeName=this.$route.query.rowdata.activityName;
+    this.activityId=this.$route.query.rowdata.activityId;
+    this.activityTime=this.$route.query.rowdata.startTime+"-"+this.$route.query.rowdata.endTime;
+    if(this.$route.query.rowdata.isQrcodeStatus=="5"){
       this.activityrule[0].Result="是"
     }else{
       this.activityrule[0].Result="否"
-    }
+    };
+    this.activityrule[1].Result=this.$route.query.rowdata.isWhiteList==0?"否":"是";
+    this.activityrule[2].Result=this.$route.query.rowdata.barProtectTime==0?"否":"是";
+    this.activityrule[3].Result=this.$route.query.rowdata.barTakeUpTime==0?"否":"是";
+    this.activityrule[4].Result=this.$route.query.rowdata.personCount;
+    this.activityrule[5].Result=this.$route.query.rowdata.personDayCount;
+    this.activityrule[6].Result=this.$route.query.rowdata.catCount;
+    this.activityrule[7].Result=this.$route.query.rowdata.needCar==0?"否":"是";
+    this.activityrule[8].Result=this.$route.query.rowdata.needAuthentication==0?"否":"是";
+    this.activityrule[9].Result=this.$route.query.rowdata.isQrcodeStatus==0?"否":"是";
+    
   },
     data(){
         return{
+          //活动基本详情
+          activitydetails:{},
           tableData:[],
           //活动名称
           activeName:"",
@@ -136,7 +161,7 @@ export default {
             },
             {
               ruletype:"派奖规则",
-              rulename:"消费每人每天可参与活动次数者激活",
+              rulename:"每人每天可参与活动次数",
               Result:""
             },
             {
@@ -159,14 +184,21 @@ export default {
               rulename:"消费者激活",
               Result:""
             },
-          ]
+          ],
+          //活动奖品列表
+          activityprizelist:[],
+          //关联码列表
+          tableData:[],
 
         }
     },
     methods:{
         awarddetails(){
             this.$router.push({
-                path:"/awarddetails"
+                path:"/awarddetails",
+                query:{
+                  activitydetails:this.activitydetails
+                }
             })
         }
     }
@@ -226,7 +258,7 @@ export default {
       }
     }
     .activityrule {
-      width: 992px;
+      width: 1092px;
       border: 1px solid #ccc;
       padding: 44px 68px 0 68px;
       h3 {
