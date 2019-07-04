@@ -76,10 +76,13 @@
             </li>
             <li class="right">
               <span>网点查询：</span>
-              <select style="width:58px;" class="province"></select>
+              <!-- <select style="width:58px;" class="province"></select>
               <select style="width:58px;" class="city"></select>
-              <select style="width:66px;" class="county"></select>
-              <select style="width:128px;" class="wd"></select>
+              <select style="width:66px;" class="county"></select> -->
+              <select style="width:208px;" class="wd" v-model="networkCode">
+                <option :value="initdetails">--请选择网点--</option>
+                <option v-for="(item,index) in dotlist" :value="item.networkCode">{{item.networkName}}</option>
+              </select>
             </li>
             <li class="left">
               <span>奖品类型：</span>
@@ -97,7 +100,7 @@
           <span style="margin-left:20px;font-size:14px;">出奖列表</span>
           <span
             style="display：block;float:right;width:94px;height:32px;text-align:center;line-height:32px;background:#fff;border:1px solid #ccc;font-size:14px;font-weight:normal;margin-right:13px;margin-top:13px;"
-          >导出</span>
+         @click="exporttab" >导出</span>
         </h2>
         <el-table :data="tableData" stripe style="width: 100%;">
           <el-table-column prop="phoneNumber" label="用户账号" width="130"></el-table-column>
@@ -141,6 +144,17 @@ export default {
     this.activityId= this.$route.query.activitydetails.activityId;
     console.log(this.activitydetails);
     this.awardlist();
+    
+      Axios({
+        method: "get",
+        url:
+          "api/networkUserManager/networkList?pageNo=1&pageSize=7"
+        
+      }).then(data => {
+         console.log(data);
+      
+        this.dotlist = data.data.data.networkPage.records;
+      });
   },
   data() {
     return {
@@ -158,9 +172,10 @@ export default {
       activityId:"",
       pageNo:"1",
       //筛选查询
-      
+      //网点列表
+      dotlist:[],
       //用户账号
-      
+      initdetails:"",
       phoneNumber: "",
 
       //扫码时间
@@ -171,7 +186,9 @@ export default {
       status: "",
       activityPrizeName: "",
       networkCode:"",
-      totalCount:Number,
+      pagesize: 10,
+      currentPage: 1,
+      totalCount:1,
     };
   },
   methods: {
@@ -190,11 +207,11 @@ export default {
 
         }
       }).then(data => {
-         console.log(data);
-         this.tableData = data.data.data.map;
-        this.totalCount = data.data.data.activityPage.total;
-        this.pagesize = data.data.data.activityPage.size;
-        this.currentPage = data.data.data.activityPage.current;
+        //  console.log(data);
+         this.tableData = data.data.data.map.records;
+        this.totalCount = data.data.data.map.total;
+        this.pagesize = data.data.data.map.size;
+        this.currentPage = data.data.data.map.current;
       });
     },
     back() {
@@ -205,6 +222,24 @@ export default {
     handleCurrentChange(val) {
       // console.log(val);
       this.currentPage = val;
+      this.awardlist();
+    },
+    //导出数据
+    exporttab(){
+       window.location.href =""
+    }
+  },
+  watch:{
+    phoneNumber(val){
+      this.awardlist();
+    },
+    status(val){
+      this.awardlist();
+    },
+    activityPrizeName(val){
+      this.awardlist();
+    },
+    networkCode(val){
       this.awardlist();
     }
   }

@@ -183,7 +183,7 @@ export default {
       }
       if (this.$route.query.flag == 0) {
         //添加网点
-        if(networkCode=="" && networkName==""){
+        if(this.networkCode=="" && this.networkName==""){
           this.$message({
               message: "必填项未填写",
               type: "error"

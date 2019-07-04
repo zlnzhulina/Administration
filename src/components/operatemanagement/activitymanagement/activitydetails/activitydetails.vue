@@ -24,7 +24,7 @@
           <p>活动时间</p>
         </div>
         <div class="tdthree">
-          <p>{{activeName}}</p>
+          <p>{{activityName}}</p>
           <p>已关联小程序码</p>
           <p>{{activityTime}}</p>
         </div>
@@ -69,7 +69,11 @@
           <el-table-column prop="activityPrizeName" label="奖项属性" width="142"></el-table-column>
            <el-table-column prop="activityPrizeInfo" label="奖品类型" width="142"></el-table-column>
             <el-table-column prop="activityPrizeName" label="奖品名称" width="142"></el-table-column>
-             <el-table-column prop="activityPrizeCount" label="数量/剩余" width="141"></el-table-column>
+             <el-table-column label="数量/剩余" width="141">
+               <template slot-scope="scope">
+                 {{scope.row.activityPrizeCount}}/{{scope.row.activityPrizeResidueCount}}
+               </template>
+             </el-table-column>
               <el-table-column prop="probability" label="中奖概率">
                 <template slot-scope="scope">
                   <span>{{scope.row.probability}}:1</span>
@@ -79,9 +83,9 @@
         <h2 style="width:100%;height:60px;background:#ddd;line-height:60px;margin-top:30px;"><span style="margin-left:20px;font-size:14px;">关联条码</span></h2>
         <el-table :data="tableData" stripe style="width: 100%;">
           
-          <el-table-column prop="date" label="活动名称" width="199"></el-table-column>
-          <el-table-column prop="name" label="关联商品" width="199"></el-table-column>
-          <el-table-column prop="address" label="奖品数量" width="199"></el-table-column>
+          <el-table-column prop="activityName" label="活动名称" width="240"></el-table-column>
+          <el-table-column prop="productName" label="关联商品" width="250"></el-table-column>
+          <el-table-column prop="activityPrizeCount" label="奖品数量" width="199"></el-table-column>
            <el-table-column prop="name" label="已关联条码数量" width="199"></el-table-column>
             <el-table-column prop="name" label="操作">
                 <template>
@@ -101,8 +105,8 @@ export default {
   created(){
     console.log(this.$route.query);
     this.activitydetails=this.$route.query.rowdata;
-    this.activityprizelist.push(this.$route.query.rowlist);
-    this.activeName=this.$route.query.rowdata.activityName;
+    this.activityprizelist=this.$route.query.rowlist;
+    this.activityName=this.$route.query.rowdata.activityName;
     this.activityId=this.$route.query.rowdata.activityId;
     this.activityTime=this.$route.query.rowdata.startTime+"-"+this.$route.query.rowdata.endTime;
     if(this.$route.query.rowdata.isQrcodeStatus=="5"){
@@ -119,7 +123,10 @@ export default {
     this.activityrule[7].Result=this.$route.query.rowdata.needCar==0?"否":"是";
     this.activityrule[8].Result=this.$route.query.rowdata.needAuthentication==0?"否":"是";
     this.activityrule[9].Result=this.$route.query.rowdata.isQrcodeStatus==0?"否":"是";
-    
+    this.tableData=this.$route.query.rowlist;
+    for(var i=0;i<this.tableData.length;i++){
+      this.tableData[i].activityName=this.activityName;
+    }
   },
     data(){
         return{

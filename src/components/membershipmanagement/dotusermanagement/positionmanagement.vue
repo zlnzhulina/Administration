@@ -156,8 +156,8 @@ showinput(){
 },
 ok(){
     
-    // console.log(this.addcontent);
-    Axios(
+     if(this.addcontent){
+       Axios(
         {
           method: "post",
           url: "api/networkUserManager/addUserCat?userCatName="+this.addcontent,
@@ -176,6 +176,15 @@ ok(){
         //   console.log/(data)
         
       })
+     }else{
+       this.$message({
+          showClose: true,
+          message: '请输入职位名称',
+          type: 'warning'
+        });
+     }
+
+    
     
 },
   handleSizeChange(val) {

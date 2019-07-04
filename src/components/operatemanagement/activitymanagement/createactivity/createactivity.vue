@@ -1270,49 +1270,49 @@ export default {
       if (this.flag) {
         console.log("修改活动");
         
-          Axios({
-            url: "api/activityManager/editActivity",
-            method: "post",
-            data: {
-              activity: this.activity,
-              list: this.list
-            }
-          }).then(data => {
-            console.log(data)
-            if (data.data.code == 0) {
-              //说明活动创建成功
-              this.$message({
-                message: "修改成功！",
-                type: "success"
-              });
-              this.createlodingcanvas = false;
-              this.createsuccesscanvas = true;
-              this.$router.push("/operatemanagement");
-            }
-          });
+          // Axios({
+          //   url: "api/activityManager/editActivity",
+          //   method: "post",
+          //   data: {
+          //     activity: this.activity,
+          //     list: this.list
+          //   }
+          // }).then(data => {
+          //   console.log(data)
+          //   if (data.data.code == 0) {
+          //     //说明活动创建成功
+          //     this.$message({
+          //       message: "修改成功！",
+          //       type: "success"
+          //     });
+          //     this.createlodingcanvas = false;
+          //     this.createsuccesscanvas = true;
+          //     this.$router.push("/operatemanagement");
+          //   }
+          // });
         
       } else {
         console.log("创建活动");
-        Axios({
-            url: "api/activityManager/addActivity",
-            method: "post",
-            data: {
-              activity: this.activity,
-              list: this.list
-            }
-          }).then(data => {
-            console.log(data)
-            if (data.data.code == 0) {
-              //说明活动创建成功
-              this.$message({
-                message: "创建成功！",
-                type: "success"
-              });
-              this.createlodingcanvas = false;
-              this.createsuccesscanvas = true;
-              this.$router.push("/operatemanagement");
-            }
-          });
+        // Axios({
+        //     url: "api/activityManager/addActivity",
+        //     method: "post",
+        //     data: {
+        //       activity: this.activity,
+        //       list: this.list
+        //     }
+        //   }).then(data => {
+        //     console.log(data)
+        //     if (data.data.code == 0) {
+        //       //说明活动创建成功
+        //       this.$message({
+        //         message: "创建成功！",
+        //         type: "success"
+        //       });
+        //       this.createlodingcanvas = false;
+        //       this.createsuccesscanvas = true;
+        //       this.$router.push("/operatemanagement");
+        //     }
+        //   });
       }
     },
     //背景图片上传成功

@@ -517,7 +517,8 @@ export default {
     },
     //确认撤回
     withdrawok() {
-      Axios({
+      if(this.withdrawnum){
+        Axios({
         url: "qrcode/codeManager/recallCodeFromBatch",
         method: "get",
         params: {
@@ -541,6 +542,14 @@ export default {
               });
         }
       });
+      }else{
+        this.$message({
+          showClose: true,
+          message: '请输入需要撤回数量',
+          type: 'warning'
+        });
+      }
+      
     },
     
     exit() {

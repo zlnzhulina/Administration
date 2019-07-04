@@ -109,7 +109,7 @@ export default {
         // "departmentId":this.postModel.departmentId
         // }
       }).then(data => {
-        // console.log(data);
+         console.log(data);
         this.totalCount = data.data.data.networkPage.total;
         this.pagesize = data.data.data.networkPage.size;
         this.currentPage = data.data.data.networkPage.current;

@@ -64,7 +64,7 @@
         </ul>
         <div class="but">
           <button class="yes" style="background:#169bd5;color:#fff;border:none" @click="ok">确认</button>
-          <button class="no">取消</button>
+          <button class="no" @click="exit">取消</button>
         </div>
       </div>
     </div>
@@ -151,7 +151,8 @@ export default {
     exit() {
       this.editcanvas = false;
     },
-    del() {}
+    del() {},
+    
   }
 };
 </script>

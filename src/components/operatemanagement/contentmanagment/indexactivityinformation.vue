@@ -23,7 +23,7 @@
 
       <el-table-column prop="information" label="描述">
         <template slot-scope="scope">
-          <p style="width:300px;height:80px;">{{scope.row.information}}</p>
+          <p style="width:500px;">{{scope.row.information}}</p>
           <!-- <textarea :value="scope.row.information" style="width:300px;height:80px;border:none;resize:none"></textarea> -->
         </template>
         <textarea></textarea>
@@ -55,9 +55,6 @@ export default {
       // cuo: require("../../../assets/no.png"),
       newsId: "",
       tabledata: [
-        {
-          
-        }
       ]
     };
   },
