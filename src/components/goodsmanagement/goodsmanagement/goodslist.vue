@@ -124,7 +124,7 @@ export default {
           productSName:"",
         }
       }).then(data=>{
-         console.log(data)
+        //  console.log(data)
         // this.tabledata=data.data.data.productSPage.records;
       })
     },
@@ -134,7 +134,7 @@ export default {
     },
     //编辑
     seedetails(row) {
-       console.log(row);
+      //  console.log(row);
        this.$router.push({
          path:"/addgoods",
          query:{flag:"1",data:row}

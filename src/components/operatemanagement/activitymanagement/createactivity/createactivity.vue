@@ -261,7 +261,7 @@
               <div style="width:646px;heigth:90px;margin-left:30px;">
                 <p style="height:52px;line-height:52px;">
                   <span style="display:inline-block;width:110px; font-weight:bold;">每人可领</span>
-                  <el-checkbox @change="personCount">不限</el-checkbox>
+                  <el-checkbox @change="personCount" v-model="personnum">不限</el-checkbox>
                   <input
                     type="number"
                     placeholder="设置数量"
@@ -273,7 +273,7 @@
                 </p>
                 <p style="height:52px;line-height:52px;">
                   <span style="display:inline-block;width:110px;font-weight:bold;">每人每天可领</span>
-                  <el-checkbox @change="personDayCount">不限</el-checkbox>
+                  <el-checkbox @change="personDayCount" v-model="personDaynum">不限</el-checkbox>
                   <input
                     type="number"
                     placeholder="设置数量"
@@ -613,7 +613,7 @@ import Axios from "axios";
 export default {
   created() {
     this.goodclasslist();
-    // console.log(this.$route.query);
+    console.log(this.$route.query);
     if (this.$route.query.flag == 1) {
       this.activityId = this.$route.query.rowdata.activityId;
       delete this.$route.query.rowdata.winningCount;
@@ -623,8 +623,10 @@ export default {
 
       // console.log(this.$route.query.rowdata);
       this.flag = this.$route.query.flag;
+      this.personDaynum=this.$route.query.rowdata.personDayCount==0?true:false;
+      this.personnum=this.$route.query.rowdata.personCount==0?true:false;
       this.activity = this.$route.query.rowdata;
-      this.activity.needAuthentication = this.activity.needAuthentication.toString();
+      this.activity.needAuthentication = this.activity.needAuthentication?this.activity.needAuthentication.toString():"";
       //处理商品奖项
       var arr = [];
       arr.push([]);
@@ -643,7 +645,7 @@ export default {
           }
         }
       }
-      console.log(arr);
+      // console.log(arr);
       for (let i = 0; i < arr.length; i++) {
         this.relationgoods.push(arr[i][0]);
       }
@@ -756,6 +758,8 @@ export default {
       //选中的商品、
       selectgood: {},
       productsId: "",
+      personDaynum:"",
+      personnum:"",
       activity: {
         //活动名称ok
         activityName: "",
@@ -949,7 +953,7 @@ export default {
             this.productsId = this.selectgood.productSId;
 
             this.relationgoods.push(this.selectgood);
-            console.log(this.selectgood);
+            // console.log(this.selectgood);
             this.selectgoods = false;
             this.firstlist = [];
             this.secondlist = [];
@@ -983,8 +987,17 @@ export default {
               });
               //  console.log("列表二：",this.prizeList)
             }
-            // console.log(this.list)
-
+            if(this.activityPrizeList.length==0){
+              // console.log("说明没有可保存的list");
+            }else{
+               this.list.push({
+              activityPrizeList: this.activityPrizeList,
+              prizeList: this.prizeList
+            });
+            }
+           
+            // console.log("添加另外商品是保存list", this.list);
+            //再次选择另外商品是，初始化商品id 和奖品列表
             this.prizedata = [];
             this.activityPrizeList = [];
             this.prizeList = [];
@@ -1094,14 +1107,14 @@ export default {
     },
     //查看添加好的活动
     checkgoods(index) {
-      console.log(this.list);
+      // console.log(this.list);
       if (index == this.relationgoods.length - 1) {
-        console.log("最后一个span");
-        console.log(this.relationgoods.length);
-        console.log(this.list.length);
+        // console.log("最后一个span");
+        // console.log(this.relationgoods.length);
+        // console.log(this.list.length);
         if (this.relationgoods.length == this.list.length) {
           //说明没有新添加的商品
-          console.log("list里的最后一个span，没有新添加的商品");
+          // console.log("list里的最后一个span，没有新添加的商品");
           this.index = index;
           this.oldgoodssetprize = true;
           this.oldgoodssetprizelist = [];
@@ -1114,16 +1127,16 @@ export default {
             ];
           }
         } else if (this.relationgoods.length > this.list.length) {
-          console.log("最后一个span，新的span,未存入list中");
+          // console.log("最后一个span，新的span,未存入list中");
           this.oldgoodssetprize = false;
         }
       } else if (index < this.relationgoods.length - 1) {
-        console.log("未点击最后一个span");
+        // console.log("未点击最后一个span");
         this.index = index;
         this.oldgoodssetprize = true;
         this.oldgoodssetprizelist = [];
-        console.log(index);
-        console.log(this.list[index]);
+        // console.log(index);
+        // console.log(this.list[index]);
         this.oldgoodssetprizelist = this.list[index].activityPrizeList;
         for (var i = 0; i < this.list[index].activityPrizeList.length; i++) {
           this.oldgoodssetprizelist[i].prizeList = this.list[index].prizeList[
@@ -1166,7 +1179,7 @@ export default {
     },
     //删除添加好的奖项
     olddeleteRow(index, row) {
-      console.log(index);
+      // console.log(index);
       if (index == 0) {
         this.$message({
           type: "error",
@@ -1210,18 +1223,18 @@ export default {
     //删除添加好的商品
     deletegoods(index, e) {
       e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
-      console.log(this.relationgoods);
+      // console.log(this.relationgoods);
       if (index == this.relationgoods.length - 1) {
         e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
-        console.log(this.relationgoods);
-        console.log(this.list);
+        // console.log(this.relationgoods);
+        // console.log(this.list);
         if (this.relationgoods.length == this.list.length) {
           this.relationgoods.splice(index, 1);
           this.list.splice(index, 1);
         } else {
           this.relationgoods.splice(index, 1);
           this.prizedata = [];
-          console.log(this.prizedata);
+          // console.log(this.prizedata);
         }
       } else {
         e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
@@ -1229,90 +1242,98 @@ export default {
         this.list.splice(index, 1);
       }
 
-      console.log(this.list);
+      // console.log(this.list);
     },
     //提交创建活动
     preservationsub() {
-      this.active = 3;
-      this.createlodingcanvas = true;
-      if (!this.prizedata.length == 0) {
-        if (this.createtype == 1) {
-          for (let i = 0; i < this.prizedata.length; i++) {
-            this.activityPrizeList.push({
-              activityPrizeName: this.prizedata[i].prizename,
-              activityPrizeCount: this.prizedata[i].prizenum,
-              activityPrizeInfo: this.prizedata[i].Tips,
-              probability: this.prizedata[i].setprize,
-              productsId: this.productsId
-            });
+      console.log(this.active);
+      if (this.active == 2) {
+        console.log("上一步已完成");
+        this.active = 3;
+        this.createlodingcanvas = true;
+        if (!this.prizedata.length == 0) {
+          if (this.createtype == 1) {
+            for (let i = 0; i < this.prizedata.length; i++) {
+              this.activityPrizeList.push({
+                activityPrizeName: this.prizedata[i].prizename,
+                activityPrizeCount: this.prizedata[i].prizenum,
+                activityPrizeInfo: this.prizedata[i].Tips,
+                probability: this.prizedata[i].setprize,
+                productsId: this.productsId
+              });
 
-            this.prizeList.push({
-              prizeName: this.prizedata[i].prizename,
-              count: this.prizedata[i].prizenum,
-              price: this.prizedata[i].Amount
+              this.prizeList.push({
+                prizeName: this.prizedata[i].prizename,
+                count: this.prizedata[i].prizenum,
+                price: this.prizedata[i].Amount
+              });
+            }
+            console.log(this.activityPrizeList)
+            console.log(this.prizeList)
+            this.list.push({
+              activityPrizeList: this.activityPrizeList,
+              prizeList: this.prizeList
             });
+            this.prizedata = [];
+            this.activityPrizeList = [];
+            this.prizeList = [];
+            // console.log(this.list);
+            // console.log(this.activity);
+            this.createtype = "0";
           }
-
-          this.list.push({
-            activityPrizeList: this.activityPrizeList,
-            prizeList: this.prizeList
-          });
-          this.prizedata = [];
-          this.activityPrizeList = [];
-          this.prizeList = [];
-          // console.log(this.list);
-          // console.log(this.activity);
-          this.createtype = "0";
+          //
         }
-        //
-      }
-      console.log(this.list);
-      if (this.flag) {
-        console.log("修改活动");
-        
-          // Axios({
-          //   url: "api/activityManager/editActivity",
-          //   method: "post",
-          //   data: {
-          //     activity: this.activity,
-          //     list: this.list
-          //   }
-          // }).then(data => {
-          //   console.log(data)
-          //   if (data.data.code == 0) {
-          //     //说明活动创建成功
-          //     this.$message({
-          //       message: "修改成功！",
-          //       type: "success"
-          //     });
-          //     this.createlodingcanvas = false;
-          //     this.createsuccesscanvas = true;
-          //     this.$router.push("/operatemanagement");
-          //   }
-          // });
-        
+         console.log(this.list);
+        if (this.flag) {
+          console.log("修改活动");
+          Axios({
+            url: "api/activityManager/editActivity",
+            method: "post",
+            data: {
+              activity: this.activity,
+              list: this.list
+            }
+          }).then(data => {
+            console.log(data)
+            if (data.data.code == 0) {
+              //说明活动创建成功
+              this.$message({
+                message: "修改成功！",
+                type: "success"
+              });
+              this.createlodingcanvas = false;
+              this.createsuccesscanvas = true;
+              this.$router.push("/operatemanagement");
+            }
+          });
+        } else {
+          console.log("创建活动");
+          Axios({
+              url: "api/activityManager/addActivity",
+              method: "post",
+              data: {
+                activity: this.activity,
+                list: this.list
+              }
+            }).then(data => {
+              console.log(data)
+              if (data.data.code == 0) {
+                //说明活动创建成功
+                this.$message({
+                  message: "创建成功！",
+                  type: "success"
+                });
+                this.createlodingcanvas = false;
+                this.createsuccesscanvas = true;
+                this.$router.push("/operatemanagement");
+              }
+            });
+        }
       } else {
-        console.log("创建活动");
-        // Axios({
-        //     url: "api/activityManager/addActivity",
-        //     method: "post",
-        //     data: {
-        //       activity: this.activity,
-        //       list: this.list
-        //     }
-        //   }).then(data => {
-        //     console.log(data)
-        //     if (data.data.code == 0) {
-        //       //说明活动创建成功
-        //       this.$message({
-        //         message: "创建成功！",
-        //         type: "success"
-        //       });
-        //       this.createlodingcanvas = false;
-        //       this.createsuccesscanvas = true;
-        //       this.$router.push("/operatemanagement");
-        //     }
-        //   });
+        this.$message({
+          message: "请先完成上一步骤操作",
+          type: "warning"
+        });
       }
     },
     //背景图片上传成功

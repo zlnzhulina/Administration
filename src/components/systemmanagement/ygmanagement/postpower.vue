@@ -382,7 +382,7 @@ export default {
     },
     //一级全选
     handlechange(index,val){
-      console.log(index);
+      // console.log(index);
      if(val==true){
        for(var i=0;i<this.menuList[index].secondMenuList.length;i++){
          this.menuList[index].secondMenuList[i].checked=true;
@@ -392,7 +392,7 @@ export default {
            }
          }
        }
-       console.log(this.menuList[index].secondMenuList);
+      //  console.log(this.menuList[index].secondMenuList);
      }else if(val==false){
         for(var i=0;i<this.menuList[index].secondMenuList.length;i++){
          this.menuList[index].secondMenuList[i].checked=false;
@@ -407,7 +407,7 @@ export default {
     },
     //二级全选
     handlechangesecondlist(firstindex,index,val){
-      console.log(firstindex,index,val)
+      // console.log(firstindex,index,val)
       if(val==true){
         for(var i=0;i<this.menuList[firstindex].secondMenuList[index].secondMenuList.length;i++){
           this.menuList[firstindex].secondMenuList[index].secondMenuList[i].checked=true;
@@ -418,7 +418,7 @@ export default {
           this.menuList[firstindex].secondMenuList[index].secondMenuList[i].checked=false;
         }
         }
-        console.log(this.menuList[firstindex])
+        // console.log(this.menuList[firstindex])
     },
     //三级选择
     handlechangethreelist(firstindex,secondindex,threeindex,val){

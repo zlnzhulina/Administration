@@ -266,7 +266,7 @@ export default {
           from: "2"
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.totalCount = data.data.data.batchPage.total;
         this.pagesize = data.data.data.batchPage.size;
         this.currentPage = data.data.data.batchPage.current;
@@ -385,7 +385,7 @@ export default {
           pageNo: "1"
         }
       }).then(data => {
-         console.log(data);
+        //  console.log(data);
         this.SAactivitylist = data.data.data.activityPage.records;
       });
       this.goodclasslist();
@@ -415,7 +415,7 @@ export default {
     },
     //选择商品之后
     selegood() {
-       console.log(this.selectgood);
+      //  console.log(this.selectgood);
     },
     //确认关联
 
@@ -452,7 +452,7 @@ export default {
     },
     //确认关联裸码
     residueok() {
-        console.log("SA活动id"+this.SAactivity.activityId,"SA活动name"+this.SAactivity.activityName,"商品id"+this.selectgood.productSId,"商品名称"+this.selectgood.productSName,"数量"+this.residuenum,this.row.batchId)
+        // console.log("SA活动id"+this.SAactivity.activityId,"SA活动name"+this.SAactivity.activityName,"商品id"+this.selectgood.productSId,"商品名称"+this.selectgood.productSName,"数量"+this.residuenum,this.row.batchId)
       Axios({
         url: "qrcode/codeManager/joinSAActivity",
         method: "get",

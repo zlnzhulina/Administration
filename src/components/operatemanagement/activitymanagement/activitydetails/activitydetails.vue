@@ -103,7 +103,7 @@
 //活动详情
 export default {
   created(){
-    console.log(this.$route.query);
+    // console.log(this.$route.query);
     this.activitydetails=this.$route.query.rowdata;
     this.activityprizelist=this.$route.query.rowlist;
     this.activityName=this.$route.query.rowdata.activityName;

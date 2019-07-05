@@ -68,7 +68,7 @@ export default {
           pageSize: this.pagesize,
         }
       }).then(data => {
-         console.log(data);
+        //  console.log(data);
         this.tableData = data.data.data.activityPage.records;
         this.list=data.data.data.list;
         this.totalCount = data.data.data.activityPage.total;

@@ -122,7 +122,7 @@ export default {
   },
   created() {
     this.goodclasslist();
-    console.log(this.$route.query)
+    // console.log(this.$route.query)
     if(this.$route.query.flag=="1"){
       this.productS.productSName=this.$route.query.data.productSName;
       this.productS.status=this.$route.query.data.status;

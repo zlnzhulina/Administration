@@ -142,7 +142,7 @@ export default {
   created() {
     this.activitydetails = this.$route.query.activitydetails;
     this.activityId= this.$route.query.activitydetails.activityId;
-    console.log(this.activitydetails);
+    // console.log(this.activitydetails);
     this.awardlist();
     
       Axios({
@@ -151,7 +151,7 @@ export default {
           "api/networkUserManager/networkList?pageNo=1&pageSize=7"
         
       }).then(data => {
-         console.log(data);
+        //  console.log(data);
       
         this.dotlist = data.data.data.networkPage.records;
       });

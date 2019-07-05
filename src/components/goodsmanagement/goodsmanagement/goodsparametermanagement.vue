@@ -209,7 +209,7 @@ export default {
       this.row = row;
       this.editparametercanvas = true;
       this.parametername = row.productParamSetName;
-      console.log(row);
+      // console.log(row);
     },
     //确定修改参数
     editok() {
@@ -344,7 +344,7 @@ export default {
     editval(val) {},
     //删除值
     delval(val) {
-      console.log("aaa");
+      // console.log("aaa");
     },
     //编辑
     deleteall() {
@@ -358,7 +358,7 @@ export default {
     },
     //删除参数
     del(val) {
-      console.log(val.productParamSetId);
+      // console.log(val.productParamSetId);
       this.$confirm("此操作将永久删除该参数, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -372,7 +372,7 @@ export default {
               productParamSetId: val.productParamSetId
             }
           }).then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.data.code == 0) {
               this.$message({
                 type: "success",
