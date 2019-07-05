@@ -35,6 +35,7 @@
     </div>
     <div class="detailsinfo">
       <div class="left">
+        <span>上传视频</span>
         <el-upload
           class="avatar-uploader el-upload--text"
           action="api/upload/uploadVideo"
@@ -68,6 +69,7 @@
             </div>
           </div>
         </div>
+        <span>上传详情图</span>
         <el-upload
           class="avatar-uploader"
           action="api/upload/uploadImage"
