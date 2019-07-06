@@ -1219,6 +1219,13 @@ export default {
       }
 
       this.list[this.index].activityPrizeList = this.oldgoodssetprizelist;
+       this.oldgoodssetprizelist = this.list[this.index].activityPrizeList;
+          for (var i = 0; i < this.list[this.index].activityPrizeList.length; i++) {
+            this.oldgoodssetprizelist[i].prizeList = this.list[this.index].prizeList[
+              i
+            ];
+          }
+      
       // console.log(this.list[this.index]);
        this.$message({
           message: '保存成功，请勿重复点击',

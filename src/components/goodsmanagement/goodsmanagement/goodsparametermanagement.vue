@@ -148,7 +148,7 @@ export default {
       parametername: "",
       //选中的商品库列表
       firstlist: [],
-      //选中的商品分类列表
+      //选中的商品分类列表  
       secodslist: [
         {
           productCatList: ""
