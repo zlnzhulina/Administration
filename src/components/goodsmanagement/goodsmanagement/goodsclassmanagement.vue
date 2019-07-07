@@ -20,7 +20,7 @@
         <option>SA</option>
       </select>
       <i>添加时间</i>
-      <input type="text">
+      <input type="text" />
       <span>搜索</span>
     </div>
     <div class="tabhand">
@@ -28,7 +28,7 @@
       <span style="display:block;height:32px;line-height:32px;float:right;margin-right:124px;">操作</span>
     </div>
     <div class="tabbody">
-      <el-collapse 
+      <el-collapse
         :v-model="firstitem.productCatId"
         accordion
         v-for="(firstitem,index) in classlist"
@@ -42,8 +42,8 @@
               style="right:120px"
               @click="addnextclass(firstitem.productCatId,$event)"
             >添加下级分类</span>
-            <span style="right:70px">编辑</span>
-            <span style="right:26px;" @click="deleteclass(firstitem.productCatId)">删除</span>
+            <span style="right:70px" @click="editclass(firstitem,$event)">编辑</span>
+            <span style="right:26px;" @click="deleteclass(firstitem.productCatId,$event)">删除</span>
           </template>
           <div>
             <el-collapse
@@ -58,17 +58,22 @@
                     style="right:120px"
                     @click="addnextclass(seconditem.productCatId,$event)"
                   >添加下级分类</span>
-                  <span style="right:70px">编辑</span>
-                  <span style="right:26px;" @click="deleteclass(seconditem.productCatId)">删除</span>
+                  <span style="right:70px" @click="editclass(seconditem,$event)">编辑</span>
+                  <span style="right:26px;" @click="deleteclass(seconditem.productCatId,$event)">删除</span>
                 </template>
-                <div v-for="(threeitem,index) in seconditem.productCatList" :key="index" style="position:relative;">
+                <div
+                  v-for="(threeitem,index) in seconditem.productCatList"
+                  :key="index"
+                  style="position:relative;"
+                >
                   <b style="font-weight: normal;margin-left:30px;">{{threeitem.productCatName}}</b>
                   <span
                     style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:50px;top:0;"
+                    @click="editclass(threeitem,$event)"
                   >编辑</span>
                   <span
-                    @click="deleteclass(threeitem.productCatId)"
                     style="display: block;position: absolute;width: auto;height: 30px;line-height: 30px;text-align: center;color: #169bd5;font-size: 14px;right:6px;top:0;"
+                    @click="deleteclass(threeitem.productCatId,$event)"
                   >删除</span>
                 </div>
               </el-collapse-item>
@@ -82,7 +87,7 @@
       <h3>添加商品库</h3>
       <p>
         名称
-        <input type="text" v-model="classname">
+        <input type="text" v-model="classname" />
       </p>
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="ok">确认</span>
@@ -113,7 +118,11 @@ export default {
           data: "2019-3-4"
         }
       ],
-      superior: ""
+      superior: "",
+      productCatId: "",
+      superCatId: "",
+      //用来判断是添加还是编辑
+      flag: ""
     };
   },
   created() {
@@ -142,6 +151,7 @@ export default {
       this.addcanvas = true;
     },
     addnextclass(val, e) {
+      this.classname="";
       e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
       // console.log(val);
       // console.log(e);
@@ -153,11 +163,20 @@ export default {
       this.addcanvas = true;
     },
     //编辑
-    deleteall() {
+    editclass(list, e) {
+      e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
       this.addcanvas = true;
+      this.flag = "1";
+      console.log(list);
+      this.classname = list.productCatName;
+      this.productCatId = list.productCatId;
+      this.superCatId = list.superCatId;
     },
+    //编辑
+
     //删除
-    deleteclass(val) {
+    deleteclass(val, e) {
+      e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
       console.log(val);
       if (typeof val == "object") {
         this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
@@ -170,7 +189,7 @@ export default {
               url: "api/productsManager/delProductCat",
               methods: "get",
               params: {
-                productCatIds: val[0],
+                productCatIds: val[0]
               }
             }).then(data => {
               // console.log(data)
@@ -189,37 +208,36 @@ export default {
               message: "已取消删除"
             });
           });
-      }else if(typeof val=="string"){
-        
+      } else if (typeof val == "string") {
         this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          Axios({
-            url: "api/productsManager/delProductCat",
-            methods: "get",
-            params: {
-              productCatIds: val
-            }
-          }).then(data => {
-            // console.log(data)
-            if (data.data.code == 0) {
-              this.goodsclasslist();
-              this.$message({
-                type: "success",
-                message: "删除成功!"
-              });
-            }
-          });
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
         })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
+          .then(() => {
+            Axios({
+              url: "api/productsManager/delProductCat",
+              methods: "get",
+              params: {
+                productCatIds: val
+              }
+            }).then(data => {
+              // console.log(data)
+              if (data.data.code == 0) {
+                this.goodsclasslist();
+                this.$message({
+                  type: "success",
+                  message: "删除成功!"
+                });
+              }
+            });
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
           });
-        });
       }
     },
     exit() {
@@ -228,27 +246,53 @@ export default {
 
     ok() {
       // console.log(this.classname, this.superCatId);
+      if (this.flag == 1) {
+        console.log("编辑");
+        Axios({
+          url: "api/productsManager/editProductCat",
+          method: "post",
+          data: {
+            productCatId: this.productCatId,
+            productCatName: this.classname,
+            superCatId: this.superCatId
+          }
+        }).then(data => {
+         this.classname="";
+          this.superCatId = "";
+          // console.log(data);
+          if (data.data.code == 0) {
+            this.goodsclasslist();
+            this.$message({
+              type: "success",
+              message: data.data.msg
+            });
+          }
+        });
+        this.flag="";
 
-      Axios({
-        url: "api/productsManager/addProductCat",
-        method: "post",
-        data: {
-          productCatId: "",
-          productCatName: this.classname,
-          superCatId: this.superior
-        }
-      }).then(data => {
-        this.classname = "";
-        this.superior = "";
-        // console.log(data);
-        if (data.data.code == 0) {
-          this.goodsclasslist();
-          this.$message({
-            type: "success",
-            message: "添加成功!"
-          });
-        }
-      });
+      } else {
+        Axios({
+          url: "api/productsManager/addProductCat",
+          method: "post",
+          data: {
+            productCatId: "",
+            productCatName: this.classname,
+            superCatId: this.superior
+          }
+        }).then(data => {
+          this.classname="";
+          this.superior="";
+          // console.log(data);
+          if (data.data.code == 0) {
+            this.goodsclasslist();
+            this.$message({
+              type: "success",
+              message: "添加成功!"
+            });
+          }
+        });
+      }
+
       this.addcanvas = false;
     }
   }

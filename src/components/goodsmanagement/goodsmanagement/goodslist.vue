@@ -125,7 +125,7 @@ export default {
         }
       }).then(data=>{
         //  console.log(data)
-        // this.tabledata=data.data.data.productSPage.records;
+         this.tabledata=data.data.data.productSPage.records;
       })
     },
     //搜索账号

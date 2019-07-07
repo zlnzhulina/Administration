@@ -615,18 +615,19 @@ export default {
     this.goodclasslist();
     console.log(this.$route.query);
     if (this.$route.query.flag == 1) {
-      this.activityId = this.$route.query.rowdata.activityId;
+      
       delete this.$route.query.rowdata.winningCount;
       delete this.$route.query.rowdata.reset;
       delete this.$route.query.rowdata.finish;
-      delete this.$route.query.rowdata.activityId;
+      
 
-      // console.log(this.$route.query.rowdata);
+     console.log(this.$route.query.rowdata);
       this.flag = this.$route.query.flag;
       this.personDaynum=this.$route.query.rowdata.personDayCount==0?true:false;
       this.personnum=this.$route.query.rowdata.personCount==0?true:false;
       this.activity = this.$route.query.rowdata;
       this.activity.needAuthentication = this.activity.needAuthentication?this.activity.needAuthentication.toString():"";
+      
       //处理商品奖项
       var arr = [];
       arr.push([]);
@@ -645,7 +646,7 @@ export default {
           }
         }
       }
-      // console.log(arr);
+       console.log(arr);
       for (let i = 0; i < arr.length; i++) {
         this.relationgoods.push(arr[i][0]);
       }
@@ -1218,7 +1219,18 @@ export default {
       }
 
       this.list[this.index].activityPrizeList = this.oldgoodssetprizelist;
+       this.oldgoodssetprizelist = this.list[this.index].activityPrizeList;
+          for (var i = 0; i < this.list[this.index].activityPrizeList.length; i++) {
+            this.oldgoodssetprizelist[i].prizeList = this.list[this.index].prizeList[
+              i
+            ];
+          }
+      
       // console.log(this.list[this.index]);
+       this.$message({
+          message: '保存成功，请勿重复点击',
+          type: 'success'
+        });
     },
     //删除添加好的商品
     deletegoods(index, e) {
@@ -1246,7 +1258,6 @@ export default {
     },
     //提交创建活动
     preservationsub() {
-      console.log(this.active);
       if (this.active == 2) {
         console.log("上一步已完成");
         this.active = 3;
@@ -1283,9 +1294,10 @@ export default {
           }
           //
         }
-         console.log(this.list);
+         
         if (this.flag) {
-          console.log("修改活动");
+          console.log(this.activity);
+          console.log(this.list);          
           Axios({
             url: "api/activityManager/editActivity",
             method: "post",

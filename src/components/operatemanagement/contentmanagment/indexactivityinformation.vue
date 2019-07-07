@@ -13,7 +13,7 @@
       stripe
     >
       <!-- stripe="true" -->
-
+<!-- 首页活动咨询 -->
       <el-table-column prop="title" label="标题" width="278px"></el-table-column>
       <el-table-column prop="coverImageUrl" label="橱窗图" width="178px">
         <template slot-scope="scope">
@@ -67,7 +67,7 @@ export default {
         url: "api/contentManager/newsList",
         method: "get"
       }).then(data => {
-        // console.log(data);
+         console.log(data);
         this.tabledata = data.data.data.newsList;
       });
     },
@@ -77,6 +77,13 @@ export default {
     },
     //编辑
     replic(row) {
+      this.$router.push({
+        path:"/addactivitynews",
+        query:{
+          flag:"1",
+          rowdata:row,
+        }
+      })
       // console.log(row)
     },
     edit(val) {

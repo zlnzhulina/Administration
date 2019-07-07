@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <h3>
-      <span>运营管理>资讯列表>添加资讯</span>
+      <span>运营管理>资讯列表>{{flag=="1"?"编辑":"添加"}}资讯</span>
     </h3>
     <div class="title">
       <p>基本信息</p>
@@ -35,6 +35,7 @@
     </div>
     <div class="detailsinfo">
       <div class="left">
+        <span>上传视频</span>
         <el-upload
           class="avatar-uploader el-upload--text"
           action="api/upload/uploadVideo"
@@ -68,6 +69,7 @@
             </div>
           </div>
         </div>
+        <span>上传详情图</span>
         <el-upload
           class="avatar-uploader"
           action="api/upload/uploadImage"
@@ -100,6 +102,7 @@ export default {
   //添加活动资讯
   data() {
     return {
+      flag:"0",
       imagenewcoverUrl: "",
 
       videoFlag: false, //是否显示进度条
@@ -120,6 +123,31 @@ export default {
       newsdetailsimglist: [],
       imgurlarr: []
     };
+  },
+  created(){
+    
+    if(this.$route.query.flag){
+      this.flag=this.$route.query.flag;
+      console.log(this.$route.query)
+      this.status=this.$route.query.rowdata.status;
+
+      this.newId=this.$route.query.rowdata.newId;
+      this.newstitle=this.$route.query.rowdata.title;
+      this.newscontent=this.$route.query.rowdata.information;
+      this.newscoverimg=this.$route.query.rowdata.coverImageUrl;
+      this.imagenewcoverUrl=this.$route.query.rowdata.coverImageUrl;
+      this.showVideoPath=this.$route.query.rowdata.videoUrl;
+      for(let i=0;i<this.$route.query.rowdata.imageList;i++){
+        this.newsdetailsimglist.push({
+          imageUrl: this.$route.query.rowdata.imageList[i],
+        newsdetailsimg: this.$route.query.rowdata.imageList[i],
+        showremovecanvas: true,
+        })
+      }
+      
+
+    }
+    
   },
   methods: {
     handlenewcoverSuccess(res, file) {
@@ -185,8 +213,27 @@ export default {
       for (var i = 0; i < this.newsdetailsimglist.length; i++) {
         this.imgurlarr.push(this.newsdetailsimglist[i].newsdetailsimg);
       }
-      // console.log(this.imgurlarr);
-      Axios({
+      if(this.flag==1){
+         Axios({
+        url: "api/contentManager/editNews",
+        method: "post",
+        data: {
+         
+            newsId: this.newsId,
+            title: this.newstitle,
+            information: this.newscontent,
+            coverImageUrl: this.newscoverimg,
+            videoUrl: this.showVideoPath,
+            imgList:this.imgurlarr,
+        }
+      }).then(data=>{
+        if(data.data.code==0){
+          this.$router.push("/operatemanagement/indexactivityinformation")
+        }
+         console.log(data)
+      });
+      }else{
+         Axios({
         url: "api/contentManager/addInformation",
         method: "post",
         data: {
@@ -205,6 +252,9 @@ export default {
         }
         // console.log(data)
       });
+      }
+      // console.log(this.imgurlarr);
+     
     }
   }
 };

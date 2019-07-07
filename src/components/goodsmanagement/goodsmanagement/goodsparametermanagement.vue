@@ -63,6 +63,7 @@
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="add">确认</span>
     </div>
+    <!-- -----------修改参数 -->
     <div class="editparametercanvas" v-if="editparametercanvas">
       <h3>修改参数</h3>
       <p>
@@ -72,7 +73,7 @@
       <span style="background:#fff" @click="exit">取消</span>
       <span style="background:#169bd5" @click="editok">确认</span>
     </div>
-    <div class="editparametercanvas" v-if="editparametercanvas" style="z-index:33;">
+    <div class="editparametercanvas" v-if="addvaluecanvas" style="z-index:33;">
       <h3>添加值</h3>
       <p>
         值名称：
@@ -94,7 +95,7 @@
       </div>
       <div class="btn">
         <span @click="addval">添加值</span>
-        <span @click="delval">删除选中</span>
+        <span @click="delvalall">删除选中</span>
       </div>
       <el-table
         :header-cell-style="{height:'32'}"
@@ -103,6 +104,7 @@
         tooltip-effect="dark"
         style="width: 100%"
         stripe
+        @selection-change="handleSelectionChange"
       >
         <!-- stripe="true" -->
         <el-table-column type="selection" width="55"></el-table-column>
@@ -146,7 +148,7 @@ export default {
       parametername: "",
       //选中的商品库列表
       firstlist: [],
-      //选中的商品分类列表
+      //选中的商品分类列表  
       secodslist: [
         {
           productCatList: ""
@@ -166,7 +168,8 @@ export default {
       productParamSetId: "",
       productCatId: "",
       //添加管理值名称
-      valuename: ""
+      valuename: "",
+      productParamValueIds: []
     };
   },
   created() {
@@ -213,43 +216,42 @@ export default {
     },
     //确定修改参数
     editok() {
-      if(this.parametername){
-          Axios({
-        url: "api/productsManager/updateProductParamSet",
-        method: "post",
-        data: {
-          productParamSetId: this.row.productParamSetId,
-          productParamSetName: this.parametername,
-          isEdit: this.isEdit,
-          isUse: this.isUse,
-          productCatId: this.productCatId
-        }
-      }).then(data=>{
-        if(data.data.code==0){
-          this.$message({
-          message: '修改成功！',
-          type: 'success'
+      if (this.parametername) {
+        Axios({
+          url: "api/productsManager/updateProductParamSet",
+          method: "post",
+          data: {
+            productParamSetId: this.row.productParamSetId,
+            productParamSetName: this.parametername,
+            isEdit: this.isEdit,
+            isUse: this.isUse,
+            productCatId: this.productCatId
+          }
+        }).then(data => {
+          if (data.data.code == 0) {
+            this.$message({
+              message: "修改成功！",
+              type: "success"
+            });
+            this.goodsparameterlist();
+          } else {
+            this.$message({
+              message: "修改失败！",
+              type: "error"
+            });
+          }
+          this.editparametercanvas = false;
         });
-        this.goodsparameterlist();
-        }else{
-           this.$message({
-          message: '修改失败！',
-          type: 'error'
-        });
-        }
-        this.editparametercanvas = false;
-      });
-      }else{
+      } else {
         this.$message({
-          message: '参数名称不能为空',
-          type: 'warning'
+          message: "参数名称不能为空",
+          type: "warning"
         });
       }
-    
-
     },
     //添加参数
     addparameter() {
+      this.parametername="";
       this.addparametercanvas = true;
     },
     add() {
@@ -272,17 +274,17 @@ export default {
           this.parametername = "";
           if (data.data.code == 0) {
             this.$message({
-                type: "success",
-                message: "添加成功!"
-              });
+              type: "success",
+              message: "添加成功!"
+            });
             this.addparametercanvas = false;
             this.goodsparameterlist();
           }
         });
-      }else{
+      } else {
         this.$message({
-          message: '参数名称不能为空',
-          type: 'warning'
+          message: "参数名称不能为空",
+          type: "warning"
         });
       }
     },
@@ -315,36 +317,113 @@ export default {
     },
     //确定添加
     addvalok() {
-      if(this.valuename){
-         Axios({
-        url: "api/productsManager/addProductParamValue",
-        method: "post",
-        data: {
-          productParamValueId: "",
-          productParamValueVal: this.valuename,
-          productParamSetId: this.productParamSetId,
-          isEdit: ""
-        }
-      }).then(data => {
-        this.addvaluecanvas = false;
-        // console.log(data);
-        if (data.data.code == 0) {
-          this.metermagevaluelist();
-        }
-      });
-      }else{
+      if (this.valuename) {
+        Axios({
+          url: "api/productsManager/addProductParamValue",
+          method: "post",
+          data: {
+            productParamValueId: "",
+            productParamValueVal: this.valuename,
+            productParamSetId: this.productParamSetId,
+            isEdit: ""
+          }
+        }).then(data => {
+          this.addvaluecanvas = false;
+          // console.log(data);
+          if (data.data.code == 0) {
+            this.metermagevaluelist();
+          }
+        });
+      } else {
         this.$message({
-          message: '参数名称不能为空',
-          type: 'warning'
+          message: "参数名称不能为空",
+          type: "warning"
         });
       }
-     
     },
     //编辑值
+    //批量选中值
+    handleSelectionChange(val) {
+      console.log(val);
+      this.productParamValueIds.length = 0;
+      for (var i = 0; i < val.length; i++) {
+        this.productParamValueIds.push(val[i].productParamValueId);
+      }
+    },
     editval(val) {},
     //删除值
-    delval(val) {
-      // console.log("aaa");
+    delval(row) {
+      console.log(row);
+      this.$confirm("此操作将永久删除该值, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          Axios({
+            url: "api/productsManager/delProductParamValue",
+            method: "get",
+            params: {
+              productParamValueIds: row.productParamValueId
+            }
+          }).then(data => {
+            if (data.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.metermagevaluelist();
+            } else {
+              this.$message({
+                type: "error",
+                message: data.data.msg
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    //批量删除管理值
+    delvalall() {
+      this.$confirm("此操作将永久删除选中的值, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          // console.log(this.productParamValueIds)
+          Axios({
+            url: "api/productsManager/delProductParamValue",
+            method: "get",
+            params: {
+              productParamValueIds: this.productParamValueIds.toString()
+            }
+          }).then(data => {
+            if (data.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "删除成功!"
+              });
+              this.metermagevaluelist();
+            } else {
+              this.$message({
+                type: "error",
+                message: data.data.msg
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     //编辑
     deleteall() {
@@ -355,6 +434,7 @@ export default {
       this.addparametercanvas = false;
       this.metermagevalcanvas = false;
       this.addvaluecanvas = false;
+      this.editparametercanvas=false;
     },
     //删除参数
     del(val) {
@@ -379,6 +459,11 @@ export default {
                 message: "删除成功!"
               });
               this.goodsparameterlist();
+            } else {
+              this.$message({
+                type: "error",
+                message: data.data.msg
+              });
             }
           });
         })

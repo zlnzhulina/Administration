@@ -20,17 +20,17 @@
         </div>
         <div class="tdtwo">
           <p>活动名称</p>
-          <p>已关联小程序码</p>
+         
           <p>活动时间</p>
         </div>
         <div class="tdthree">
           <p>{{activityName}}</p>
-          <p>已关联小程序码</p>
+         
           <p>{{activityTime}}</p>
         </div>
         <div class="tdtwo">
           <p>活动状态</p>
-          <p>已激活小程序码</p>
+          
           <p>活动区域</p>
         </div>
         <div class="tdthree">
@@ -39,7 +39,7 @@
           {{activitydetails.finish==1?"已结束":""}}
           {{activitydetails.finish==2?"已取消":""}}
        </p>
-          <p>2362组</p>
+         
           <p>全国</p>
         </div>
       </div>
@@ -83,15 +83,15 @@
         <h2 style="width:100%;height:60px;background:#ddd;line-height:60px;margin-top:30px;"><span style="margin-left:20px;font-size:14px;">关联条码</span></h2>
         <el-table :data="tableData" stripe style="width: 100%;">
           
-          <el-table-column prop="activityName" label="活动名称" width="240"></el-table-column>
-          <el-table-column prop="productName" label="关联商品" width="250"></el-table-column>
-          <el-table-column prop="activityPrizeCount" label="奖品数量" width="199"></el-table-column>
-           <el-table-column prop="name" label="已关联条码数量" width="199"></el-table-column>
-            <el-table-column prop="name" label="操作">
+          <el-table-column prop="activityName" label="活动名称"></el-table-column>
+          <el-table-column prop="productName" label="关联商品"></el-table-column>
+          <el-table-column prop="activityPrizeCount" label="奖品数量" width="200"></el-table-column>
+           <el-table-column prop="name" label="已关联条码数量" width="200"></el-table-column>
+            <!-- <el-table-column prop="name" label="操作">
                 <template>
                     <el-button type="text" size="small" >关联</el-button>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             
         </el-table>
       </div>
@@ -100,10 +100,12 @@
 </template>
 
 <script>
+import Axios from 'axios';
 //活动详情
 export default {
   created(){
-    // console.log(this.$route.query);
+     console.log(this.$route.query);
+    this.barActivityId=this.$route.query.rowdata.activityId;
     this.activitydetails=this.$route.query.rowdata;
     this.activityprizelist=this.$route.query.rowlist;
     this.activityName=this.$route.query.rowdata.activityName;
@@ -124,12 +126,13 @@ export default {
     this.activityrule[8].Result=this.$route.query.rowdata.needAuthentication==0?"否":"是";
     this.activityrule[9].Result=this.$route.query.rowdata.isQrcodeStatus==0?"否":"是";
     this.tableData=this.$route.query.rowlist;
-    for(var i=0;i<this.tableData.length;i++){
+    for(let i=0;i<this.tableData.length;i++){
       this.tableData[i].activityName=this.activityName;
     }
   },
     data(){
         return{
+          barActivityId:"",
           //活动基本详情
           activitydetails:{},
           tableData:[],
@@ -207,6 +210,18 @@ export default {
                   activitydetails:this.activitydetails
                 }
             })
+        },
+        // 获取关联条码数量
+        codecount(){
+          Axios({
+            url:"qrcode/codeManager/selectCountByActivityId",
+            method:"get",
+            params:{
+              barActivityId:this.barActivityId,
+            }
+          }).then(data=>{
+            console.log(data)
+          })
         }
     }
 };
@@ -237,14 +252,14 @@ export default {
       }
       .activitytype {
         width: 214px;
-        height: 148px;
+        height: 98px;
         text-align: center;
         background: #ddd;
         border: 1px solid #ccc;
       }
       .tdtwo {
         width: 124px;
-        height: 150px;
+        height: 100px;
         background: #ddd;
 
         p {
@@ -255,7 +270,7 @@ export default {
       }
       .tdthree {
         width: 266px;
-        height: 150px;
+        height: 100px;
 
         p {
           width: 266px;
