@@ -12,10 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       "/qrcode": {
-        
-        target: "http://localhost:8001",
-        
-        // target: "http://futian.atscloud.cn/FT_SA/qrcode/",
+         
+        target: "http://futian.atscloud.cn/FT_SA/qrcode/",
         // target: "http://jiefang.atscloud.cn/JF_SA/qrcode/",
         changeOrigin: true,
         pathRewrite: {
@@ -23,8 +21,13 @@ module.exports = {
         }
       },
       "/api":{
-         target: "http://192.168.2.108:8001",
+
+         target: "http://localhost:8001",
         //  target: "http://futian.atscloud.cn/FT_SA/api",
+
+        //  target: "http://192.168.2.108:8001",
+        //  target: "http://futian.atscloud.cn/FT_SA/api",
+
         // target: "http://jiefang.atscloud.cn/JF_SA/api/",
          changeOrigin: true,
          pathRewrite: {
@@ -67,7 +70,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps

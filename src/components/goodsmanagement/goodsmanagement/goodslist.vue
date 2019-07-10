@@ -77,6 +77,16 @@
         </div>
       </div>
     </div>
+    <div class="block fr" style="margin-top: 10px;">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="pagesize"
+        layout="total,  prev, pager, next, jumper"
+        :total="totalCount"
+      ></el-pagination>
+    </div>
   </div>
 </template>
 
@@ -103,6 +113,9 @@ export default {
       goodsidarr:[],
       //删除的商品id的集合字符串
       delgoodsids:"",
+      currentPage: 1,
+      pagesize:10,
+      totalCount:1,
       //搜索id值
       searchId:"",
     };
@@ -116,16 +129,19 @@ export default {
         url:"api/productsManager/productSList",
         method:"get",
         params:{
-          pageNo:"1",
-          pageSize:8,
+        
+           pageNo: this.currentPage,
           productCatId:"",
           littleTime:"",
           bigTime:"",
           productSName:"",
         }
       }).then(data=>{
-        //  console.log(data)
+          console.log(data)
          this.tabledata=data.data.data.productSPage.records;
+         this.totalCount = data.data.data.productSPage.total;
+         this.pagesize = data.data.data.productSPage.size;
+        this.currentPage = data.data.data.productSPage.current;
       })
     },
     //搜索账号
@@ -139,13 +155,7 @@ export default {
          path:"/addgoods",
          query:{flag:"1",data:row}
        })
-      //  this.productSName=row.productSName;
-      //  this.productSId=row.productSId;
-      //  this.status=row.status;
-      //  this.cityName=row.cityName;
-      //  this.productCatId=row.productCatId;
-      //  this.productImgUrl=row.productImgUrl;
-      //  this.editgoodlistcanvas=true;
+     
     },
     //添加
     addgoods() {
@@ -169,6 +179,7 @@ export default {
     },
     //批量删除
     deleteall(){
+      
       this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -178,7 +189,7 @@ export default {
             url:"api/productsManager/delProductS",
             method:"get",
             params:{
-              productSId:this.degoodsids,
+              productSId:this.delgoodsids,
             }
           }).then(data=>{
             // console.log(data);
@@ -205,6 +216,7 @@ export default {
         });
     },
     removegoods(val){
+      console.log(val)
       this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -214,10 +226,10 @@ export default {
             url:"api/productsManager/delProductS",
             method:"get",
             params:{
-              productSId:val.degoodsids,
+              productSId:val.productSId,
             }
           }).then(data=>{
-            // console.log(data);
+             console.log(data);
             if(data.data.code==0){
               this.$message({
             type: 'success',
@@ -244,7 +256,13 @@ export default {
       this.delcanvas = false;
       this.editgoodlistcanvas=false;
     },
-
+    // 分页功能
+     handleSizeChange(val) {},
+    handleCurrentChange(val) {
+      // console.log(val);
+      this.currentPage = val;
+      this.activitylist();
+    },
     del() {
       this.delcanvas = false;
     }

@@ -435,7 +435,7 @@
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.prizenum"
-                          @keyup="countnum(scope.$index,scope.row.prizenum)"
+                          @input="countnum(scope.$index,scope.row.prizenum)"
                         />
                       </template>
                     </el-table-column>
@@ -518,7 +518,7 @@
                           type="text"
                           style="width:100%;height:26px;outline:none;font-size:12px;"
                           v-model="scope.row.activityPrizeCount"
-                          @keyup="oldcountnum(scope.$index,scope.row.activityPrizeCount)"
+                          @input="oldcountnum(scope.$index,scope.row.activityPrizeCount)"
                         />
                       </template>
                     </el-table-column>
@@ -627,7 +627,7 @@ export default {
       this.personnum=this.$route.query.rowdata.personCount==0?true:false;
       this.activity = this.$route.query.rowdata;
       this.activity.needAuthentication = this.activity.needAuthentication?this.activity.needAuthentication.toString():"";
-      
+      this.needCar=this.$route.query.rowdata.needCar;
       //处理商品奖项
       var arr = [];
       arr.push([]);
@@ -886,16 +886,10 @@ export default {
       }
     },
     nexttwo() {
-      // console.log(this.activity);
-      if (
-        this.activity.personCount &&
-        this.activity.personDayCount &&
-        this.activity.isRealName
-      ) {
+       console.log(this.activity);
+      if (this.activity.personCount && this.activity.personDayCount && this.activity.isRealName) {
         if (
-          (this.activity.needCar == 1 && this.activity.catCount) ||
-          this.activity.needCar == 0
-        ) {
+          (this.activity.needCar == 1 && this.activity.catCount) || this.activity.needCar == 0 ) {
           if (this.active == 1) {
             this.active = 2;
             this.activeName = "third";
@@ -903,6 +897,7 @@ export default {
             this.two = false;
             this.three = true;
           } else {
+            this.$message.error("请完善基本设置！");
             this.active = this.active;
             this.activeName = "third";
             this.one = false;
@@ -912,6 +907,8 @@ export default {
         } else {
           this.$message.error("请完善派奖设置！");
         }
+      }else{
+        this.$message.error("请完善派奖设置！");
       }
     },
     addgoods() {
@@ -1296,8 +1293,8 @@ export default {
         }
          
         if (this.flag) {
-          console.log(this.activity);
-          console.log(this.list);          
+          // console.log(this.activity);
+          // console.log(this.list);          
           Axios({
             url: "api/activityManager/editActivity",
             method: "post",
@@ -1343,7 +1340,7 @@ export default {
         }
       } else {
         this.$message({
-          message: "请先完成上一步骤操作",
+          message: "请先确认基本设置与派奖设置是否有误，无误请点击下一步",
           type: "warning"
         });
       }
@@ -1365,22 +1362,26 @@ export default {
       // console.log(index);
       // console.log(this.prizedata[0].prizenum);
       // console.log(this.prizedata[index].prizenum);
-      if (!index == 0) {
+      if (!index == 0 && this.prizedata[index].prizenum) {
         var num = Math.round(
           this.prizedata[0].prizenum / this.prizedata[index].prizenum
         );
         this.prizedata[index].setprize = num.toString();
         // console.log(this.prizedata);
+      }else if(!index == 0 && !this.prizedata[index].prizenum){
+        this.prizedata[index].setprize="";
       }
     },
     oldcountnum(index, row) {
       // console.log(this.oldgoodssetprizelist);
-      if (!index == 0) {
+      if (!index == 0 && this.oldgoodssetprizelist[index].activityPrizeCount) {
         var num = Math.round(
           this.oldgoodssetprizelist[0].activityPrizeCount /
             this.oldgoodssetprizelist[index].activityPrizeCount
         );
         this.oldgoodssetprizelist[index].probability = num.toString();
+      }else if(!index == 0 && !this.oldgoodssetprizelist[index].activityPrizeCount){
+         this.oldgoodssetprizelist[index].probability = "";
       }
     },
     //标题图片上传成功
@@ -1874,7 +1875,8 @@ export default {
             line-height: 32px;
             span {
               display: inline-block;
-              width: 140px;
+              min-width: 170px;
+              padding-right: 13px;
             }
           }
         }

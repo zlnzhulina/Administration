@@ -26,6 +26,7 @@
         <option>机修工</option>
         <option>SA</option>
       </select>
+      <span style="height:30px;background:#1abc9c;border-radius: 6px;line-height:30px;color:#fff;padding:0 6px 0 6px;">升序/降序 ↑↓</span>
     </div>
     <el-table
       :header-cell-style="{background:'#ccd1e0',height:'32'}"
@@ -33,7 +34,6 @@
       :data="tabledata"
       tooltip-effect="dark"
       style="width: 100%"
-      
       stripe
     >
       <!-- stripe="true" -->
@@ -41,14 +41,16 @@
       <el-table-column prop="batchId" label="批次编号" width="188px"></el-table-column>
       <el-table-column prop="batchName" label="批次名称" width="158px"></el-table-column>
       <el-table-column prop="type" label="批次类型" width="100px">
+
         <template slot-scope="scope">{{scope.row.type==2?"双码":"单码"}}</template>
       </el-table-column>
+       <el-table-column prop="createTime" label="创建时间"></el-table-column>
       <el-table-column prop="count" label="批次数量"></el-table-column>
-      <el-table-column  label="占用">
+      <el-table-column label="占用">
         <template slot-scope="scope">{{scope.row.count-scope.row.residueCount}}</template>
       </el-table-column>
       <el-table-column prop="residueCount" label="未占用"></el-table-column>
-
+     
       <el-table-column fixed="right" label="操作" width="300px">
         <template slot-scope="scope">
           <!-- <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button> -->
@@ -81,7 +83,7 @@
         </div>
         <div class="withdrawnum">
           <b>撤回数量：</b>
-          <input type="text" v-model="withdrawnum">
+          <input type="text" v-model="withdrawnum" />
         </div>
         <div class="withdrawnumbtn">
           <span style="background:#1abc9c;border:none;color:#fff;" @click="withdrawok">确定</span>
@@ -92,7 +94,7 @@
     <!-- ----------二维码批次关联活动和商品 ---------------->
     <div class="relationcanvastwowrap" v-if="relationcanvas"></div>
     <div class="relationcanvastwo" v-if="relationcanvas">
-      <img src="../../assets/no.png" @click="exit">
+      <img src="../../assets/no.png" @click="exit" />
       <div class="relationSA" style="width:100%;">
         <div class="membershow">
           <span>批次编号：</span>
@@ -122,11 +124,11 @@
             >{{val.activityName}}</option>
           </select>
           <span>关联数量：</span>
-          <input type="text" v-model="relationarr[index].joinCount">
+          <input type="text" v-model="relationarr[index].joinCount" />
           <span>个</span>
         </div>
         <button @click="subrelation(index)">确定关联</button>
-        <hr>
+        <hr />
       </div>
       <!-- 裸码关联 -->
       <div class="relationSA">
@@ -175,7 +177,7 @@
         </div>
         <div class="membershow">
           <span>请输入关联数量：</span>
-          <input type="text" v-model="residuenum">
+          <input type="text" v-model="residuenum" />
         </div>
         <button @click="residueok">确认关联</button>
       </div>
@@ -266,7 +268,7 @@ export default {
           from: "2"
         }
       }).then(data => {
-        // console.log(data);
+        console.log(data);
         this.totalCount = data.data.data.batchPage.total;
         this.pagesize = data.data.data.batchPage.size;
         this.currentPage = data.data.data.batchPage.current;
@@ -279,7 +281,7 @@ export default {
         path: "/addqrcode"
       });
     },
-    
+
     details(row) {
       // console.log(1)
       if (row.type == 2) {
@@ -344,7 +346,7 @@ export default {
         }
       }).then(data => {
         //  console.log(data);
-        this.memberrelationlist=[];
+        this.memberrelationlist = [];
         this.memberrelationlist = data.data.data.list;
         this.residueCount = data.data.data.residueCount;
         // console.log(this.memberrelationlist);
@@ -360,7 +362,7 @@ export default {
               productsIds: this.productsIds.toString()
             }
           }).then(res => {
-            // console.log(res);
+             console.log(res);
             this.productsIds.length = 0;
             if (res.data.code == 0) {
               this.SAactivityarr = res.data.data;
@@ -382,7 +384,8 @@ export default {
         url: "api/activityManager/activityList",
         method: "get",
         params: {
-          pageNo: "1"
+          pageNo: "1",
+          pageSize:"1000"
         }
       }).then(data => {
         //  console.log(data);
@@ -434,7 +437,7 @@ export default {
           productsName: this.relationarr[i].productsName,
           joinCount: this.relationarr[i].joinCount,
           batchId: this.row.batchId,
-          type:"",
+          type: ""
         }
       }).then(data => {
         // console.log(data);
@@ -443,16 +446,15 @@ export default {
             type: "success",
             message: "关联成功!"
           });
-          this.relationcanvas=false;
+          this.relationcanvas = false;
           this.relationarr.length = 0;
           // console.log(this.relationarr)
-          
         }
       });
     },
     //确认关联裸码
     residueok() {
-        // console.log("SA活动id"+this.SAactivity.activityId,"SA活动name"+this.SAactivity.activityName,"商品id"+this.selectgood.productSId,"商品名称"+this.selectgood.productSName,"数量"+this.residuenum,this.row.batchId)
+      // console.log("SA活动id"+this.SAactivity.activityId,"SA活动name"+this.SAactivity.activityName,"商品id"+this.selectgood.productSId,"商品名称"+this.selectgood.productSName,"数量"+this.residuenum,this.row.batchId)
       Axios({
         url: "qrcode/codeManager/joinSAActivity",
         method: "get",
@@ -463,7 +465,7 @@ export default {
           productsName: this.selectgood.productSName,
           joinCount: this.residuenum,
           batchId: this.row.batchId,
-          type:"1",
+          type: "1"
         }
       }).then(data => {
         // console.log(data);
@@ -472,10 +474,8 @@ export default {
             type: "success",
             message: "关联成功!"
           });
-          this.relationcanvas=false;
-          
+          this.relationcanvas = false;
         }
-        
       });
     },
     del(row) {
@@ -517,41 +517,40 @@ export default {
     },
     //确认撤回
     withdrawok() {
-      if(this.withdrawnum){
+      if (this.withdrawnum) {
         Axios({
-        url: "qrcode/codeManager/recallCodeFromBatch",
-        method: "get",
-        params: {
-          batchId: this.row.batchId,
-          recallCount: this.withdrawnum,
-          type:"1",
-        }
-      }).then(data=>{
-        // console.log(data);
-        if(data.data.code==0){
-          this.$message({
-                type: "success",
-                message: "撤回成功!"
-              });
-          this.withdrawnum="";
-          this.withdrawcanvas = false;
-        }else{
-          this.$message({
-                type: "error",
-                message: data.data.msg
-              });
-        }
-      });
-      }else{
+          url: "qrcode/codeManager/recallCodeFromBatch",
+          method: "get",
+          params: {
+            batchId: this.row.batchId,
+            recallCount: this.withdrawnum,
+            type: "1"
+          }
+        }).then(data => {
+          // console.log(data);
+          if (data.data.code == 0) {
+            this.$message({
+              type: "success",
+              message: "撤回成功!"
+            });
+            this.withdrawnum = "";
+            this.withdrawcanvas = false;
+          } else {
+            this.$message({
+              type: "error",
+              message: data.data.msg
+            });
+          }
+        });
+      } else {
         this.$message({
           showClose: true,
-          message: '请输入需要撤回数量',
-          type: 'warning'
+          message: "请输入需要撤回数量",
+          type: "warning"
         });
       }
-      
     },
-    
+
     exit() {
       this.relationcanvas = false;
       this.withdrawcanvas = false;
@@ -589,9 +588,7 @@ export default {
       this.currentPage = val;
       this.qrcodelist();
     },
-    getTable(){
-
-    }
+    getTable() {}
   }
 };
 //二维码列表
@@ -842,7 +839,8 @@ export default {
           color: goldenrod;
         }
         p {
-          width: 100px;
+          min-width: 100px;
+          padding: 0 7px 0 7px;
           height: 34px;
           line-height: 34px;
           border: 1px solid #555;

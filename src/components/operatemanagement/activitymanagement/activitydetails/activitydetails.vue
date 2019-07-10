@@ -66,7 +66,9 @@
           <el-table-column prop="name" label="奖项名称" width="142">
             <template>微信红包</template>
           </el-table-column>
-          <el-table-column prop="activityPrizeName" label="奖项属性" width="142"></el-table-column>
+          <el-table-column prop="prize.price" label="奖项属性" width="142">
+            <!-- <template></template> -->
+          </el-table-column>
            <el-table-column prop="activityPrizeInfo" label="奖品类型" width="142"></el-table-column>
             <el-table-column prop="activityPrizeName" label="奖品名称" width="142"></el-table-column>
              <el-table-column label="数量/剩余" width="141">
