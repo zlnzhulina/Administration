@@ -22,8 +22,8 @@ module.exports = {
       },
       "/api":{
 
-        //  target: "http://192.168.2.108:8001",
-         target: "http://futian.atscloud.cn/FT_SA/api",
+         target: "http://localhost:8001",
+        //  target: "http://futian.atscloud.cn/FT_SA/api",
         // target: "http://jiefang.atscloud.cn/JF_SA/api/",
          changeOrigin: true,
          pathRewrite: {
