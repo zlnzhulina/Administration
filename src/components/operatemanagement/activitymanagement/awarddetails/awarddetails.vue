@@ -108,8 +108,8 @@
             <template>{{"微信红包"}}</template>
           </el-table-column>
           <el-table-column prop="activityPrizeName" label="奖品名称" width="110"></el-table-column>
-          <el-table-column prop="activityPrizeCount" label="数量/全部" width="110"></el-table-column>
-          <el-table-column prop="activityPrizeResidueCount" label="数量/剩余" width="110"></el-table-column>
+          <el-table-column prop="activityPrizeCount" label="全部数量" width="110"></el-table-column>
+          <el-table-column prop="activityPrizeResidueCount" label="剩余数量" width="110"></el-table-column>
           <el-table-column prop="networkName" label="网点名称" width="112"></el-table-column>
           <el-table-column prop="recevideDate" label="领取时间" width="160"></el-table-column>
           <el-table-column prop="scanDate" label="扫码时间" width="160"></el-table-column>
@@ -207,7 +207,7 @@ export default {
 
         }
       }).then(data => {
-        //  console.log(data);
+          console.log(data);
          this.tableData = data.data.data.map.records;
         this.totalCount = data.data.data.map.total;
         this.pagesize = data.data.data.map.size;
@@ -254,7 +254,7 @@ export default {
   float: right;
 }
 .wrap {
-  width: 1120px;
+  width: 1217px;
   height: auto;
   margin: 0 auto;
   padding-top: 60px;
@@ -267,11 +267,12 @@ export default {
     height: auto;
     margin: 30px auto;
     .tab {
-      width: 982px;
+      
       height: 150px;
-      display: flex;
       text-align: center;
       margin: 30px auto;
+      display: flex;
+    justify-content: center;
       p {
         line-height: 48px;
       }
@@ -283,22 +284,22 @@ export default {
         border: 1px solid #ccc;
       }
       .tdtwo {
-        width: 124px;
+        
         height: 150px;
         background: #ddd;
 
         p {
-          width: 124px;
+          
           height: 48px;
           border: 1px solid #ccc;
         }
       }
       .tdthree {
-        width: 266px;
+        
         height: 150px;
 
         p {
-          width: 266px;
+          width: 346px;
           height: 48px;
           border: 1px solid #ccc;
         }

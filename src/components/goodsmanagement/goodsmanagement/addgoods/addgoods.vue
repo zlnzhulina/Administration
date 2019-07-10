@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <h3>
-      <span>商品管理>添加商品</span>
+      <span>商品管理>{{flag==1?"编辑":"添加"}}商品</span>
     </h3>
     <div class="content">
       <div class="left">
@@ -9,7 +9,7 @@
         <ul>
           <li>
             <span>商品名称:</span>
-            <input type="text" v-model="productS.productSName">
+            <input type="text" v-model="productS.productSName" />
           </li>
           <li>
             <span>商品库:</span>
@@ -48,13 +48,17 @@
               value="保存后自动生成"
               readonly="readonly"
               style="outline:none;background:#f2f2f2;text-align:center; color:#7f7f7f;"
-            >
+            />
           </li>
           <li v-for="(goodsparameter,index) in selectlist">
             <span>{{goodsparameter.name}}</span>
-            <select v-model="goodsparameter.selectedI" @change="selectparameter(index,productCatList)">
+            <select
+              v-model="goodsparameter.selectedI"
+              @change="selectparameter(index,productCatList)"
+            >
               <option>请选择</option>
-              <option @click="cccc()"
+              <option
+                @click="cccc()"
                 v-for="(valitem,i) in goodsparameter.children"
                 :value="valitem"
               >{{valitem.productParamValueVal}}</option>
@@ -66,18 +70,15 @@
         <span>图片</span>
         <div class="addimg">
           <el-upload
+            class="avatar-uploader"
             action="api/upload/uploadImage"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-success="updatesuccess"
-            style="width:490px;display:inline-block;"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
           >
-            <i class="el-icon-plus"></i>
+            <img v-if="dialogImageUrl" :src="dialogImageUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt>
-          </el-dialog>
         </div>
       </div>
     </div>
@@ -93,9 +94,10 @@ import Axios from "axios";
 export default {
   data() {
     return {
-      productCatList:[],
-      i:"",
-      selectitemlist:[],
+      flag: "0",
+      dialogVisible: [],
+      productCatList: [],
+      i: "",
       productS: {
         productSName: "",
         status: "",
@@ -122,17 +124,21 @@ export default {
   },
   created() {
     this.goodclasslist();
-    // console.log(this.$route.query)
-    if(this.$route.query.flag=="1"){
-      this.productS.productSName=this.$route.query.data.productSName;
-      this.productS.status=this.$route.query.data.status;
-      this.productS.cityName=this.$route.query.data.cityName;
-      this.productS.productCatId=this.$route.query.data.productCatId;
-      this.productS.productImgUrl=this.$route.query.data.productImgUrl;
+    console.log(this.$route.query);
+    if (this.$route.query.flag == "1") {
+      this.flag = this.$route.query.flag == "1";
+      this.productS.productSName = this.$route.query.data.productSName;
+      this.productS.status = this.$route.query.data.status;
+      this.productS.cityName = this.$route.query.data.cityName;
+      this.productS.productCatId = this.$route.query.data.productCatId;
+      this.productS.productImgUrl = this.$route.query.data.productImgUrl;
+      this.dialogImageUrl = this.$route.query.data.productImgUrl;
+      this.productS.productImgUrl = this.$route.query.data.productImgUrl;
+      this.productS.productSId=this.$route.query.data.productSId;
     }
   },
   methods: {
-    cccc(){
+    cccc() {
       // console.log(333)
     },
     //商品分类列表
@@ -151,7 +157,7 @@ export default {
     //商品参数列表
     goodsparameterlist() {
       // console.log(this.threelist);
-      this.productS.productCatId=this.threelist.productCatId;
+      this.productS.productCatId = this.threelist.productCatId;
       Axios({
         url: "api/productsManager/productParamSetList",
         method: "get",
@@ -188,57 +194,80 @@ export default {
     },
     // productParamSetId  参数id
     //选择参数
-    selectparameter(i,val){
-      //  console.log(i)
-      
+    selectparameter(i, val) {
       // console.log(val)
-       this.selectitemlist.push(val)
+    
       //  console.log(this.selectlist);
       //  console.log(this.selectlist[i]["selectedI"]);
-       this.productParamSetSelectList.push(this.selectlist[i]["selectedI"]);
-      //  console.log(this.productParamSetSelectList)
-      //  console.log("iiii",this.selectlist[i].selectedI);
-    //   console.log("productCatList",this.productCatList[0]);
-	  // console.log("productCatList",this.productCatList[1]);
-	  // console.log("productCatList",this.productCatList[2]);
-	  // console.log("productCatList",this.productCatList[3]);
-      // console.log(this.selectitemlist)
+      for(let i=0;i<this.productParamSetSelectList.length;i++){
+        if(this.productParamSetSelectList[i].productParamSetId==this.selectlist[i]["selectedI"].productParamSetId){
+          this.productParamSetSelectList.splice(i, 1);
+          this.productParamSetSelectList.push(this.selectlist[i]["selectedI"]);
+        }else{
+          this.productParamSetSelectList.push(this.selectlist[i]["selectedI"]);
+        }
+      }
+      
+     
+       console.log(this.productParamSetSelectList);
     },
     //添加商品
     addgoods() {
-      Axios({
-        url: "api/productsManager/addProductS",
-        method: "post",
-        data: {
-          productS:this.productS,
-          productParamSetSelectList: this.productParamSetSelectList,
-        },
-      }).then(data=>{
-        // console.log(data)
-        if(data.data.code==0){
-           this.$message({
-            type: 'success',
-            message: '添加成功!'
-          });
-          this.$router.push("/goodsmanagement/goodslist")
-        }
-      });
+      if (this.flag == 1) {
+        console.log(this.productParamSetSelectList);
+        // Axios({
+        //   url: "api/productsManager/editProductS",
+        //   method: "post",
+        //   data: {
+        //     productS: this.productS,
+        //     productParamSetSelectList: this.productParamSetSelectList
+        //   }
+        // }).then(data => {
+        //   // console.log(data)
+        //   if (data.data.code == 0) {
+        //     this.$message({
+        //       type: "success",
+        //       message: "修改成功!"
+        //     });
+        //     this.$router.push("/goodsmanagement/goodslist");
+        //   }
+        // });
+      } else {
+        Axios({
+          url: "api/productsManager/addProductS",
+          method: "post",
+          data: {
+            productS: this.productS,
+            productParamSetSelectList: this.productParamSetSelectList
+          }
+        }).then(data => {
+          // console.log(data)
+          if (data.data.code == 0) {
+            this.$message({
+              type: "success",
+              message: "添加成功!"
+            });
+            this.$router.push("/goodsmanagement/goodslist");
+          }
+        });
+      }
     },
 
-    handleRemove(file, fileList) {
-      // console.log(file, fileList);
+    handleAvatarSuccess(res, file) {
+      this.dialogImageUrl = URL.createObjectURL(file.raw);
+      this.productS.productImgUrl = file.response.data.fileUrl;
     },
-    handlePictureCardPreview(file) {
-      // console.log(file);
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
-    updatesuccess(res, file) {
-      if (res.code == 0) {
-        this.productS.productImgUrl=file.response.data.fileUrl;
-        // this.goodsimg.push(file.response.data.fileUrl);
-        // console.log(this.goodsimg);
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
       }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
     }
   }
 };
@@ -316,18 +345,28 @@ export default {
       float: left;
       padding-left: 22px;
       font-size: 12px;
-      .addimg {
-        width: auto;
-        height: auto;
-        margin-top: 15px;
+      .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      .avatar-uploader .el-upload:hover {
+        border-color: #409eff;
+      }
+      .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
         text-align: center;
-        line-height: 74px;
-        div {
-          .el-upload-list--picture-card {
-            display: inline-block;
-            width: 300px;
-          }
-        }
+      }
+      .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
       }
     }
   }
