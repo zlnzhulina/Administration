@@ -12,19 +12,20 @@
     >
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="activityName" label="活动名称"></el-table-column>
+      <el-table-column prop="startTime" label="活动开始时间"></el-table-column>
       <el-table-column prop="endTime" label="有效时间"></el-table-column>
       <el-table-column prop="activityType" label="活动状态">
         <template slot-scope="scope">
-          {{scope.row.finish==0?"未结束":""}}
-          {{scope.row.finish==1?"已结束":""}}
-          {{scope.row.finish==2?"已取消":""}}
+          {{scope.row.activityStatus=="1"?"未开始":""}}
+          {{scope.row.activityStatus=="2"?"进行中":""}}
+          {{scope.row.activityStatus=="3"?"已结束":""}}
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="310">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="details(scope.$index,scope.row)">查看</el-button>
           <el-button type="text" size="small" @click="edit(scope.$index,scope.row)">修改</el-button>
-          <el-button type="text" size="small">结束</el-button>
+          <el-button type="text" size="small" @click="endactivity(scope.row)">结束</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -52,7 +53,7 @@ export default {
       totalCount: 1,
       pagesize: 10,
       currentPage: 1,
-      list:[],
+      list: []
     };
   },
   created() {
@@ -65,12 +66,12 @@ export default {
         method: "get",
         params: {
           pageNo: this.currentPage,
-          pageSize: this.pagesize,
+          pageSize: this.pagesize
         }
       }).then(data => {
-          console.log(data);
+        // console.log(data);
         this.tableData = data.data.data.activityPage.records;
-        this.list=data.data.data.list;
+        this.list = data.data.data.list;
         this.totalCount = data.data.data.activityPage.total;
         this.pagesize = data.data.data.activityPage.size;
         this.currentPage = data.data.data.activityPage.current;
@@ -80,22 +81,22 @@ export default {
       this.$router.push("/createactivity");
     },
     //查看活动详情
-    details(index,row) {
+    details(index, row) {
       this.$router.push({
         path: "/activitydetails",
-        query:{
-          flag:1,
-          rowdata:row,
-          rowlist:this.list[index],
+        query: {
+          flag: 1,
+          rowdata: row,
+          rowlist: this.list[index]
         }
       });
     },
     //修改活动
-    edit(index,row){
+    edit(index, row) {
       this.$router.push({
-        path:"/createactivity",
-        query:{flag:1,rowdata:row,rowlist:this.list[index]}
-      })
+        path: "/createactivity",
+        query: { flag: 1, rowdata: row, rowlist: this.list[index] }
+      });
     },
     //分页功能
     handleSizeChange(val) {},
@@ -103,6 +104,41 @@ export default {
       // console.log(val);
       this.currentPage = val;
       this.activitylist();
+    },
+    endactivity(row) {
+      console.log(row);
+      this.$confirm("此操作将结束此活动, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          Axios({
+            url: "api/activityManager/endActivity",
+            method: "get",
+            params: {
+              activityId: row.activityId
+            }
+          }).then(data => {
+            if (data.data.code == 0) {
+              this.$message({
+                type: "success",
+                message: "操作成功，活动已结束!"
+              });
+            } else {
+              this.$message({
+                type: "success",
+                message: data.data.msg
+              });
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消此次操作"
+          });
+        });
     }
   }
 };

@@ -137,7 +137,7 @@ export default {
           productSName:"",
         }
       }).then(data=>{
-          console.log(data)
+          // console.log(data)
          this.tabledata=data.data.data.productSPage.records;
          this.totalCount = data.data.data.productSPage.total;
          this.pagesize = data.data.data.productSPage.size;
@@ -216,7 +216,7 @@ export default {
         });
     },
     removegoods(val){
-      console.log(val)
+      // console.log(val)
       this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -229,7 +229,7 @@ export default {
               productSId:val.productSId,
             }
           }).then(data=>{
-             console.log(data);
+            //  console.log(data);
             if(data.data.code==0){
               this.$message({
             type: 'success',

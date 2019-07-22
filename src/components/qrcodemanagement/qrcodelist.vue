@@ -268,7 +268,7 @@ export default {
           from: "2"
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.totalCount = data.data.data.batchPage.total;
         this.pagesize = data.data.data.batchPage.size;
         this.currentPage = data.data.data.batchPage.current;
@@ -362,7 +362,7 @@ export default {
               productsIds: this.productsIds.toString()
             }
           }).then(res => {
-             console.log(res);
+            //  console.log(res);
             this.productsIds.length = 0;
             if (res.data.code == 0) {
               this.SAactivityarr = res.data.data;

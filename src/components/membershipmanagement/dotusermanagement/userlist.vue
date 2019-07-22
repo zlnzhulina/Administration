@@ -163,8 +163,7 @@ export default {
     seedetails(row) {
       this.$router.push({
         path: "/userdetails",
-        query: { flag: "2", data: row }
-        // params: {Id:id}
+        query: { flag: "2", rowdata: row }
       });
     },
     //添加

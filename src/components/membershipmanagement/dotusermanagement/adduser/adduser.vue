@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <h3>
-      <span>用户维护>{{flag==1?"编辑用户":"添加用户"}}</span>
+      <span>用户维护>{{flag==1||flag==2?"编辑用户":"添加用户"}}</span>
     </h3>
     <ul>
       <li>
@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     init() {
-      // console.log(this.$route.query);
+      console.log(this.$route.query);
       if (this.$route.query.flag == 1) {
         this.flag = this.$route.query.flag;
         this.user.userCatId = this.$route.query.networkParm.userCatId;
@@ -80,6 +80,13 @@ export default {
         this.user.name = this.$route.query.networkParm.name;
         this.user.phoneNumber = this.$route.query.networkParm.phoneNumber;
         this.user.userId = this.$route.query.networkParm.userId;
+      }else if(this.$route.query.flag==2){
+         this.flag = this.$route.query.flag;
+          this.user.userCatId = this.$route.query.rowdata.userCatId;
+        this.user.networkId = this.$route.query.rowdata.networkId;
+        this.user.name = this.$route.query.rowdata.name;
+        this.user.phoneNumber = this.$route.query.rowdata.phoneNumber;
+        this.user.userId = this.$route.query.rowdata.userId;
       }
     },
     addUser: function() {

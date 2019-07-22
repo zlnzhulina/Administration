@@ -167,7 +167,7 @@ export default {
       e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
       this.addcanvas = true;
       this.flag = "1";
-      console.log(list);
+      // console.log(list);
       this.classname = list.productCatName;
       this.productCatId = list.productCatId;
       this.superCatId = list.superCatId;
@@ -177,7 +177,7 @@ export default {
     //删除
     deleteclass(val, e) {
       e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
-      console.log(val);
+      // console.log(val);
       if (typeof val == "object") {
         this.$confirm("此操作将永久删除该数据, 是否继续?", "提示", {
           confirmButtonText: "确定",
@@ -247,7 +247,7 @@ export default {
     ok() {
       // console.log(this.classname, this.superCatId);
       if (this.flag == 1) {
-        console.log("编辑");
+        // console.log("编辑");
         Axios({
           url: "api/productsManager/editProductCat",
           method: "post",

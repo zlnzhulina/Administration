@@ -161,7 +161,7 @@ export default {
     seedetails(index, row) {
       this.$router.push({
         path: "/distributordetails",
-        query: { flag: "1", networkId: row.networkId }
+        query: { flag: "1", rowdata: row }
         // params: {Id:id}
       });
     },

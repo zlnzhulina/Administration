@@ -399,6 +399,7 @@ export default {
     details(row) {
       //查看详情
       this.qrdetailscanvas = true;
+      console.log(row)
     },
     //下载单码
     download(row) {},

@@ -128,7 +128,7 @@ export default {
     
     if(this.$route.query.flag){
       this.flag=this.$route.query.flag;
-      console.log(this.$route.query)
+      // console.log(this.$route.query)
       this.status=this.$route.query.rowdata.status;
 
       this.newId=this.$route.query.rowdata.newId;

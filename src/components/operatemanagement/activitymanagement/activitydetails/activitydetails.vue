@@ -54,6 +54,8 @@
           <el-table-column prop="rulename" label="规则名称" width="327"></el-table-column>
           <el-table-column prop="Result" label="结果">
           </el-table-column>
+          <el-table-column prop="value" label="值">
+          </el-table-column>
         </el-table>
 
         <h3 style="margin-top:80px;">
@@ -106,7 +108,7 @@ import Axios from 'axios';
 //活动详情
 export default {
   created(){
-     console.log(this.$route.query);
+    //  console.log(this.$route.query);
     this.barActivityId=this.$route.query.rowdata.activityId;
     this.activitydetails=this.$route.query.rowdata;
     this.activityprizelist=this.$route.query.rowlist;
@@ -121,16 +123,46 @@ export default {
     this.activityrule[1].Result=this.$route.query.rowdata.isWhiteList==0?"否":"是";
     this.activityrule[2].Result=this.$route.query.rowdata.barProtectTime==0?"否":"是";
     this.activityrule[3].Result=this.$route.query.rowdata.barTakeUpTime==0?"否":"是";
-    this.activityrule[4].Result=this.$route.query.rowdata.personCount;
-    this.activityrule[5].Result=this.$route.query.rowdata.personDayCount;
-    this.activityrule[6].Result=this.$route.query.rowdata.catCount;
+this.activityrule[4].Result=this.$route.query.rowdata.personCount==null?"未设置":this.$route.query.rowdata.personCount==0?"不限":this.$route.query.rowdata.personCount+"次";
+    this.activityrule[5].Result=this.$route.query.rowdata.personDayCount==null?"未设置":this.$route.query.rowdata.personDayCount==0?"不限":this.$route.query.rowdata.personDayCount+"次";
+    this.activityrule[6].Result=this.$route.query.rowdata.catCount==null?"未设置":this.$route.query.rowdata.catCount==0?"不限":this.$route.query.rowdata.catCount+"次";
     this.activityrule[7].Result=this.$route.query.rowdata.needCar==0?"否":"是";
     this.activityrule[8].Result=this.$route.query.rowdata.needAuthentication==0?"否":"是";
-    this.activityrule[9].Result=this.$route.query.rowdata.isQrcodeStatus==0?"否":"是";
+    
+    this.activityrule[0].value=this.$route.query.rowdata.isQrcodeStatus==-1?"未开启":this.$route.query.rowdata.isQrcodeStatus==1?"未关联":this.$route.query.rowdata.isQrcodeStatus==2?"已关联":this.$route.query.rowdata.isQrcodeStatus==6?"已查询":this.$route.query.rowdata.isQrcodeStatus==5?"已激活":"未设置"
+    
+    this.activityrule[1].value=this.$route.query.rowdata.isWhiteList==0?"未开启":"已开启";
+    this.activityrule[2].value=this.$route.query.rowdata.barProtectTime==0?"未开启":"已开启";
+    this.activityrule[3].value=this.$route.query.rowdata.barTakeUpTime==0?"未开启":this.$route.query.rowdata.barTakeUpTime+"小时";
+    this.activityrule[4].value=this.$route.query.rowdata.personCount==null?"未设置":this.$route.query.rowdata.personCount==0?"不限":this.$route.query.rowdata.personCount+"次";
+    this.activityrule[5].value=this.$route.query.rowdata.personDayCount==null?"未设置":this.$route.query.rowdata.personDayCount==0?"不限":this.$route.query.rowdata.personDayCount+"次";
+    this.activityrule[6].value=this.$route.query.rowdata.catCount==null?"未设置":this.$route.query.rowdata.catCount==0?"不限":this.$route.query.rowdata.catCount+"次";
+    this.activityrule[7].value=this.$route.query.rowdata.needCar==0?"否":"是";
+    this.activityrule[8].value=this.$route.query.rowdata.needAuthentication==0?"否":"是";
+    console.log(this.$route.query.rowlist)
+    // for(var i=0;i<this.$route.query.rowlist.length;i++){
+
+    // }
     this.tableData=this.$route.query.rowlist;
-    for(let i=0;i<this.tableData.length;i++){
+    for(let i=0;i<this.$route.query.rowlist.length;i++){
+      if(this.tableData.length==0){
+        this.tableData.push({
+          activityName:this.$route.query.rowlist[0].activityName,
+          productName:this.$route.query.rowlist[0].productName,
+          activityPrizeCount:this.$route.query.rowlist[0].activityPrizeCount,
+        })
+      }
       this.tableData[i].activityName=this.activityName;
     }
+    Axios({
+      url:"api/activityManager/getProductListByActivityId",
+      method:"get",
+      params:{
+        activityId:this.$route.query.rowdata.activityId
+      }
+    }).then(data=>{
+      console.log(data)
+    })
   },
     data(){
         return{
@@ -149,53 +181,57 @@ export default {
             {
               ruletype:"基础规则",
               rulename:"消费者状态",
-              Result:""
+              Result:"",
+              value:""
             },
             {
               ruletype:"基础规则",
               rulename:"是否开启白名单",
-              Result:""
+              Result:"",
+              value:""
             },
             {
               ruletype:"基础规则",
               rulename:"是否开启保护期",
-              Result:""
+              Result:"",
+              value:""
             },
             {
               ruletype:"基础规则",
               rulename:"是否开启占用期",
-              Result:""
+              Result:"",
+              value:""
             },
             {
               ruletype:"派奖规则",
               rulename:"每人可参与活动次数",
-              Result:""
+              Result:"",
+              value:""
             },
             {
               ruletype:"派奖规则",
               rulename:"每人每天可参与活动次数",
-              Result:""
+              Result:"",
+              value:""
             },
             {
               ruletype:"派奖规则",
               rulename:"每车可参与活动次数",
-              Result:""
+              Result:"",
+              value:""
             },
             {
               ruletype:"领奖规则 ",
               rulename:"是否需要添加车辆",
-              Result:""
+              Result:"",
+              value:""
             },
              {
               ruletype:"领奖规则 ",
               rulename:"是否需要认证车辆",
-              Result:""
-            },
-             {
-              ruletype:"领奖规则 ",
-              rulename:"消费者激活",
-              Result:""
-            },
+              Result:"",
+              value:""
+            }
           ],
           //活动奖品列表
           activityprizelist:[],
@@ -222,7 +258,7 @@ export default {
               barActivityId:this.barActivityId,
             }
           }).then(data=>{
-            console.log(data)
+            // console.log(data)
           })
         }
     }

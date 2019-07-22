@@ -124,7 +124,7 @@ export default {
   },
   created() {
     this.goodclasslist();
-    console.log(this.$route.query);
+    // console.log(this.$route.query);
     if (this.$route.query.flag == "1") {
       this.flag = this.$route.query.flag == "1";
       this.productS.productSName = this.$route.query.data.productSName;
@@ -209,12 +209,12 @@ export default {
       }
       
      
-       console.log(this.productParamSetSelectList);
+      //  console.log(this.productParamSetSelectList);
     },
     //添加商品
     addgoods() {
       if (this.flag == 1) {
-        console.log(this.productParamSetSelectList);
+        // console.log(this.productParamSetSelectList);
         // Axios({
         //   url: "api/productsManager/editProductS",
         //   method: "post",
@@ -223,7 +223,7 @@ export default {
         //     productParamSetSelectList: this.productParamSetSelectList
         //   }
         // }).then(data => {
-        //   // console.log(data)
+        //   console.log(data)
         //   if (data.data.code == 0) {
         //     this.$message({
         //       type: "success",

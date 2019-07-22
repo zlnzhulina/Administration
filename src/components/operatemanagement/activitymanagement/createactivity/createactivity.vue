@@ -613,7 +613,7 @@ import Axios from "axios";
 export default {
   created() {
     this.goodclasslist();
-    console.log(this.$route.query);
+    // console.log(this.$route.query);
     if (this.$route.query.flag == 1) {
       
       delete this.$route.query.rowdata.winningCount;
@@ -621,7 +621,7 @@ export default {
       delete this.$route.query.rowdata.finish;
       
 
-     console.log(this.$route.query.rowdata);
+    //  console.log(this.$route.query.rowdata);
       this.flag = this.$route.query.flag;
       this.personDaynum=this.$route.query.rowdata.personDayCount==0?true:false;
       this.personnum=this.$route.query.rowdata.personCount==0?true:false;
@@ -646,7 +646,7 @@ export default {
           }
         }
       }
-       console.log(arr);
+      //  console.log(arr);
       for (let i = 0; i < arr.length; i++) {
         this.relationgoods.push(arr[i][0]);
       }
@@ -672,13 +672,13 @@ export default {
           // console.log("111")
           this.list[i].prizeList.push({
             prizeName: arr[i][j].activityPrizeName,
-
+            prizeId:arr[i][j].prizeId,
             count: arr[i][j].activityPrizeCount,
             price: arr[i][j].prize.price
           });
         }
       }
-      // console.log(this.list);
+      //  console.log(this.list);
       // console.log(this.relationgoods);
     }
   },
@@ -886,7 +886,7 @@ export default {
       }
     },
     nexttwo() {
-       console.log(this.activity);
+      //  console.log(this.activity);
       if (this.activity.personCount && this.activity.personDayCount && this.activity.isRealName) {
         if (
           (this.activity.needCar == 1 && this.activity.catCount) || this.activity.needCar == 0 ) {
@@ -1117,7 +1117,7 @@ export default {
           this.oldgoodssetprize = true;
           this.oldgoodssetprizelist = [];
           // console.log(index);
-          // console.log(this.list[index]);
+          //  console.log(this.list[index]);
           this.oldgoodssetprizelist = this.list[index].activityPrizeList;
           for (var i = 0; i < this.list[index].activityPrizeList.length; i++) {
             this.oldgoodssetprizelist[i].prizeList = this.list[index].prizeList[
@@ -1134,7 +1134,7 @@ export default {
         this.oldgoodssetprize = true;
         this.oldgoodssetprizelist = [];
         // console.log(index);
-        // console.log(this.list[index]);
+        //  console.log(this.list[index]);
         this.oldgoodssetprizelist = this.list[index].activityPrizeList;
         for (var i = 0; i < this.list[index].activityPrizeList.length; i++) {
           this.oldgoodssetprizelist[i].prizeList = this.list[index].prizeList[
@@ -1205,7 +1205,7 @@ export default {
         ].activityPrizeName;
       }
       this.list[this.index].prizeList = [];
-      for (var i = 0; i < this.oldgoodssetprizelist.length; i++) {
+      for (let i = 0; i < this.oldgoodssetprizelist.length; i++) {
         this.list[this.index].prizeList.push(
           this.oldgoodssetprizelist[i].prizeList
         );
@@ -1223,7 +1223,7 @@ export default {
             ];
           }
       
-      // console.log(this.list[this.index]);
+      //  console.log(this.list[this.index]);
        this.$message({
           message: '保存成功，请勿重复点击',
           type: 'success'
@@ -1256,7 +1256,7 @@ export default {
     //提交创建活动
     preservationsub() {
       if (this.active == 2) {
-        console.log("上一步已完成");
+        // console.log("上一步已完成");
         this.active = 3;
         this.createlodingcanvas = true;
         if (!this.prizedata.length == 0) {
@@ -1276,8 +1276,8 @@ export default {
                 price: this.prizedata[i].Amount
               });
             }
-            console.log(this.activityPrizeList)
-            console.log(this.prizeList)
+            // console.log(this.activityPrizeList)
+            // console.log(this.prizeList)
             this.list.push({
               activityPrizeList: this.activityPrizeList,
               prizeList: this.prizeList
@@ -1303,7 +1303,7 @@ export default {
               list: this.list
             }
           }).then(data => {
-            console.log(data)
+            // console.log(data)
             if (data.data.code == 0) {
               //说明活动创建成功
               this.$message({
@@ -1316,7 +1316,7 @@ export default {
             }
           });
         } else {
-          console.log("创建活动");
+          // console.log("创建活动");
           Axios({
               url: "api/activityManager/addActivity",
               method: "post",
@@ -1325,7 +1325,7 @@ export default {
                 list: this.list
               }
             }).then(data => {
-              console.log(data)
+              // console.log(data)
               if (data.data.code == 0) {
                 //说明活动创建成功
                 this.$message({

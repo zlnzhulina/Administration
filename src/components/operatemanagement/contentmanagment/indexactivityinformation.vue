@@ -67,7 +67,7 @@ export default {
         url: "api/contentManager/newsList",
         method: "get"
       }).then(data => {
-         console.log(data);
+        //  console.log(data);
         this.tabledata = data.data.data.newsList;
       });
     },

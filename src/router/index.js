@@ -54,8 +54,7 @@ import Membershipmanagement from '@/components/membershipmanagement'
       import dotlist from '@/components/membershipmanagement/dotusermanagement/dotlist'
          //查看网点详情
          import distributordetails from '@/components/membershipmanagement/dotusermanagement/distributordetails/distributordetails'
-            //编辑网点详细内部信息
-            import modify from '@/components/membershipmanagement/dotusermanagement/distributordetails/modify/modify'
+           
          //添加网点（编辑网点）
          import adddot from '@/components/membershipmanagement/dotusermanagement/adddot/adddot'
          //职位管理
@@ -86,6 +85,18 @@ import goodsmanagement from '@/components/goodsmanagement'
 
 // 统计
 import statistics from '@/components/statistics'
+  //概况
+  import survey from '@/components/statistics/survey'
+  //用户统计
+  import userstatistics from '@/components/statistics/userstatistics'
+  //活动统计
+  import activitystatistics from '@/components/statistics/activitystatistics'
+  //商品统计
+  import goodsstatistics from '@/components/statistics/goodsstatistics'
+  //服务站统计
+  import dotstatistics from '@/components/statistics/dotstatistics'
+  //访问统计
+  import visitstatistics from '@/components/statistics/visitstatistics'
 //系统管理
 import systemmanagement from '@/components/systemmanagement'
   //员工列表
@@ -399,15 +410,7 @@ export default new Router({
         requireAuth:true,
       },
     },
-    {
-      path:"/modify",
-      name:"modify",
-      component:modify,
-      meta:{
-        flag:true,
-        requireAuth:true,
-      },
-    },
+    
     {
       path:'/qrcodemanagement',
       name:'qrcodemanagement',
@@ -505,6 +508,7 @@ export default new Router({
         requireAuth:true,
       },
     },
+    //统计
     {
       path:'/statistics',
       name:'statistics',
@@ -513,6 +517,61 @@ export default new Router({
         flag:true,
         requireAuth:true,
       },
+      redirect:"statistics/survey",
+      children:[{
+        path:'survey',
+        name:'survey',
+        component:survey,
+        meta:{
+          flag:true,
+          requireAuth:true,
+        },
+      },
+      {
+        path:'userstatistics',
+        name:'userstatistics',
+        component:userstatistics,
+        meta:{
+          flag:true,
+          requireAuth:true,
+        },
+      },
+      {
+        path:'activitystatistics',
+        name:'activitystatistics',
+        component:activitystatistics,
+        meta:{
+          flag:true,
+          requireAuth:true,
+        },
+      },
+      {
+        path:'goodsstatistics',
+        name:'goodsstatistics',
+        component:goodsstatistics,
+        meta:{
+          flag:true,
+          requireAuth:true,
+        },
+      },
+      {
+        path:'dotstatistics',
+        name:'dotstatistics',
+        component:dotstatistics,
+        meta:{
+          flag:true,
+          requireAuth:true,
+        },
+      },
+      {
+        path:'visitstatistics',
+        name:'visitstatistics',
+        component:visitstatistics,
+        meta:{
+          flag:true,
+          requireAuth:true,
+        },
+      }]
     },
     {
       path:'/systemmanagement',
