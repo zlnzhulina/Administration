@@ -78,7 +78,7 @@
       </div>
       <div class="surveylist-visit">
         <div class="header">
-          <b>访问统计概况</b>
+          <b>行为统计</b>
           <a @click="more('visitstatistics')">更多>></a>
         </div>
       </div>
@@ -101,7 +101,13 @@ export default {
         "" +
         myDate.getDate();
       this.sevendata.push(sevendata);
+      
     }
+    // for (let i=0;i<7;i++) {
+    //前一天
+    // var Date7 = new Date(myDate.getTime() - i*24*60*60*1000).format('yyyy.MM.dd');
+    // this.sevendata.push(Date7);
+    // }
     console.log(this.sevendata);
   },
   data() {

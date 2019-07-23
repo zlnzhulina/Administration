@@ -34,7 +34,7 @@ export default {
                             navto:"/statistics/dotstatistics"
                         },
                         {
-                            title:"访问统计",
+                            title:"行为统计",
                             navto:"/statistics/visitstatistics"
                         }
                     ]

@@ -95,6 +95,8 @@ import statistics from '@/components/statistics'
   import goodsstatistics from '@/components/statistics/goodsstatistics'
   //服务站统计
   import dotstatistics from '@/components/statistics/dotstatistics'
+  //服务站出奖详情
+  import dotawarddetails from '@/components/statistics/dotawarddetails/dotawarddetails'
   //访问统计
   import visitstatistics from '@/components/statistics/visitstatistics'
 //系统管理
@@ -572,6 +574,16 @@ export default new Router({
           requireAuth:true,
         },
       }]
+    },
+    //统计的服务站出奖详情
+    {
+      path:'/dotawarddetails',
+      name:'dotawarddetails',
+      component:dotawarddetails,
+      meta:{
+        flag:true,
+        requireAuth:true
+      }
     },
     {
       path:'/systemmanagement',
