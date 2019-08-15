@@ -84,7 +84,7 @@
     </div>
     <div class="btn">
       <span style="background:#169bd5;border:1px solid #169bd5;color:#fff;" @click="addgoods">保存</span>
-      <span>取消</span>
+      <span @click="back()">取消</span>
     </div>
   </div>
 </template>
@@ -268,6 +268,9 @@ export default {
         this.$message.error("上传头像图片大小不能超过 2MB!");
       }
       return isJPG && isLt2M;
+    },
+    back(){
+      this.$router.back();
     }
   }
 };

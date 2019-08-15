@@ -53,7 +53,7 @@ export default {
               title: "首页扫码入口",
               navto:"/operatemanagement/indexcodeentrance"
             }, {
-              title: "首页活动咨询",
+              title: "首页活动资讯",
               navto:"/operatemanagement/indexactivityinformation"
             }, {
               title: "登录页验真展示",

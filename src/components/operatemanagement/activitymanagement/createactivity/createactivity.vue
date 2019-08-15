@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <header>运营管理>创建活动</header>
+    <header>
+      <a @click="back()">运营管理</a>
+      >{{flag=="1"?"修改活动":"创建活动"}}
+    </header>
     <div class="activityselect">
       <el-steps :active="active" finish-status="success">
         <el-step title="步骤 1"></el-step>
@@ -353,7 +356,7 @@
                     @click="deletegoods(index,$event)"
                   />
                 </span>
-                <span @click="addgoods">添加</span>
+                <span @click="addgoods">添加商品</span>
               </div>
 
               <div class="selectgoods" v-if="selectgoods">
@@ -391,7 +394,10 @@
                       :value="goodsitem"
                     >{{goodsitem.productSName}}</option>
                   </select>
-                  <a @click="addgood">添加商品</a>
+                  <a
+                    @click="addgood"
+                    style="display：inline-block;padding:2px 13px 2px;background:#1abc9c;color:#fff;border-radius: 5px;"
+                  >确定</a>
                 </p>
               </div>
 
@@ -406,9 +412,18 @@
                 <div class="tab">
                   <el-table :data="prizedata" stripe style="width: 100%;font-size:12px;">
                     <el-table-column prop="priority" label="优先级" width="68">
-                      <!-- <template slot-scoped="scoped">
-                        <div>{{scoped.row}}</div>
-                      </template>-->
+                      <template slot-scope="scope">
+                        <div>
+                          {{scope.$index==0?"基础奖":""}}
+                          <input
+                            v-if="scope.$index==0?false:true"
+                            checked="scope.row.first==0?false:true"
+                            type="checkbox"
+                            @change="first(scope.$index,scope.row)"
+                            v-model="prizedata[scope.$index].first"
+                          />
+                        </div>
+                      </template>
                     </el-table-column>
                     <el-table-column prop="prize" label="奖品" width="100"></el-table-column>
                     <el-table-column prop="prizename" label="奖品名称" width="100">
@@ -484,11 +499,17 @@
                 <div class="tab">
                   <el-table :data="oldgoodssetprizelist" stripe style="width: 100%;font-size:12px;">
                     <el-table-column label="优先级" width="68">
-                      <!-- <template slot-scoped="scoped">
-                        <div>{{scoped.row}}</div>
-                      </template>-->
                       <template slot-scope="scope">
-                        <div>{{scope.$index==0?"基础奖":""}}</div>
+                        <div>
+                          {{scope.$index==0?"基础奖":""}}
+                          <input
+                            v-if="scope.$index==0?false:true"
+                            checked="scope.row.first==0?false:true"
+                            type="checkbox"
+                            @change="first2(scope.$index,scope.row)"
+                            v-model="list[index].activityPrizeList[scope.$index].first"
+                          />
+                        </div>
                       </template>
                     </el-table-column>
                     <el-table-column label="奖品" width="100">
@@ -613,71 +634,95 @@ import Axios from "axios";
 export default {
   created() {
     this.goodclasslist();
-    // console.log(this.$route.query);
+      console.log(this.$route.query);
     if (this.$route.query.flag == 1) {
-      
       delete this.$route.query.rowdata.winningCount;
       delete this.$route.query.rowdata.reset;
       delete this.$route.query.rowdata.finish;
-      
-
-    //  console.log(this.$route.query.rowdata);
+      this.activity.activityType = "1";
+      this.type = 1;
+      this.imagereceivetitleUrl = this.$route.query.rowdata.titleUrl;
+      this.imagebgUrl = this.$route.query.rowdata.backgroundUrl;
+      this.imagereceivebgUrl = this.prizeUrl;
+      //  console.log(this.$route.query.rowdata);
       this.flag = this.$route.query.flag;
-      this.personDaynum=this.$route.query.rowdata.personDayCount==0?true:false;
-      this.personnum=this.$route.query.rowdata.personCount==0?true:false;
+      this.personDaynum =
+        this.$route.query.rowdata.personDayCount == 0 ? true : false;
+      this.personnum =
+        this.$route.query.rowdata.personCount == 0 ? true : false;
+
+      this.activity.personCount = this.$route.query.rowdata.personCount.toString();
+      this.activity.personDayCount = this.$route.query.rowdata.personDayCount.toString();
+      this.activity.isRealName = this.$route.query.rowdata.isRealName;
+      this.userdelayed = this.$route.query.rowdata.scanTime;
+
       this.activity = this.$route.query.rowdata;
-      this.activity.needAuthentication = this.activity.needAuthentication?this.activity.needAuthentication.toString():"";
-      this.needCar=this.$route.query.rowdata.needCar;
+      this.activity.needAuthentication = this.activity.needAuthentication
+        ? this.activity.needAuthentication.toString()
+        : "";
+      this.needCar = this.$route.query.rowdata.needCar;
+      this.usercodetype = this.$route.query.rowdata.isQrcodeStatus;
       //处理商品奖项
       var arr = [];
       arr.push([]);
-      for (let i = 0; i < this.$route.query.rowlist.length; i++) {
-        if (i == 0) {
-          arr[0].push(this.$route.query.rowlist[0]);
-        } else {
-          if (
-            this.$route.query.rowlist[i].productsId ==
-            arr[arr.length - 1][0].productsId
-          ) {
-            arr[arr.length - 1].push(this.$route.query.rowlist[i]);
+      arr[0].push(this.$route.query.rowlist[0]);
+      // console.log(this.$route.query.rowlist)
+      for (let i = 1; i < this.$route.query.rowlist.length; i++) {
+        for (var j = 0; j < arr.length; j++) {
+          if (this.$route.query.rowlist[i].productsId == arr[j][0].productsId) {
+            arr[j].push(this.$route.query.rowlist[i]);
+            break;
           } else {
-            arr.push([]);
-            arr[arr.length - 1].push(this.$route.query.rowlist[i]);
+            if (j == arr.length - 1) {
+              arr.push([]);
+              arr[arr.length - 1].push(this.$route.query.rowlist[i]);
+              break;
+            }
+          }
+        }
+
+        // }
+      }
+      // console.log(arr);
+      if (arr.length == 0) {
+        this.relationgoods = [];
+      } else {
+        for (let i = 0; i < arr.length; i++) {
+          this.relationgoods.push(arr[i][0]);
+        }
+        for (var i = 0; i < this.relationgoods.length; i++) {
+          this.relationgoods[i].productSName = this.relationgoods[
+            i
+          ].productName;
+        }
+        for (var i = 0; i < arr.length; i++) {
+          this.list.push({
+            activityPrizeList: [],
+            prizeList: []
+          });
+          //  console.log(this.list);
+
+          for (let j = 0; j < arr[i].length; j++) {
+            this.list[i].activityPrizeList.push({
+              activityPrizeId: arr[i][j].activityPrizeId,
+              activityPrizeName: arr[i][j].activityPrizeName,
+              first: arr[i][j].first,
+              activityPrizeCount: arr[i][j].activityPrizeCount,
+              activityPrizeInfo: arr[i][j].activityPrizeInfo,
+              probability: arr[i][j].probability,
+              productsId: arr[i][j].productsId
+            });
+            // console.log("111")
+            this.list[i].prizeList.push({
+              prizeName: arr[i][j].activityPrizeName,
+              prizeId: arr[i][j].prizeId,
+              count: arr[i][j].activityPrizeCount,
+              price: arr[i][j].prize.price
+            });
           }
         }
       }
-      //  console.log(arr);
-      for (let i = 0; i < arr.length; i++) {
-        this.relationgoods.push(arr[i][0]);
-      }
-      for (var i = 0; i < this.relationgoods.length; i++) {
-        this.relationgoods[i].productSName = this.relationgoods[i].productName;
-      }
-      for (var i = 0; i < arr.length; i++) {
-        this.list.push({
-          activityPrizeList: [],
-          prizeList: []
-        });
-        //  console.log(this.list);
 
-        for (let j = 0; j < arr[i].length; j++) {
-          this.list[i].activityPrizeList.push({
-            activityPrizeId: arr[i][j].activityPrizeId,
-            activityPrizeName: arr[i][j].activityPrizeName,
-            activityPrizeCount: arr[i][j].activityPrizeCount,
-            activityPrizeInfo: arr[i][j].activityPrizeInfo,
-            probability: arr[i][j].probability,
-            productsId: arr[i][j].productsId
-          });
-          // console.log("111")
-          this.list[i].prizeList.push({
-            prizeName: arr[i][j].activityPrizeName,
-            prizeId:arr[i][j].prizeId,
-            count: arr[i][j].activityPrizeCount,
-            price: arr[i][j].prize.price
-          });
-        }
-      }
       //  console.log(this.list);
       // console.log(this.relationgoods);
     }
@@ -691,6 +736,7 @@ export default {
 
       oldgoodssetprizelist: [],
       index: "",
+      checkbox: "",
       flag: "",
       one: true,
       two: false,
@@ -759,8 +805,8 @@ export default {
       //选中的商品、
       selectgood: {},
       productsId: "",
-      personDaynum:"",
-      personnum:"",
+      personDaynum: "",
+      personnum: "",
       activity: {
         //活动名称ok
         activityName: "",
@@ -865,7 +911,7 @@ export default {
         this.$message.error("请完善基本设置！");
       }
 
-      //  console.log(this.activity);
+      // console.log(this.activity);
     },
     //每人可领不限
     personCount(val) {
@@ -886,28 +932,47 @@ export default {
       }
     },
     nexttwo() {
-      //  console.log(this.activity);
-      if (this.activity.personCount && this.activity.personDayCount && this.activity.isRealName) {
+      // console.log(this.activity.personCount,this.activity.personDayCount,this.activity.isRealName,);
+      if (
+        (this.activity.personCount == 0 &&
+          this.activity.personDayCount == 0 &&
+          this.activity.isRealName) ||
+        (this.activity.personCount &&
+          this.activity.personDayCount &&
+          this.activity.isRealName)
+      ) {
+        // console.log(this.activity);
         if (
-          (this.activity.needCar == 1 && this.activity.catCount) || this.activity.needCar == 0 ) {
-          if (this.active == 1) {
-            this.active = 2;
-            this.activeName = "third";
-            this.one = false;
-            this.two = false;
-            this.three = true;
-          } else {
-            this.$message.error("请完善基本设置！");
-            this.active = this.active;
-            this.activeName = "third";
-            this.one = false;
-            this.two = false;
-            this.three = true;
-          }
+          this.activity.catCount < 0 ||
+          this.activity.personDayCount < 0 ||
+          this.activity.personCount < 0
+        ) {
+          this.$message.error("数量不能小于一");
         } else {
-          this.$message.error("请完善派奖设置！");
+          if (
+            (this.activity.needCar == 1 && this.activity.catCount > 0) ||
+            this.activity.needCar == 0
+          ) {
+            if (this.activeName == "second") {
+              this.active = 2;
+              this.activeName = "third";
+              this.one = false;
+              this.two = false;
+              this.three = true;
+            } else {
+              // console.log(this.active)
+              this.$message.error("请完善基本设置！");
+              this.active = this.active;
+              this.activeName = "third";
+              this.one = false;
+              this.two = false;
+              this.three = true;
+            }
+          } else {
+            this.$message.error("请完善派奖设置！");
+          }
         }
-      }else{
+      } else {
         this.$message.error("请完善派奖设置！");
       }
     },
@@ -946,6 +1011,7 @@ export default {
               type: "success",
               message: "添加成功!"
             });
+
             //记录添加的商品的id
             this.oldgoodssetprize = false;
             this.productsId = this.selectgood.productSId;
@@ -955,10 +1021,14 @@ export default {
             this.selectgoods = false;
             this.firstlist = [];
             this.secondlist = [];
+            this.threelist = [];
+            this.goodsclasslist = [];
             this.goodslist = [];
+            this.checkbox = "";
             this.prizedata.push({
               productsId: this.productsId,
               priority: "基础奖",
+              first: 0,
               prize: "微信红包",
               prizename: "",
               Amount: "",
@@ -966,11 +1036,13 @@ export default {
               setprize: "1",
               Tips: ""
             });
+            console.log(this.prizedata);
           } else {
             // console.log("已有选中的商品");
             for (let i = 0; i < this.prizedata.length; i++) {
               // console.log(this.prizedata)
               this.activityPrizeList.push({
+                first: this.prizedata[i].first,
                 activityPrizeName: this.prizedata[i].prizename,
                 activityPrizeCount: this.prizedata[i].prizenum,
                 activityPrizeInfo: this.prizedata[i].Tips,
@@ -985,15 +1057,15 @@ export default {
               });
               //  console.log("列表二：",this.prizeList)
             }
-            if(this.activityPrizeList.length==0){
+            if (this.activityPrizeList.length == 0) {
               // console.log("说明没有可保存的list");
-            }else{
-               this.list.push({
-              activityPrizeList: this.activityPrizeList,
-              prizeList: this.prizeList
-            });
+            } else {
+              this.list.push({
+                activityPrizeList: this.activityPrizeList,
+                prizeList: this.prizeList
+              });
             }
-           
+
             // console.log("添加另外商品是保存list", this.list);
             //再次选择另外商品是，初始化商品id 和奖品列表
             this.prizedata = [];
@@ -1012,10 +1084,14 @@ export default {
             this.selectgoods = false;
             this.firstlist = [];
             this.secondlist = [];
+            this.threelist = [];
+            this.goodsclasslist = [];
             this.goodslist = [];
+            this.checkbox = "";
             this.prizedata.push({
               productsId: this.productsId,
               priority: "基础奖",
+              first: 0,
               prize: "微信红包",
               prizename: "",
               Amount: "",
@@ -1038,38 +1114,47 @@ export default {
     },
     //添加奖项
     addprize() {
-      if (this.prizedata.length == 0) {
-        this.prizedata.push({
-          priority: "",
-          prize: "微信红包",
-          prizename: "",
-          Amount: "",
-          prizenum: "",
-          setprize: "",
-          Tips: ""
-        });
-      } else {
-        var lestnum = this.prizedata.length - 1;
-        if (
-          this.prizedata[lestnum].prizename &&
-          this.prizedata[lestnum].Amount &&
-          this.prizedata[lestnum].prizenum &&
-          this.prizedata[lestnum].Tips
-        ) {
+      if (!this.relationgoods.length == 0) {
+        if (this.prizedata.length == 0) {
+          this.checkbox = "";
           this.prizedata.push({
             priority: "",
+
             prize: "微信红包",
             prizename: "",
+            first: 0,
             Amount: "",
             prizenum: "",
             setprize: "",
             Tips: ""
           });
-          // this.prizeList.push({
-          //   prizeName:""
-          // })
         } else {
-          this.$message.error("请补充奖项信息！");
+          // prizename
+          var lestnum = this.prizedata.length - 1;
+          if (
+            this.prizedata[lestnum].prizename &&
+            this.prizedata[lestnum].Amount &&
+            this.prizedata[lestnum].prizenum &&
+            this.prizedata[lestnum].Tips
+          ) {
+            this.checkbox = "";
+            console.log(this.prizedata);
+            this.prizedata.push({
+              priority: "",
+              prize: "微信红包",
+              first: 0,
+              prizename: "",
+              Amount: "",
+              prizenum: "",
+              setprize: "",
+              Tips: ""
+            });
+            // this.prizeList.push({
+            //   prizeName:""
+            // })
+          } else {
+            this.$message.error("请补充奖项信息！");
+          }
         }
       }
 
@@ -1083,6 +1168,7 @@ export default {
           message: "基础奖不可移除!"
         });
       } else {
+        this.checkbox = "";
         this.prizedata.splice(index, 1);
       }
       // console.log(index);
@@ -1101,6 +1187,24 @@ export default {
         this.one = false;
         this.two = false;
         this.three = true;
+      }
+    },
+    //勾选优先级
+    first(data, val) {
+      console.log(data, val);
+      if (val.first) {
+        this.prizedata[data].first = 1;
+      } else {
+        this.prizedata[data].first = 0;
+      }
+      console.log(this.prizedata);
+    },
+    first2(data, val) {
+      console.log(data, val);
+      if (val.first) {
+        this.list[this.index].activityPrizeList[data].first = 1;
+      } else {
+        this.list[this.index].activityPrizeList[data].first = 0;
       }
     },
     //查看添加好的活动
@@ -1165,6 +1269,7 @@ export default {
       this.oldgoodssetprizelist.push({
         activityPrizeCount: "",
         activityPrizeInfo: "",
+        first: 0,
         activityPrizeName: "",
         probability: "",
         productsId: this.oldgoodssetprizelist[0].productsId,
@@ -1185,6 +1290,7 @@ export default {
         });
       } else {
         this.oldgoodssetprizelist.splice(index, 1);
+        // console.log( this.oldgoodssetprizelist);
       }
     },
     //保存更改后的商品奖项
@@ -1216,18 +1322,18 @@ export default {
       }
 
       this.list[this.index].activityPrizeList = this.oldgoodssetprizelist;
-       this.oldgoodssetprizelist = this.list[this.index].activityPrizeList;
-          for (var i = 0; i < this.list[this.index].activityPrizeList.length; i++) {
-            this.oldgoodssetprizelist[i].prizeList = this.list[this.index].prizeList[
-              i
-            ];
-          }
-      
-      //  console.log(this.list[this.index]);
-       this.$message({
-          message: '保存成功，请勿重复点击',
-          type: 'success'
-        });
+      this.oldgoodssetprizelist = this.list[this.index].activityPrizeList;
+      for (var i = 0; i < this.list[this.index].activityPrizeList.length; i++) {
+        this.oldgoodssetprizelist[i].prizeList = this.list[
+          this.index
+        ].prizeList[i];
+      }
+
+      console.log(this.list);
+      this.$message({
+        message: "保存成功，请勿重复点击",
+        type: "success"
+      });
     },
     //删除添加好的商品
     deletegoods(index, e) {
@@ -1257,86 +1363,112 @@ export default {
     preservationsub() {
       if (this.active == 2) {
         // console.log("上一步已完成");
-        this.active = 3;
-        this.createlodingcanvas = true;
-        if (!this.prizedata.length == 0) {
-          if (this.createtype == 1) {
-            for (let i = 0; i < this.prizedata.length; i++) {
-              this.activityPrizeList.push({
-                activityPrizeName: this.prizedata[i].prizename,
-                activityPrizeCount: this.prizedata[i].prizenum,
-                activityPrizeInfo: this.prizedata[i].Tips,
-                probability: this.prizedata[i].setprize,
-                productsId: this.productsId
-              });
 
-              this.prizeList.push({
-                prizeName: this.prizedata[i].prizename,
-                count: this.prizedata[i].prizenum,
-                price: this.prizedata[i].Amount
+        if (
+          (!this.prizedata.length == 0 &&
+            !this.prizedata[this.prizedata.length - 1].prizename == "" &&
+            !this.prizedata[this.prizedata.length - 1].Amount == "" &&
+            !this.prizedata[this.prizedata.length - 1].prizenum == "" &&
+            !this.prizedata[this.prizedata.length - 1].setprize == "" &&
+            !this.prizedata[this.prizedata.length - 1].Tips == "") ||
+          this.flag
+        ) {
+          if (this.createtype == 1) {
+            if (this.prizedata.length > 0) {
+              for (let i = 0; i < this.prizedata.length; i++) {
+                this.activityPrizeList.push({
+                  activityPrizeName: this.prizedata[i].prizename,
+                  first: this.prizedata[i].first,
+                  activityPrizeCount: this.prizedata[i].prizenum,
+                  activityPrizeInfo: this.prizedata[i].Tips,
+                  probability: this.prizedata[i].setprize,
+                  productsId: this.productsId
+                });
+
+                this.prizeList.push({
+                  prizeName: this.prizedata[i].prizename,
+                  count: this.prizedata[i].prizenum,
+                  price: this.prizedata[i].Amount
+                });
+              }
+              // console.log(this.activityPrizeList)
+              // console.log(this.prizeList)
+              this.list.push({
+                activityPrizeList: this.activityPrizeList,
+                prizeList: this.prizeList
+              });
+              this.prizedata = [];
+              this.activityPrizeList = [];
+              this.prizeList = [];
+              // console.log(this.list);
+              // console.log(this.activity);
+              this.createtype = "0";
+              this.active = 3;
+              this.createlodingcanvas = true;
+            }
+
+            if (this.flag) {
+              // console.log(this.activity);
+              //  console.log(this.list);
+              Axios({
+                url: "api/activityManager/editActivity",
+                method: "post",
+                data: {
+                  activity: this.activity,
+                  list: this.list
+                }
+              }).then(data => {
+                // console.log(data)
+                if (data.data.code == 0) {
+                  //说明活动修改成功
+                  this.$message({
+                    message: "修改成功！",
+                    type: "success"
+                  });
+                  this.createlodingcanvas = false;
+                  this.createsuccesscanvas = true;
+                  this.$router.push("/operatemanagement");
+                } else {
+                  this.$message({
+                    message: "修改失败！",
+                    type: "error"
+                  });
+                }
+              });
+            } else {
+              Axios({
+                url: "api/activityManager/addActivity",
+                method: "post",
+                data: {
+                  activity: this.activity,
+                  list: this.list
+                }
+              }).then(data => {
+                // console.log(data)
+                if (data.data.code == 0) {
+                  //说明活动创建成功
+                  this.$message({
+                    message: "创建成功！",
+                    type: "success"
+                  });
+                  this.createlodingcanvas = false;
+                  this.createsuccesscanvas = true;
+                  this.$router.push("/operatemanagement");
+                } else {
+                  this.$message({
+                    message: "创建失败！",
+                    type: "error"
+                  });
+                }
               });
             }
-            // console.log(this.activityPrizeList)
-            // console.log(this.prizeList)
-            this.list.push({
-              activityPrizeList: this.activityPrizeList,
-              prizeList: this.prizeList
-            });
-            this.prizedata = [];
-            this.activityPrizeList = [];
-            this.prizeList = [];
-            // console.log(this.list);
-            // console.log(this.activity);
-            this.createtype = "0";
           }
           //
-        }
-         
-        if (this.flag) {
-          // console.log(this.activity);
-          // console.log(this.list);          
-          Axios({
-            url: "api/activityManager/editActivity",
-            method: "post",
-            data: {
-              activity: this.activity,
-              list: this.list
-            }
-          }).then(data => {
-            // console.log(data)
-            if (data.data.code == 0) {
-              //说明活动创建成功
-              this.$message({
-                message: "修改成功！",
-                type: "success"
-              });
-              this.createlodingcanvas = false;
-              this.createsuccesscanvas = true;
-              this.$router.push("/operatemanagement");
-            }
-          });
         } else {
-          // console.log("创建活动");
-          Axios({
-              url: "api/activityManager/addActivity",
-              method: "post",
-              data: {
-                activity: this.activity,
-                list: this.list
-              }
-            }).then(data => {
-              // console.log(data)
-              if (data.data.code == 0) {
-                //说明活动创建成功
-                this.$message({
-                  message: "创建成功！",
-                  type: "success"
-                });
-                this.createlodingcanvas = false;
-                this.createsuccesscanvas = true;
-                this.$router.push("/operatemanagement");
-              }
-            });
+          this.$message({
+            message: "请设置商品与奖项",
+            type: "success"
+          });
         }
       } else {
         this.$message({
@@ -1368,8 +1500,8 @@ export default {
         );
         this.prizedata[index].setprize = num.toString();
         // console.log(this.prizedata);
-      }else if(!index == 0 && !this.prizedata[index].prizenum){
-        this.prizedata[index].setprize="";
+      } else if (!index == 0 && !this.prizedata[index].prizenum) {
+        this.prizedata[index].setprize = "";
       }
     },
     oldcountnum(index, row) {
@@ -1380,8 +1512,11 @@ export default {
             this.oldgoodssetprizelist[index].activityPrizeCount
         );
         this.oldgoodssetprizelist[index].probability = num.toString();
-      }else if(!index == 0 && !this.oldgoodssetprizelist[index].activityPrizeCount){
-         this.oldgoodssetprizelist[index].probability = "";
+      } else if (
+        !index == 0 &&
+        !this.oldgoodssetprizelist[index].activityPrizeCount
+      ) {
+        this.oldgoodssetprizelist[index].probability = "";
       }
     },
     //标题图片上传成功
@@ -1424,29 +1559,36 @@ export default {
     },
     code() {
       this.$router.push("/qrcodemanagement");
+    },
+    back() {
+      this.$router.back();
     }
   },
   watch: {
     usercodetype(val) {
-      // console.log(val)
+      // console.log(val);
       if (val == -1) {
         this.activity.isQrcodeStatus = "-1";
         this.userdelayed = "0";
-
+        this.usercodetype = "-1";
         this.isbarTakeUpTime = "0";
         this.isbarProtectTime = "0";
       } else {
         this.activity.isQrcodeStatus = "";
-        this.userdelayed = "1";
-
+        this.usercodetype="1";
+       
         this.isbarTakeUpTime = "1";
         this.isbarProtectTime = "1";
       }
     },
     userdelayed(val) {
+      // console.log(val)
       if (val == 0) {
-        this.activity.scanTime = "-1";
+        this.userdelayed = "0";
+        this.activity.scanTime = "0";
       } else {
+        this.userdelayed = "1";
+        // console.log(this.activity.scanTime);
         this.activity.scanTime = "";
       }
     },
@@ -1466,13 +1608,15 @@ export default {
     },
     //是否需要认证车辆
     needCar(val) {
-      // console.log(val)
+      //  console.log(val)
       if (val == "0") {
         this.activity.needAuthentication = "0";
         this.activity.needCar = "0";
+        this.needCar = "0";
       } else if (val == "1") {
         this.activity.needAuthentication = "1";
         this.activity.needCar = "1";
+        this.needCar = "1";
       }
     }
   }

@@ -75,7 +75,7 @@ import Axios from "axios";
 //员工详情
 export default {
   created() {
-    console.log(this.$route.query);
+    // console.log(this.$route.query);
     this.rowdata = this.$route.query.rowdata;
     if (this.$route.query.flag == "2") {
       this.init();
@@ -101,7 +101,7 @@ export default {
           pageNo: 1
         }
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.tableData = data.data.data.userReceivePage.records;
           this.totalCount = data.data.data.userReceivePage.total;
         this.currentPage = data.data.data.userReceivePage.current;

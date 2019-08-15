@@ -10,7 +10,7 @@
       >返回</span>
     </div>
     <span @click="awarddetails"
-      style="width:140px;height:34px;color:#fff;font-size:14px;text-align:center;line-height:34px;display:block;margin-top:30px;background:#1abc9c;"
+      style="width:140px;height:34px;color:#fff;font-size:14px;text-align:center;line-height:34px;display:block;margin-top:30px;cursor:default;background:#1abc9c;"
     >查看出奖详情</span>
     <div class="content">
       <div class="tab">
@@ -46,7 +46,7 @@
       <div class="activityrule">
         <h3>
           <b>活动规则</b>
-          <span>修改</span>
+          
         </h3>
         <el-table :data="activityrule" stripe style="width: 100%;">
           
@@ -60,7 +60,7 @@
 
         <h3 style="margin-top:80px;">
           <b>奖项与奖品信息</b>
-          <span>修改</span>
+         
         </h3>
         <el-table :data="activityprizelist" stripe style="width: 100%;">
           
@@ -108,38 +108,42 @@ import Axios from 'axios';
 //活动详情
 export default {
   created(){
-    //  console.log(this.$route.query);
+      console.log(this.$route.query);
     this.barActivityId=this.$route.query.rowdata.activityId;
     this.activitydetails=this.$route.query.rowdata;
     this.activityprizelist=this.$route.query.rowlist;
     this.activityName=this.$route.query.rowdata.activityName;
     this.activityId=this.$route.query.rowdata.activityId;
-    this.activityTime=this.$route.query.rowdata.startTime+"-"+this.$route.query.rowdata.endTime;
+    this.activityTime=this.$route.query.rowdata.startTime.trim().split(/\s+/)[0]+"-"+this.$route.query.rowdata.endTime.trim().split(/\s+/)[0];
     if(this.$route.query.rowdata.isQrcodeStatus=="5"){
       this.activityrule[0].Result="是"
     }else{
       this.activityrule[0].Result="否"
     };
     this.activityrule[1].Result=this.$route.query.rowdata.isWhiteList==0?"否":"是";
-    this.activityrule[2].Result=this.$route.query.rowdata.barProtectTime==0?"否":"是";
-    this.activityrule[3].Result=this.$route.query.rowdata.barTakeUpTime==0?"否":"是";
-this.activityrule[4].Result=this.$route.query.rowdata.personCount==null?"未设置":this.$route.query.rowdata.personCount==0?"不限":this.$route.query.rowdata.personCount+"次";
-    this.activityrule[5].Result=this.$route.query.rowdata.personDayCount==null?"未设置":this.$route.query.rowdata.personDayCount==0?"不限":this.$route.query.rowdata.personDayCount+"次";
-    this.activityrule[6].Result=this.$route.query.rowdata.catCount==null?"未设置":this.$route.query.rowdata.catCount==0?"不限":this.$route.query.rowdata.catCount+"次";
-    this.activityrule[7].Result=this.$route.query.rowdata.needCar==0?"否":"是";
-    this.activityrule[8].Result=this.$route.query.rowdata.needAuthentication==0?"否":"是";
+    this.activityrule[2].Result=this.$route.query.rowdata.barProtectTime==-1?"否":"是";
+    this.activityrule[3].Result=this.$route.query.rowdata.barTakeUpTime==-1?"否":"是";
+    this.activityrule[4].Result=this.$route.query.rowdata.scanTime==-1?"否":"是";
+    
+this.activityrule[5].Result=this.$route.query.rowdata.personCount==null?"未设置":this.$route.query.rowdata.personCount==0?"不限":this.$route.query.rowdata.personCount+"次";
+    this.activityrule[6].Result=this.$route.query.rowdata.personDayCount==null?"未设置":this.$route.query.rowdata.personDayCount==0?"不限":this.$route.query.rowdata.personDayCount+"次";
+    this.activityrule[7].Result=this.$route.query.rowdata.catCount==null?"未设置":this.$route.query.rowdata.catCount==0?"不限":this.$route.query.rowdata.catCount+"次";
+    this.activityrule[8].Result=this.$route.query.rowdata.needCar==0?"否":"是";
+    this.activityrule[9].Result=this.$route.query.rowdata.needAuthentication==0?"否":"是";
     
     this.activityrule[0].value=this.$route.query.rowdata.isQrcodeStatus==-1?"未开启":this.$route.query.rowdata.isQrcodeStatus==1?"未关联":this.$route.query.rowdata.isQrcodeStatus==2?"已关联":this.$route.query.rowdata.isQrcodeStatus==6?"已查询":this.$route.query.rowdata.isQrcodeStatus==5?"已激活":"未设置"
     
-    this.activityrule[1].value=this.$route.query.rowdata.isWhiteList==0?"未开启":"已开启";
-    this.activityrule[2].value=this.$route.query.rowdata.barProtectTime==0?"未开启":"已开启";
-    this.activityrule[3].value=this.$route.query.rowdata.barTakeUpTime==0?"未开启":this.$route.query.rowdata.barTakeUpTime+"小时";
-    this.activityrule[4].value=this.$route.query.rowdata.personCount==null?"未设置":this.$route.query.rowdata.personCount==0?"不限":this.$route.query.rowdata.personCount+"次";
-    this.activityrule[5].value=this.$route.query.rowdata.personDayCount==null?"未设置":this.$route.query.rowdata.personDayCount==0?"不限":this.$route.query.rowdata.personDayCount+"次";
-    this.activityrule[6].value=this.$route.query.rowdata.catCount==null?"未设置":this.$route.query.rowdata.catCount==0?"不限":this.$route.query.rowdata.catCount+"次";
-    this.activityrule[7].value=this.$route.query.rowdata.needCar==0?"否":"是";
-    this.activityrule[8].value=this.$route.query.rowdata.needAuthentication==0?"否":"是";
-    console.log(this.$route.query.rowlist)
+    this.activityrule[1].value=this.$route.query.rowdata.isWhiteList==-1?"未开启":"已开启";
+    this.activityrule[2].value=this.$route.query.rowdata.barProtectTime==-1?"未开启":this.$route.query.rowdata.barProtectTime+"小时";
+    this.activityrule[3].value=this.$route.query.rowdata.barTakeUpTime==-1?"未开启":this.$route.query.rowdata.barTakeUpTime+"小时";
+     this.activityrule[4].value=this.$route.query.rowdata.scanTime==-1?"未开启":this.$route.query.rowdata.scanTime+"小时";
+
+    this.activityrule[5].value=this.$route.query.rowdata.personCount==null?"未设置":this.$route.query.rowdata.personCount==0?"不限":this.$route.query.rowdata.personCount+"次";
+    this.activityrule[6].value=this.$route.query.rowdata.personDayCount==null?"未设置":this.$route.query.rowdata.personDayCount==0?"不限":this.$route.query.rowdata.personDayCount+"次";
+    this.activityrule[7].value=this.$route.query.rowdata.catCount==null?"未设置":this.$route.query.rowdata.catCount==0?"不限":this.$route.query.rowdata.catCount+"次";
+    this.activityrule[8].value=this.$route.query.rowdata.needCar==0?"否":"是";
+    this.activityrule[9].value=this.$route.query.rowdata.needAuthentication==0?"否":"是";
+    // console.log(this.$route.query.rowlist)
     // for(var i=0;i<this.$route.query.rowlist.length;i++){
 
     // }
@@ -154,15 +158,15 @@ this.activityrule[4].Result=this.$route.query.rowdata.personCount==null?"未设�
       }
       this.tableData[i].activityName=this.activityName;
     }
-    Axios({
-      url:"api/activityManager/getProductListByActivityId",
-      method:"get",
-      params:{
-        activityId:this.$route.query.rowdata.activityId
-      }
-    }).then(data=>{
-      console.log(data)
-    })
+    // Axios({
+    //   url:"api/activityManager/getProductListByActivityId",
+    //   method:"get",
+    //   params:{
+    //     activityId:this.$route.query.rowdata.activityId
+    //   }
+    // }).then(data=>{
+    //   console.log(data)
+    // })
   },
     data(){
         return{
@@ -199,6 +203,12 @@ this.activityrule[4].Result=this.$route.query.rowdata.personCount==null?"未设�
             {
               ruletype:"基础规则",
               rulename:"是否开启占用期",
+              Result:"",
+              value:""
+            },
+            {
+              ruletype:"基础规则",
+              rulename:"是否开启延时扫码",
               Result:"",
               value:""
             },
@@ -241,6 +251,7 @@ this.activityrule[4].Result=this.$route.query.rowdata.personCount==null?"未设�
         }
     },
     methods:{
+
         awarddetails(){
             this.$router.push({
                 path:"/awarddetails",
@@ -260,6 +271,9 @@ this.activityrule[4].Result=this.$route.query.rowdata.personCount==null?"未设�
           }).then(data=>{
             // console.log(data)
           })
+        },
+        back(){
+          this.$router.back();
         }
     }
 };

@@ -60,7 +60,7 @@ export default {
   },
   created: function() {
     this.init();
-    console.log(this.$route.query);
+    // console.log(this.$route.query);
     this.rowdata = this.$route.query.rowdata;
     this.frongImg = this.$route.query.frongImg;
   },
@@ -79,7 +79,7 @@ export default {
         method: "get",
         url: "api/networkUserManager/networkDetail" + "?networkId=" + netId
       }).then(data => {
-        console.log(data);
+        // console.log(data);
         this.tableData = data.data.data.userList;
       });
     },

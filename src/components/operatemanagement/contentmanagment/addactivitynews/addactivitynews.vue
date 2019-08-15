@@ -9,7 +9,7 @@
     <ul class="information">
       <li>
         <span>标题</span>
-        <input type="text" v-model="newstitle">
+        <input type="text" v-model="newstitle" />
       </li>
       <li style="height:100px;">
         <span>资讯摘要</span>
@@ -24,7 +24,7 @@
             :show-file-list="false"
             :on-success="handlenewcoverSuccess"
           >
-            <img v-if="imagenewcoverUrl" :src="imagenewcoverUrl" class="avatar">
+            <img v-if="imagenewcoverUrl" :src="imagenewcoverUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </div>
@@ -36,6 +36,7 @@
     <div class="detailsinfo">
       <div class="left">
         <span>上传视频</span>
+        
         <el-upload
           class="avatar-uploader el-upload--text"
           action="api/upload/uploadVideo"
@@ -45,6 +46,8 @@
           :before-upload="beforeUploadVideo"
           :on-progress="uploadVideoProcess"
         >
+          <video v-if="showVideoPath !='' && !videoFlag" :src="showVideoPath" style="width:100%;height:102px;position:absolute;top:0;margin-top:0;">您的浏览器不支持视频播放</video>
+          <img @click="reomvevideo($event)" v-if="showVideoPath !='' && !videoFlag"  src="../../../../assets/no.png" style="position:absolute;top:-3px;right:-3px;"/>
           <i class="el-icon-plus avatar-uploader-icon"></i>
           <el-progress
             v-if="videoFlag == true"
@@ -61,10 +64,10 @@
             @mouseover="removepreviewimg(index)"
             @mouseout="removepreviewimgno(index)"
           >
-            <img v-if="item.imageUrl" :src="item.imageUrl" class="avatar">
+            <img v-if="item.imageUrl" :src="item.imageUrl" class="avatar" />
             <div class="removeimg" v-show="item.showremovecanvas">
               <i @click="removedetailsimg(index)">
-                <img src="../../../../assets/deleteIcon.png">
+                <img src="../../../../assets/deleteIcon.png" />
               </i>
             </div>
           </div>
@@ -88,7 +91,7 @@
           poster="../../../../assets/video.jpg"
         >您的浏览器不支持视频播放</video>
         <div v-for="(item,index) in newsdetailsimglist" :key="index">
-          <img :src="item.imageUrl" style="width:100%;">
+          <img :src="item.imageUrl" style="width:100%;" />
         </div>
       </div>
     </div>
@@ -97,14 +100,14 @@
 </template>
 
 <script>
-import Axios from 'axios'
+import Axios from "axios";
 export default {
   //添加活动资讯
   data() {
     return {
-      flag:"0",
+      flag: "0",
       imagenewcoverUrl: "",
-
+      newId: "",
       videoFlag: false, //是否显示进度条
       videoUploadPercent: "", //进度条的进度，
       isShowUploadVideo: false, //显示上传按钮
@@ -124,30 +127,27 @@ export default {
       imgurlarr: []
     };
   },
-  created(){
-    
-    if(this.$route.query.flag){
-      this.flag=this.$route.query.flag;
-      // console.log(this.$route.query)
-      this.status=this.$route.query.rowdata.status;
+  created() {
+    if (this.$route.query.flag) {
+      this.flag = this.$route.query.flag;
+      // console.log(this.$route.query);
+      this.status = this.$route.query.rowdata.status;
 
-      this.newId=this.$route.query.rowdata.newId;
-      this.newstitle=this.$route.query.rowdata.title;
-      this.newscontent=this.$route.query.rowdata.information;
-      this.newscoverimg=this.$route.query.rowdata.coverImageUrl;
-      this.imagenewcoverUrl=this.$route.query.rowdata.coverImageUrl;
-      this.showVideoPath=this.$route.query.rowdata.videoUrl;
-      for(let i=0;i<this.$route.query.rowdata.imageList;i++){
+      this.newId = this.$route.query.rowdata.newId;
+      this.newstitle = this.$route.query.rowdata.title;
+      this.newscontent = this.$route.query.rowdata.information;
+      this.newscoverimg = this.$route.query.rowdata.coverImageUrl;
+      this.imagenewcoverUrl = this.$route.query.rowdata.coverImageUrl;
+      this.showVideoPath = this.$route.query.rowdata.videoUrl;
+      for (let i = 0; i < this.$route.query.rowdata.imageList.length; i++) {
         this.newsdetailsimglist.push({
-          imageUrl: this.$route.query.rowdata.imageList[i],
-        newsdetailsimg: this.$route.query.rowdata.imageList[i],
-        showremovecanvas: true,
-        })
+          imageUrl: this.$route.query.rowdata.imageList[i].imageUrl,
+          newsdetailsimg: this.$route.query.rowdata.imageList[i].imageUrl,
+          showremovecanvas: true
+        });
       }
-      
-
+      // console.log( this.newsdetailsimglist)
     }
-    
   },
   methods: {
     handlenewcoverSuccess(res, file) {
@@ -213,48 +213,56 @@ export default {
       for (var i = 0; i < this.newsdetailsimglist.length; i++) {
         this.imgurlarr.push(this.newsdetailsimglist[i].newsdetailsimg);
       }
-      if(this.flag==1){
-         Axios({
-        url: "api/contentManager/editNews",
-        method: "post",
-        data: {
-         
-            newsId: this.newsId,
-            title: this.newstitle,
-            information: this.newscontent,
-            coverImageUrl: this.newscoverimg,
-            videoUrl: this.showVideoPath,
-            imgList:this.imgurlarr,
-        }
-      }).then(data=>{
-        if(data.data.code==0){
-          this.$router.push("/operatemanagement/indexactivityinformation")
-        }
-         console.log(data)
-      });
-      }else{
-         Axios({
-        url: "api/contentManager/addInformation",
-        method: "post",
-        data: {
-          newsData: {
-            newsId: "",
-            title: this.newstitle,
-            information: this.newscontent,
-            coverImageUrl: this.newscoverimg,
-            videoUrl: this.showVideoPath,
-          },
-          imgList:this.imgurlarr,
-        }
-      }).then(data=>{
-        if(data.data.code==0){
-          this.$router.push("/operatemanagement/indexactivityinformation")
-        }
-        // console.log(data)
-      });
+      if (this.flag == 1) {
+        // console.log(this.imgurlarr);
+        Axios({
+          url: "api/contentManager/editNews",
+          method: "post",
+          data: {
+            news: {
+              newId: this.newId,
+              title: this.newstitle,
+              information: this.newscontent,
+              coverImageUrl: this.newscoverimg,
+              videoUrl: this.showVideoPath
+            },
+            imgList: this.imgurlarr
+          }
+        }).then(data => {
+          if (data.data.code == 0) {
+            this.$message.success("修改成功");
+            this.$router.push("/operatemanagement/indexactivityinformation");
+          }
+          // console.log(data);
+        });
+      } else {
+        Axios({
+          url: "api/contentManager/addInformation",
+          method: "post",
+          data: {
+            newsData: {
+              newsId: "",
+              title: this.newstitle,
+              information: this.newscontent,
+              coverImageUrl: this.newscoverimg,
+              videoUrl: this.showVideoPath
+            },
+            imgList: this.imgurlarr
+          }
+        }).then(data => {
+          if (data.data.code == 0) {
+            this.$router.push("/operatemanagement/indexactivityinformation");
+          }
+          // console.log(data)
+        });
       }
       // console.log(this.imgurlarr);
-     
+    },
+    //删除上传的视频
+    reomvevideo(e){
+      e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
+      // this.isShowUploadVideo = true;
+        this.showVideoPath = "";
     }
   }
 };
@@ -402,6 +410,10 @@ export default {
       .video-avatar {
         width: 400px;
         height: 200px;
+      }
+      .videoactive {
+        width: 180px;
+        height: 100px;
       }
       .previewdetailsimg {
         width: 180px;

@@ -3,27 +3,36 @@
     <div class="header">
       <span class="add" @click="addgoods">添加商品</span>
       <span class="add" @click="deleteall">批量删除</span>
-      <input type="text" placeholder="账号 " v-model="searchId"><img @click="searchid" src="../../../assets/sousuo.png"/>
+      <input type="text" placeholder="账号 " v-model="searchId" />
+      <img @click="searchid" src="../../../assets/sousuo.png" />
     </div>
 
     <div class="search">
-      <select name="userclass">
-        <option>商品库</option>
-        <option>机修工</option>
-        <option>SA</option>
+      <select name="userclass" v-model="firstlist">
+        <option value="">全部商品库</option>
+        <option
+          v-for="(firstlist,index) in goodsclasslist"
+          @change="ccc(firstlist)"
+          :value="firstlist"
+        >{{firstlist.productCatName}}</option>
       </select>
-      <select name="userclass">
+      <select name="userclass" v-model="secondlist">
         <option>商品类型</option>
-        <option>机修工</option>
-        <option>SA</option>
+        <option
+          v-for="(secondlist,index) in firstlist.productCatList"
+          :value="secondlist"
+        >{{secondlist.productCatName}}</option>
       </select>
-      <select name="userclass">
-        <option>商品品牌</option>
-        <option>机修工</option>
-        <option>SA</option>
+      <select v-model="threelist" @change="selectthree">
+        <option
+          v-for="(threelist,index) in secondlist.productCatList"
+          :value="threelist"
+        >{{threelist.productCatName}}</option>
       </select>
-      <i>添加时间</i><input type="text"/>
-      <span>搜索</span>
+      <i>添加时间</i>
+
+      <el-date-picker v-model="littleTime" type="date" placeholder="选择日期"></el-date-picker>
+      <span @click="search">搜索</span>
     </div>
     <el-table
       :header-cell-style="{background:'#ccd1e0',height:'32'}"
@@ -32,39 +41,32 @@
       tooltip-effect="dark"
       style="width: 100%;font-size:12px;"
       @selection-change="handleSelectionChange"
-       stripe 
+      stripe
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55" v-model="checkList"></el-table-column>
-      <el-table-column prop="productSId" label="商品编号" width="160px" ></el-table-column>
+      <el-table-column prop="productSId" label="商品编号" width="160px"></el-table-column>
       <el-table-column prop="productSName" label="商品名称" width="244"></el-table-column>
       <el-table-column prop="productCatName" label="商品分类" width="194px"></el-table-column>
       <el-table-column prop="addTime" label="时间"></el-table-column>
       <el-table-column fixed="right" label="操作" width="146px">
         <template slot-scope="scope">
-        <el-button type="text" size="small" @click="seedetails(scope.row)">编辑</el-button>
-        <el-button type="text" size="small" @click="removegoods(scope.row)">删除</el-button>
+          <el-button type="text" size="small" @click="seedetails(scope.row)">编辑</el-button>
+          <el-button type="text" size="small" @click="removegoods(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-   <div class="addcanvas" v-if="editgoodlistcanvas">
+    <div class="addcanvas" v-if="editgoodlistcanvas">
       <div class="edit">
         <h3>编辑员工</h3>
         <ul>
-          
-         
           <li>
             <span>商品名称</span>
-            <input type="text" v-model="goodsName">
+            <input type="text" v-model="goodsName" />
           </li>
-           <li>
+          <li>
             <span>商品分类</span>
-            <select
-              name="department"
-              id="department"
-              class="department"
-              v-model="goodclass"
-            >
+            <select name="department" id="department" class="department" v-model="goodclass">
               <option>—请选择—</option>
               <option v-for="(item,index) in post" :value="item.goodsId">{{item.postName}}</option>
             </select>
@@ -91,71 +93,86 @@
 </template>
 
 <script>
-import Axios from 'axios';
+import Axios from "axios";
 export default {
   //商品列表
+
   data() {
     return {
-     
-     editgoodlistcanvas:false,
-     goodsclass:"",
-     goodsName:"",
-      tabledata: [
-        {
-          goodsid: "12543245543",
-          goodsname: "wddws",
-          goodsclass: "afsefw",
-          data: "2019-3-4"
-        }
-      ],
-      checkList:[],
+      editgoodlistcanvas: false,
+      goodsclass: "",
+      goodsName: "",
+      tabledata: [],
+      checkList: [],
       //批量删除商品id
-      goodsidarr:[],
+      goodsidarr: [],
       //删除的商品id的集合字符串
-      delgoodsids:"",
+      delgoodsids: "",
       currentPage: 1,
-      pagesize:10,
-      totalCount:1,
+      pagesize: 10,
+      totalCount: 1,
       //搜索id值
-      searchId:"",
+      searchId: "",
+      goodsclasslist: [],
+      //一级分类列表
+      firstlist: [],
+      //二级分类列表
+      secondlist: [],
+      threelist: [],
+      productCatId: "",
+      littleTime:"",
     };
   },
-  created(){
-    this.goodslist()
+  created() {
+    this.goodslist();
+    Axios({
+      url: "api/productsManager/productCatList",
+      method: "get"
+    }).then(data => {
+      this.goodsclasslist = data.data.data.firstCatList;
+      console.log(this.goodsclasslist);
+    });
   },
   methods: {
-    goodslist(){
+    ccc(val) {
+      console.log(val);
+    },
+    goodslist() {
       Axios({
-        url:"api/productsManager/productSList",
-        method:"get",
-        params:{
-        
-           pageNo: this.currentPage,
-          productCatId:"",
-          littleTime:"",
-          bigTime:"",
-          productSName:"",
+        url: "api/productsManager/productSList",
+        method: "get",
+        params: {
+          pageNo: this.currentPage,
+          productCatId: this.productCatId,
+          littleTime: this.littleTime.toString(),
+          bigTime: "",
+          productSName: ""
         }
-      }).then(data=>{
-          // console.log(data)
-         this.tabledata=data.data.data.productSPage.records;
-         this.totalCount = data.data.data.productSPage.total;
-         this.pagesize = data.data.data.productSPage.size;
+      }).then(data => {
+        // console.log(data)
+        this.tabledata = data.data.data.productSPage.records;
+        this.totalCount = data.data.data.productSPage.total;
+        this.pagesize = data.data.data.productSPage.size;
         this.currentPage = data.data.data.productSPage.current;
-      })
+      });
     },
     //搜索账号
-    searchid(){
-      
+    searchid() {},
+    search(){
+      this.goodslist();
+      this.productCatId="";
+      this.littleTime="";
     },
     //编辑
     seedetails(row) {
       //  console.log(row);
-       this.$router.push({
-         path:"/addgoods",
-         query:{flag:"1",data:row}
-       })
-     
+      this.$router.push({
+        path: "/addgoods",
+        query: { flag: "1", data: row }
+      });
+    },
+    selectthree() {
+      this.productCatId = this.threelist.productCatId;
     },
     //添加
     addgoods() {
@@ -164,104 +181,101 @@ export default {
       });
     },
     //编辑
-    yesedit(){
-
-    },
+    yesedit() {},
     //批量选中
-    handleSelectionChange(val){
+    handleSelectionChange(val) {
       // console.log(val)
-      this.goodsidarr.length=0;
-      for(var i=0;i<val.length;i++){
-         this.goodsidarr.push(val[i].productSId)
-      };
-        
-         this.delgoodsids=this.goodsidarr.toString()
+      this.goodsidarr.length = 0;
+      for (var i = 0; i < val.length; i++) {
+        this.goodsidarr.push(val[i].productSId);
+      }
+
+      this.delgoodsids = this.goodsidarr.toString();
     },
     //批量删除
-    deleteall(){
-      
-      this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+    deleteall() {
+      this.$confirm("此操作将永久删除多条数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
           Axios({
-            url:"api/productsManager/delProductS",
-            method:"get",
-            params:{
-              productSId:this.delgoodsids,
+            url: "api/productsManager/delProductS",
+            method: "get",
+            params: {
+              productSId: this.delgoodsids
             }
-          }).then(data=>{
+          }).then(data => {
             // console.log(data);
-            if(data.data.code==0){
+            if (data.data.code == 0) {
               this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-          this.goodslist();
-            }else{
+                type: "success",
+                message: "删除成功!"
+              });
+              this.goodslist();
+            } else {
               this.$message({
-            type: 'error',
-            message: '删除失败!'
-          });
+                type: "error",
+                message: "删除失败!"
+              });
             }
-
-          })
-          
-        }).catch(() => {
+          });
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除"
+          });
         });
     },
-    removegoods(val){
+    removegoods(val) {
       // console.log(val)
-      this.$confirm('此操作将永久删除多条数据, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+      this.$confirm("此操作将永久删除多条数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
           Axios({
-            url:"api/productsManager/delProductS",
-            method:"get",
-            params:{
-              productSId:val.productSId,
+            url: "api/productsManager/delProductS",
+            method: "get",
+            params: {
+              productSId: val.productSId
             }
-          }).then(data=>{
+          }).then(data => {
             //  console.log(data);
-            if(data.data.code==0){
+            if (data.data.code == 0) {
               this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-          this.goodslist();
-            }else{
+                type: "success",
+                message: "删除成功!"
+              });
+              this.goodslist();
+            } else {
               this.$message({
-            type: 'error',
-            message: '删除失败!'
-          });
+                type: "error",
+                message: "删除失败!"
+              });
             }
-
-          })
-          
-        }).catch(() => {
+          });
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除"
+          });
         });
     },
     exit() {
       this.delcanvas = false;
-      this.editgoodlistcanvas=false;
+      this.editgoodlistcanvas = false;
     },
     // 分页功能
-     handleSizeChange(val) {},
+    handleSizeChange(val) {},
     handleCurrentChange(val) {
       // console.log(val);
       this.currentPage = val;
-      this.activitylist();
+      this.goodslist();
     },
     del() {
       this.delcanvas = false;
@@ -276,14 +290,14 @@ export default {
   height: 100%;
   position: relative;
   .header {
-      width: 100%;
-      height: 60px;
+    width: 100%;
+    height: 60px;
     .add {
       display: block;
       width: 122px;
       height: 36px;
       margin-top: 10px;
-      
+
       border: 1px solid #555;
       color: #7f7f7f;
       text-align: center;
@@ -293,22 +307,22 @@ export default {
       float: left;
       margin-right: 8px;
     }
-    input{
-        width:216px;
-        height:34px;
-        margin-top: 10px;
-        border-radius: 15px;
-        float: right;
-        border: 1px solid #ddd;
-        padding-left: 8px;
-        outline:none;
+    input {
+      width: 216px;
+      height: 34px;
+      margin-top: 10px;
+      border-radius: 15px;
+      float: right;
+      border: 1px solid #ddd;
+      padding-left: 8px;
+      outline: none;
     }
-    img{
-        width: 20px;
-        height: 20px;
-        position: absolute;
-        right: 13px;
-        top: 18px;
+    img {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      right: 13px;
+      top: 18px;
     }
   }
 
@@ -327,7 +341,6 @@ export default {
       border: 1px solid #dfdfdf;
       text-align: center;
       font-size: 12px;
-      color: #dfdfdf;
     }
     select {
       width: 150px;
@@ -339,10 +352,9 @@ export default {
       font-size: 12px;
       color: #555;
     }
-    i{
-        font-style: normal;
-        margin-left: 15px;
-
+    i {
+      font-style: normal;
+      margin-left: 15px;
     }
     span {
       display: inline-block;
@@ -442,6 +454,5 @@ export default {
       }
     }
   }
-  
 }
 </style>

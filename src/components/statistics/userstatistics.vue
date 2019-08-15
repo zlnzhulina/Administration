@@ -6,7 +6,7 @@
     <div class="yesterdaydata">
       <ul>
         <li>
-          <b>338</b>
+          <b>{{yesterday.visitUv}}</b>
           <span>访问人数</span>
           <i>
             同比日
@@ -19,28 +19,28 @@
           <i>同比月</i>
         </li>
         <li>
-          <b>12</b>
+          <b>{{yesterday.visitUvNew}}</b>
           <span>新增访问人数</span>
           <i>同比日</i>
           <i>同比周</i>
           <i>同比月</i>
         </li>
         <li>
-          <b>338</b>
+          <b>{{yesterday.registerNum}}</b>
           <span>新增注册用户数</span>
           <i>同比日</i>
           <i>同比周</i>
           <i>同比月</i>
         </li>
         <li>
-          <b>338</b>
+          <b>{{yesterday.registerSum}}</b>
           <span>累计注册用户数</span>
           <i>同比日</i>
           <i>同比周</i>
           <i>同比月</i>
         </li>
         <li>
-          <b>78%</b>
+          <b>{{yesterday.proportion}}</b>
           <span>占比</span>
           <i>同比日</i>
           <i>同比周</i>
@@ -52,10 +52,11 @@
       <b>
         数据对比
         <select v-model="daynum" @change="handledaynum(daynum)">
-          <option value="30">最近30天</option>
-          <option value="7">最近7天</option>
-          <!-- <option value="30">最近30天</option> -->
+          <option value="1">最近7天</option>
+          <option value="2">最近30天</option>
+          <option value="0">自定义</option>
         </select>
+        
         <i>{{datatime}}</i>
       </b>
       <a @click="exportdata">导出</a>
@@ -129,6 +130,19 @@
 import Axios from "axios";
 let echarts = require("echarts/lib/echarts");
 export default {
+  created() {
+    Axios({
+      url: "api/dataCenterManager/userData",
+      method: "get"
+    }).then(data => {
+      // console.log(data);
+      if (data.data.code == 0) {
+        this.yesterday = data.data.data;
+      }
+    });
+     this.time(7)
+    //  this.atacontrast();
+  },
   mounted() {
     let datacompareChart = echarts.init(
       document.getElementById("datacomparecontent")
@@ -253,7 +267,10 @@ export default {
   },
   data() {
     return {
-      daynum: "",
+      yesterday: {},
+      daynum: "1",
+      beginTime: "",
+      endTime: "",
       datatime: "日期起止时间",
       tableData: [
         {
@@ -384,8 +401,42 @@ export default {
     };
   },
   methods: {
+    // 数据对比
+    atacontrast() {
+      Axios({
+        url: "api/dataCenterManager/dataContrast",
+        method: "get",
+        params: {
+          beginTime: "this.beginTime.toString()",
+          endTime: this.endTime.toString(),
+          type: this.daynum.toString()
+        }
+      }).then(data => {
+        console.log(data);
+      });
+    },
+    // 获取时间
+    time(n) {
+      var date1 = new Date();
+      this.beginTime =(date1.getFullYear() +"" +((date1.getMonth() + 1)<10?'0'+(date1.getMonth() + 1):(date1.getMonth() + 1)) +"" +date1.getDate()-1).toString();
+      
+      var date2 = new Date(date1);
+      date2.setDate(date1.getDate() - n);
+      this.endTime =(date2.getFullYear() +"" +((date2.getMonth() + 1)<10?'0'+(date2.getMonth() + 1):(datdate2e1.getMonth() + 1)) +"" +date2.getDate()).toString();
+      console.log(this.beginTime);
+      console.log(this.endTime);
+
+    },
     handledaynum(val) {
-      console.log(val);
+      // console.log(val);
+      if (val == 1) {
+        //七天
+        this.time(7);
+         this.atacontrast();
+      }else if(val==30){
+         this.time(30);
+        // this.atacontrast();
+      }
     },
     //导出数据
     exportdata() {}
@@ -508,7 +559,7 @@ export default {
   .region {
     width: 80%;
     min-height: 1273px;
-    height:auto;
+    height: auto;
     border: 1px solid #d6d6d6;
     box-sizing: border-box;
     font-family: "Arial Regular", "Arial";

@@ -69,7 +69,7 @@ export default {
           pageSize: this.pagesize
         }
       }).then(data => {
-        // console.log(data);
+        //  console.log(data);
         this.tableData = data.data.data.activityPage.records;
         this.list = data.data.data.list;
         this.totalCount = data.data.data.activityPage.total;
@@ -106,7 +106,7 @@ export default {
       this.activitylist();
     },
     endactivity(row) {
-      console.log(row);
+      // console.log(row);
       this.$confirm("此操作将结束此活动, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

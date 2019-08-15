@@ -207,23 +207,7 @@ export default {
         // console.log(data);
       });
     },
-    // postlist() {
-    //   Axios({
-    //     method: "get",
-    //     url: "api/systemManager/postList",
-    //     params: {
-    //       pageNo: "1",
-    //       pageSize: 30,
-    //       postName: ""
-    //     },
-    //     headers: {
-    //       ADMINLOGINTOKEN: localStorage.ADMINLOGINTOKEN
-    //     }
-    //   }).then(data => {
-    //     this.post = data.data.data.postPage.records;
-    //     console.log(data);
-    //   });
-    // },
+    
     departmentlist() {
       Axios({
         method: "get",
@@ -243,6 +227,7 @@ export default {
     },
     //选择部门之后查询岗位
     selectdepartment(val){
+      // console.log(val)
       Axios({
         url:"api/systemManager/selectPostList",
         method:"get",
@@ -276,6 +261,10 @@ export default {
             type: 'success',
             message: '添加成功!'
           });
+          this.departmentmodle.departmentid="";
+          this.departmentmodle.phoneNumber=""
+          this.departmentmodle.postId=""
+          this.departmentmodle.adminName=""
         }else{
            this.$message({
             type: 'error',
@@ -288,15 +277,26 @@ export default {
     },
     //编辑员工
     edityg(index, row) {
-      // console.log(row);
+      //  console.log(row);
       
       this.editmodle.departmentid = row.departmentId;
-      this.editmodle.postId=row.postId;
+     
       this.editmodle.adminName=row.adminName;
       this.editmodle.adminUserName=row.adminUserName;
       this.editmodle.phoneNumber=row.phoneNumber;
       this.editmodle.adminUserId=row.adminUserId;
       this.editstaffcanvas = true;
+      Axios({
+        url:"api/systemManager/selectPostList",
+        method:"get",
+        params:{
+          departmentId:row.departmentId,
+        }
+      }).then(data=>{
+        // console.log(data)
+              this.post = data.data.data.postList;
+      });
+ this.editmodle.postId=row.postId;
     },
     yesedit(){
       Axios({
@@ -324,6 +324,11 @@ export default {
             message: '编辑失败!'
           });
         }
+        this.editmodle.adminName,
+          this.editmodle.departmentid="";
+         this.editmodle.postId="";
+          this.editmodle.phoneNumber="";
+          this.editmodle.adminUserId="";
         // console.log(data);
       })
     },
@@ -331,6 +336,10 @@ export default {
       this.addstaffcanvas = false;
       this.delstaffcanvas = false;
       this.editstaffcanvas = false;
+       this.departmentmodle.departmentid="";
+          this.departmentmodle.phoneNumber=""
+          this.departmentmodle.postId=""
+          this.departmentmodle.adminName=""
     },
    delyg(index,row){
      this.adminUserIds=row.adminUserId

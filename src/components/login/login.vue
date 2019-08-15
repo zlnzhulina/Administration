@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="login">
-      <h2>渠道分销激励系统管理</h2>
+      <h2>壳家人-福田戴姆勒</h2>
       <form>
         <label>
           <img src="../../assets/zhanghao.png">
@@ -109,13 +109,13 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  background: url("../../assets/login.png") no-repeat;
+  background: #fbc107;
   background-size: 100% 100%;
   padding-bottom: -90px;
   .login {
     width: 500px;
     height: 370px;
-    background: rgba(255, 255, 255, 0.4);
+    background:hsla(0,0%,100%,0.7);
     position: absolute;
     left: 50%;
     top: 25%;
@@ -123,9 +123,10 @@ export default {
     h2 {
       width: 100%;
       height: 104px;
-      line-height: 80px;
+      line-height: 100px;
       text-align: center;
-      font-size: 24px;
+      font-size: 32px;
+      color: #dd1d21;
     }
     label {
       display: block;
@@ -133,8 +134,8 @@ export default {
       height: 60px;
       line-height: 60px;
       text-align: center;
-      color: #8e7f7f;
-      font-weight: bold;
+      color: #404040;
+      font-weight: 700;
       position: relative;
       img {
         position: absolute;
@@ -145,24 +146,26 @@ export default {
 
       input {
         width: 246px;
-        height: 30px;
-        border-radius: 9px;
+        height: 40px;
+        border-radius: 5px;
         border: 1px solid #ccc;
-        padding-left: 30px;
+        padding-left: 32px;
         font-size: 14px;
-        color: #555;
+        // color: #555;
       }
     }
     span {
       display: block;
-      width: 150px;
-      height: 40px;
+      width: 220px;
+      height: 50px;
       text-align: center;
-      background: #79986a;
+      background: #003c88;
       margin: 43px auto;
-      line-height: 40px;
+      line-height: 50px;
       border-radius: 10px;
       color: #fff;
+      font-size: 20px;
+      font-weight: bold;
     }
   }
 }

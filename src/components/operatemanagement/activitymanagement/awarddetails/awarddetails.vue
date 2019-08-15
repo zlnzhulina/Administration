@@ -9,6 +9,7 @@
         style="display:block;width:102px;height:30px;float:right;text-align:center;line-height:30px;border:1px solid #555;font-size:14px;margin-top:16px;"
       >关闭</span>
       <span
+        @click="refresh"
         style="display:block;width:102px;height:30px;float:right;margin-right:10px;text-align:center;line-height:30px;border:1px solid #555;font-size:14px;margin-top:16px;"
       >刷新</span>
     </div>
@@ -26,7 +27,7 @@
         <div class="tdthree">
           <p>{{activitydetails.activityName}}</p>
           <p>54543组</p>
-          <p>{{activitydetails.startTime}}至{{activitydetails.endTime}}</p>
+          <p>{{activitydetails.startTime.trim().split(/\s+/)[0]}}至{{activitydetails.endTime.trim().split(/\s+/)[0]}}</p>
         </div>
         <div class="tdtwo">
           <p>活动状态</p>
@@ -52,20 +53,20 @@
             <li class="right">
               <span>领取时间：</span>
               <el-date-picker
-                style="width:153px;"
+                style="width:163px;"
                 v-model="receiveBeginTime"
                 type="date"
                 placeholder="选择日期"
-                format="yyyy--MM--dd HH:mm:ss"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                format="yyyy--MM--dd"
+                value-format="yyyy-MM-dd"
               ></el-date-picker>-
               <el-date-picker
-                style="width:153px;"
+                style="width:163px;"
                 v-model="receiveEndTime"
                 type="date"
                 placeholder="选择日期"
-                format="yyyy--MM--dd HH:mm:ss"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                format="yyyy--MM--dd"
+                value-format="yyyy-MM-dd"
               ></el-date-picker>
             </li>
             <li class="left">
@@ -79,20 +80,20 @@
             <li class="right">
               <span>扫码时间：</span>
               <el-date-picker
-                style="width:153px;"
+                style="width:163px;"
                 v-model="scanBeginTime"
                 type="date"
                 placeholder="选择日期"
-                format="yyyy--MM--dd HH:mm:ss"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                format="yyyy--MM--dd"
+                value-format="yyyy-MM-dd"
               ></el-date-picker>-
               <el-date-picker
-                style="width:153px;"
+                style="width:163px;"
                 v-model="scanEndTime"
                 type="date"
                 placeholder="选择日期"
                 format="yyyy--MM--dd HH:mm:ss"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="yyyy-MM-dd"
               ></el-date-picker>
             </li>
 
@@ -159,7 +160,7 @@
           </el-table-column>
         </el-table>
         <div class="block fr" style="margin-top: 10px;">
-          <el-pagination
+          <el-pagination 
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
@@ -184,13 +185,13 @@ export default {
     this.awardlist();
 
     Axios({
-      method: "get",
-      url: "api/networkUserManager/networkList?pageNo=1&pageSize=7"
-    }).then(data => {
-      //  console.log(data);
+        method: "get",
+        url: "api/networkUserManager/initUserCatAndNetworkList"
+      }).then(data => {
+          console.log(data);
 
-      this.dotlist = data.data.data.networkPage.records;
-    });
+        this.dotlist = data.data.data.networkList;
+      });
     Axios({
       url: "api/activityManager/getProductListByActivityId",
       method: "get",
@@ -198,7 +199,7 @@ export default {
         activityId: this.$route.query.activitydetails.activityId
       }
     }).then(data => {
-      console.log(data);
+      // console.log(data);
       this.productList = data.data.data.productList;
     });
   },
@@ -270,6 +271,33 @@ export default {
         this.currentPage = data.data.data.map.current;
       });
     },
+    //刷新
+    refresh() {
+
+      this.awardlist();
+// this.productList=[];
+      Axios({
+        method: "get",
+        url: "api/networkUserManager/initUserCatAndNetworkList"
+      }).then(data => {
+          console.log(data);
+
+        this.dotlist = data.data.data.networkList;
+      });
+      Axios({
+        url: "api/activityManager/getProductListByActivityId",
+        method: "get",
+        params: {
+          activityId: this.$route.query.activitydetails.activityId
+        }
+      }).then(data => {
+        if(data.data.code==0){
+         this.$message.success("刷新成功！");
+        }
+        // console.log(data);
+        this.productList = data.data.data.productList;
+      });
+    },
     back() {
       this.$router.push("/operatemanagement");
     },
@@ -283,7 +311,7 @@ export default {
     //导出数据
     exporttab() {
       window.location.href =
-        "qrcode/activityManager/outExcelData?activityId=" +
+        "api/activityManager/outExcelData?activityId=" +
         this.activityId +
         "&pageNo=1" +
         "&phoneNumber=" +
@@ -310,7 +338,7 @@ export default {
       this.awardlist();
     },
     productId(val) {
-      console.log(val);
+      // console.log(val);
       this.awardlist();
     },
     scanBeginTime(val) {
@@ -322,7 +350,7 @@ export default {
     receiveBeginTime(val) {
       this.awardlist();
     },
-    receiveEndTime(val){
+    receiveEndTime(val) {
       this.awardlist();
     }
   }

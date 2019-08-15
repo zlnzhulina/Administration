@@ -4,24 +4,31 @@
       <span class="add" @click="addgoodsbank">添加商品库</span>
     </div>
     <div class="search">
-      <select name="userclass">
-        <option>商品库</option>
-        <option>机修工</option>
-        <option>SA</option>
+      <select name="userclass" v-model="firstlist">
+        <option value>全部商品库</option>
+        <option
+          v-for="(firstlist,index) in classlist"
+          @change="ccc(firstlist)"
+          :value="firstlist"
+        >{{firstlist.productCatName}}</option>
       </select>
-      <select name="userclass">
+      <select name="userclass" v-model="secondlist">
         <option>商品类型</option>
-        <option>机修工</option>
-        <option>SA</option>
+        <option
+          v-for="(secondlist,index) in firstlist.productCatList"
+          :value="secondlist"
+        >{{secondlist.productCatName}}</option>
       </select>
-      <select name="userclass">
-        <option>商品品牌</option>
-        <option>机修工</option>
-        <option>SA</option>
+      <select v-model="threelist" @change="selectthree">
+        <option
+          v-for="(threelist,index) in secondlist.productCatList"
+          :value="threelist"
+        >{{threelist.productCatName}}</option>
       </select>
       <i>添加时间</i>
-      <input type="text" />
-      <span>搜索</span>
+
+      <el-date-picker v-model="littleTime" type="date" placeholder="选择日期"></el-date-picker>
+      <span @click="search">搜索</span>
     </div>
     <div class="tabhand">
       <span style="margin-left:19px;">分类名称</span>
@@ -122,11 +129,26 @@ export default {
       productCatId: "",
       superCatId: "",
       //用来判断是添加还是编辑
-      flag: ""
+      flag: "",
+      // goodsclasslist: [],
+      //一级分类列表
+      firstlist: [],
+      //二级分类列表
+      secondlist: [],
+      threelist: [],
+      productCatIds: "",
+      littleTime: ""
     };
   },
   created() {
     this.goodsclasslist();
+    // Axios({
+    //   url: "api/productsManager/productCatList",
+    //   method: "get"
+    // }).then(data => {
+    //   this.goodsclasslist= data.data.data.firstCatList;
+    //   console.log(this.goodsclasslist);
+    // });
   },
   methods: {
     goodsclasslist() {
@@ -138,7 +160,14 @@ export default {
         this.classlist = data.data.data.firstCatList;
       });
     },
-
+    selectthree() {
+      this.productCatId = this.threelist.productCatId;
+    },
+    search() {
+      // this.goodslist();
+      this.productCatId = "";
+      this.littleTime = "";
+    },
     //查看
     seedetails(id) {
       this.$router.push({
@@ -151,7 +180,7 @@ export default {
       this.addcanvas = true;
     },
     addnextclass(val, e) {
-      this.classname="";
+      this.classname = "";
       e.stopPropagation ? e.stopPropagation() : (e.cancelBubble = true);
       // console.log(val);
       // console.log(e);
@@ -257,7 +286,7 @@ export default {
             superCatId: this.superCatId
           }
         }).then(data => {
-         this.classname="";
+          this.classname = "";
           this.superCatId = "";
           // console.log(data);
           if (data.data.code == 0) {
@@ -268,8 +297,7 @@ export default {
             });
           }
         });
-        this.flag="";
-
+        this.flag = "";
       } else {
         Axios({
           url: "api/productsManager/addProductCat",
@@ -280,8 +308,8 @@ export default {
             superCatId: this.superior
           }
         }).then(data => {
-          this.classname="";
-          this.superior="";
+          this.classname = "";
+          this.superior = "";
           // console.log(data);
           if (data.data.code == 0) {
             this.goodsclasslist();

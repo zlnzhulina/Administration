@@ -84,6 +84,12 @@ export default {
           
           this.$router.push("/qrcodemanagement");
           
+        }else{
+          this.$message({
+            message: data.data.msg,
+            type: "error"
+          });
+          this.createnowcanvas = false;
         }
       }).catch(error=>{
         this.$message({

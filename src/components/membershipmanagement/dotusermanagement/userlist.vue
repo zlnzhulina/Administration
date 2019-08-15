@@ -3,13 +3,13 @@
     <span class="add" @click="adduser">添加用户</span>
     <span class="add" @click="batchmaintenance">批量导入用户</span>
     <span class="add" @click="deleteall">批量删除用户</span>
-    <span class="add">下载导入模板</span>
+    <span class="add" @click="dowmodel"><a href="api/networkUserManager/downloadTemplateForNetwork?type=2">下载导入模板</a></span>
     <div class="search">
       <select name="userclass" v-model="userCatId">
         <option value="">--请选择用户类型--</option>
        <option v-for="(item,index) in position" :value="item.userCatId">{{item.userCatName}}</option>
       </select>
-      <input type="text" placeholder="用户账号" v-model="phoneNumber">
+      <input type="text" placeholder="用户账号" v-model="phoneNumber" style="color:#666">
       <span @click="search">查询</span>
     </div>
     <el-table
@@ -203,7 +203,7 @@ export default {
             } else {
               this.$message({
                 type: "error",
-                message: "删除失败!"
+                message: data.data.msg
               });
             }
           });
@@ -215,6 +215,9 @@ export default {
           });
         });
     },
+    //下载导入模板
+  dowmodel(){
+  },
     //批量选中
     handleSelectionChange(val) {
       // console.log(val)
@@ -255,6 +258,21 @@ export default {
     border-radius: 5px;
     float: left;
     margin-right: 8px;
+    a{
+      display: block;
+    width: 122px;
+    height: 36px;
+   
+   
+   
+    color: #7f7f7f;
+    text-align: center;
+    
+    font-size: 12px;
+    border-radius: 5px;
+    float: left;
+    margin-right: 8px;
+    }
   }
   .search {
     width: 100%;

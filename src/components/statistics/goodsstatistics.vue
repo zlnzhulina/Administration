@@ -260,7 +260,7 @@ export default {
     handledot(val) {},
     //查看各奖项情况
     details(row) {
-      console.log(row),
+      // console.log(row),
         this.$router.push({
           path: "/dotawarddetails",
           query: {
@@ -269,7 +269,7 @@ export default {
         });
     },
     handledaynum(val) {
-      console.log(val);
+      // console.log(val);
     },
     //导出数据
     exportdata() {}

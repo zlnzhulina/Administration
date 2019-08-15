@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query);
+      // console.log(this.$route.query);
       if (this.$route.query.flag == 1) {
         this.flag = this.$route.query.flag;
         this.user.userCatId = this.$route.query.networkParm.userCatId;
@@ -93,7 +93,7 @@ export default {
       // console.log(this.user);
       if (this.$route.query.flag) {
         //更改员工信息
-        if (!/^1(3|4|5|7|8)\d{9}$/.test(this.user.phoneNumber)) {
+        if (!/^1[0-9]{10}$/.test(this.user.phoneNumber)) {
           this.$message({
             message: "手机号填写有误，请重新填写",
             type: "error"
@@ -140,7 +140,7 @@ export default {
         }
       } else {
         //添加员工信息
-        if (!/^1(3|4|5|7|8)\d{9}$/.test(this.user.phoneNumber)) {
+        if (!/^1[0-9]{10}$/.test(this.user.phoneNumber)) {
           this.$message({
             message: "手机号填写有误，请重新填写",
             type: "error"

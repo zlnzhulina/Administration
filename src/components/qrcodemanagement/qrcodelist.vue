@@ -26,7 +26,7 @@
         <option>机修工</option>
         <option>SA</option>
       </select>
-      <span style="height:30px;background:#1abc9c;border-radius: 6px;line-height:30px;color:#fff;padding:0 6px 0 6px;">升序/降序 ↑↓</span>
+      <!-- <span style="height:30px;background:#1abc9c;border-radius: 6px;line-height:30px;color:#fff;padding:0 6px 0 6px;">升序/降序 ↑↓</span> -->
     </div>
     <el-table
       :header-cell-style="{background:'#ccd1e0',height:'32'}"
@@ -57,7 +57,7 @@
           <el-button type="text" size="small" @click="details(scope.row)">详情</el-button>
           <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
           <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
-          <el-button type="text" size="small">删除</el-button>
+          
           <!--  @click="del(scope.row)" -->
           <el-button type="text" size="small" @click="withdraw(scope.row)">撤回</el-button>
         </template>

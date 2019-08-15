@@ -6,7 +6,7 @@
     <div class="yesterdaydata">
       <ul>
         <li>
-          <b>338</b>
+          <b>{{yesterday.joinUserNum}}</b>
           <span>参与用户数</span>
           <i>
             同比日
@@ -19,35 +19,35 @@
           <i>同比月</i>
         </li>
         <li>
-          <b>12</b>
+          <b>{{yesterday.newJoinNum}}</b>
           <span>新增参与用户数</span>
           <i>同比日</i>
           <i>同比周</i>
           <i>同比月</i>
         </li>
         <li>
-          <b>338</b>
+          <b>{{yesterday.outPrizeNum}}</b>
           <span>出奖数量</span>
           <i>同比日</i>
           <i>同比周</i>
           <i>同比月</i>
         </li>
         <li>
-          <b>338</b>
+          <b>{{yesterday.joinUserNum}}</b>
           <span>累计参与人数</span>
           <i>同比日</i>
           <i>同比周</i>
           <i>同比月</i>
         </li>
         <li>
-          <b>78%</b>
+          <b>{{yesterday.countOutPrizeNum}}</b>
           <span>累计出奖数</span>
           <i>同比日</i>
           <i>同比周</i>
           <i>同比月</i>
         </li>
         <li>
-          <b>78%</b>
+          <b>{{yesterday.registerJoinProportion}}</b>
           <span>注册转化比</span>
           <i>同比日</i>
           <i>同比周</i>
@@ -55,12 +55,68 @@
         </li>
       </ul>
     </div>
+    <div class="component">
+      <div class="nav">
+        <span v-for="(item,index) in navlist" :class="(index==flag)?'active':''" @click="selectnav(index)">{{item}}</span>
+        <!-- <span>ugui</span> -->
+      </div>
+      <component :is="currentComp"></component>
+    </div>
   </div>
 </template>
 <script>
-
 //活动统计
-export default {};
+import user from "./activitystatics/component/user.vue";
+import region from "./activitystatics/component/region.vue";
+import prize from "./activitystatics/component/prize.vue";
+import Axios from 'axios';
+export default {
+  components: {
+    user,
+    region,
+    prize
+  },
+  created(){
+    Axios({
+      url:"api/dataCenterManager/activityYeasterdayData",
+      method:"get",
+
+    }).then(data=>{
+      console.log(data)
+      if(data.data.code==0){
+        this.yesterday = data.data.data;
+
+      }
+    })
+  },
+  data() {
+    return {
+      navlist:["参与用户统计","参与区域统计","奖项统计"],
+      flag:"",
+      currentComp: "user",
+      yesterday:{}
+    };
+  },
+  methods:{
+    selectnav(i){
+      this.flag=i;
+      switch(i){
+        case 0:{
+          this.currentComp="user"
+          break;
+        }
+        case 1:{
+          this.currentComp="region"
+          break;
+        }
+        case 2:{
+          this.currentComp="prize"
+          break;
+        }
+      }
+    }
+  }
+};
 </script>
 
  <style lang="scss" scoped>
@@ -122,6 +178,23 @@ export default {};
       }
     }
   }
+  .component {
+    width: 80%;
+    height: auto;
+    margin: 0 auto;
+    .nav{
+      height: 68px;
+      line-height: 68px;
+      font-size: 14px;
+      span{
+        
+        padding: 0 12px 0;
+      }
+    }
+  }
+}
+.active{
+  color: #02a7f0;
 }
 </style>
 

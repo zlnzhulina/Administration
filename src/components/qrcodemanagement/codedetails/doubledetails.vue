@@ -4,10 +4,15 @@
       <b
         style="display:block;float:left;width:82px;border-left:3px solid #027db4;height:16px;font-size:12px;text-align:center;color:#666;margin-top:23px;"
       >批次详情</b>
+
       <span
         @click="back()"
         style="display:block;width:102px;height:30px;float:right;text-align:center;line-height:30px;border:1px solid #555;font-size:14px;margin-top:16px;"
       >返回</span>
+      <span
+        @click="resset()"
+        style="display:block;width:102px;height:30px;float:right;text-align:center;line-height:30px;border:1px solid #555;font-size:14px;margin-top:16px;margin-right:13px;"
+      >刷新</span>
     </div>
     <div class="search">
       <div class="title">
@@ -24,35 +29,33 @@
         </select>
         <span>条码状态：</span>
         <select v-model="SAcodetype">
-          <option value="">请选择状态</option>
-         <option value="1">未关联</option>
-         <option value="2">已关联</option>
-         <option value="5">已激活</option>
-         <option value="3">已占用</option>
-         <option value="4">已保护</option>
-          
-         
+          <option value>请选择状态</option>
+          <option value="1">未关联</option>
+          <option value="2">已关联</option>
+          <option value="5">已激活</option>
+          <option value="3">已占用</option>
+          <option value="4">已保护</option>
         </select>
         <span>小程序码状态：</span>
         <select v-model="usercodetype">
-          <option value="">请选择状态</option>
+          <option value>请选择状态</option>
           <option value="1">未关联</option>
           <option value="2">已关联</option>
           <option value="5">已激活</option>
           <option value="6">已查询</option>
         </select>
         <span>编号查询：</span>
-        <input placeholder="请输入码的编号" v-model="codeid">
-        <div class="all">
+        <input placeholder="请输入码的编号" v-model="codeid" />
+        <!-- <div class="all">
           <b>删除选中</b>
           <b>关联选中</b>
           <b>撤回选中</b>
-        </div>
+        </div>-->
       </div>
       <div class="searchactivity">
         <span>商品：</span>
         <select name="userw" v-model="searchfirstlist">
-          <option value="">请选择商品库</option>
+          <option value>请选择商品库</option>
           <option
             v-for="searchfirstitem in searchgoodsclasslist"
             :key="searchfirstitem.productCatId"
@@ -60,7 +63,7 @@
           >{{searchfirstitem.productCatName}}</option>
         </select>
         <select name="userw" v-model="searchsecondlist">
-          <option value="">请选择商品类型</option>
+          <option value>请选择商品类型</option>
           <option
             v-for="searchseconditem in searchfirstlist.productCatList"
             :key="searchseconditem.productCatId"
@@ -68,7 +71,7 @@
           >{{searchseconditem.productCatName}}</option>
         </select>
         <select name="userw" v-model="searchthreelist" @change="searchselectthree()">
-          <option value="">请选择商品品牌</option>
+          <option value>请选择商品品牌</option>
           <option
             v-for="searchthreeitem in searchsecondlist.productCatList"
             :key="searchthreeitem.productCatId"
@@ -81,7 +84,7 @@
           <option>SA</option>
         </select>-->
         <select name="userw" v-model="productSId" @change="selegoodsearch">
-          <option value="">请选择商品</option>
+          <option value>请选择商品</option>
           <option
             v-for="goodsitem in searchgoodslist"
             :key="goodsitem.productSId"
@@ -102,7 +105,7 @@
     >
       <!-- stripe="true" -->
       <el-table-column type="selection" width="55px;"></el-table-column>
-      <el-table-column prop="qrId" label="ID" width="154px"></el-table-column>
+      <el-table-column prop="qrId" label="ID" width="104px"></el-table-column>
       <el-table-column prop="goodsname" label="批次名称" width="156">
         <template>{{batchName}}</template>
       </el-table-column>
@@ -114,7 +117,7 @@
           slot-scope="scope"
         >{{scope.row.qrActivityName==null?"未关联消费者活动":scope.row.qrActivityName}}</template>
       </el-table-column>
-      <el-table-column prop="qrStatus" label="消费者状态" width="120">
+      <el-table-column prop="qrStatus" label="消费者状态" width="100">
         <template slot-scope="scope">
           {{scope.row.qrStatus==1?"未关联":""}}
           {{scope.row.qrStatus==2?"已关联":""}}
@@ -123,8 +126,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="qrCodeUrl" label="IMG">
-        <template slot-scoped="scoped">
-          <img src="scoped.row.qrCodeUrl">
+        <template slot-scope="scope">
+          <img :src="scope.row.qrCodeUrl" style="width:58px;" @click="bigcode(scope.row.qrCodeUrl)" />
         </template>
       </el-table-column>
       <el-table-column prop="barActivityName" label="渠道活动" width="186">
@@ -132,7 +135,7 @@
           slot-scope="scope"
         >{{scope.row.barActivityName==null?"未关联渠道活动":scope.row.barActivityName}}</template>
       </el-table-column>
-      <el-table-column prop="barStatus" label="渠道状态" width="120">
+      <el-table-column prop="barStatus" label="渠道状态" width="100">
         <template slot-scope="scope">
           {{scope.row.barStatus==1?"未关联":""}}
           {{scope.row.barStatus==2?"已关联":""}}
@@ -142,8 +145,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="barCodeUrl" label="IMG">
-        <template slot-scoped="scope">
-          <img src="scope.row.barCodeUrl">
+        <template slot-scope="scope">
+          <img :src="scope.row.barCodeUrl" style="width:58px;" @click="bigcode(scope.row.barCodeUrl)"/>
         </template>
       </el-table-column>
       <el-table-column prop="productsName" label="关联商品" width="182">
@@ -153,9 +156,14 @@
         <template slot-scope="scope">
           <!-- <el-button type="text" size="small" @click="moreoperations(scope.row)">更多操作</el-button> -->
           <el-button type="text" size="small" @click="details(scope.row)">详情</el-button>
-          <el-button type="text" size="small" @click="download(scope.row)">下载</el-button>
+          <el-button type="text" size="small" @click="download(scope.row)">
+            <a
+              :href="'http://192.168.2.108:8101/codeManager/downloadBarCodeFromCodeList?codeId='+qrId"
+              download
+            >下载</a>
+          </el-button>
           <el-button type="text" size="small" @click="relation(scope.row)">关联</el-button>
-          <el-button type="text" size="small">删除</el-button>
+
           <!--  @click="del(scope.row)" -->
           <el-button type="text" size="small" @click="withdraw(scope.row)">撤回</el-button>
         </template>
@@ -177,15 +185,47 @@
       <div class="tab">
         <div class="header">
           <span>码详情</span>
-          <img @click="exit" src="../../../assets/no.png">
+          <img @click="exit" src="../../../assets/no.png" />
         </div>
         <ul>
-          <li><div style="width:128px; border:1px solid #555;">消费者码</div><div style="width:128px;border:1px solid #555;">扫码时间</div><div style="width:128px;border:1px solid #555;">用户姓名</div><div style="width:128px;border:1px solid #555;">用户账号</div><div style="width:53px;border:1px solid #555;">区域</div><div style="width:128px;border:1px solid #555;">奖项</div><div style="width:53px;border:1px solid #555;">状态</div></li>
-          <li style="background:#eee;"><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:53px;"></div><div style="width:128px;"></div><div style="width:53px;"></div></li>
+          <li>
+            <div style="width:128px; border:1px solid #555;">消费者码</div>
+            <div style="width:128px;border:1px solid #555;">扫码时间</div>
+            <div style="width:128px;border:1px solid #555;">用户姓名</div>
+            <div style="width:128px;border:1px solid #555;">用户账号</div>
+            <div style="width:53px;border:1px solid #555;">区域</div>
+            <div style="width:128px;border:1px solid #555;">奖项</div>
+            <div style="width:53px;border:1px solid #555;">状态</div>
+          </li>
+          <li style="background:#eee;">
+            <div style="width:128px;"></div>
+            <div style="width:128px;"></div>
+            <div style="width:128px;"></div>
+            <div style="width:128px;"></div>
+            <div style="width:53px;"></div>
+            <div style="width:128px;"></div>
+            <div style="width:53px;"></div>
+          </li>
         </ul>
         <ul>
-          <li><div style="width:128px; border:1px solid #555;">渠道码</div><div style="width:128px;border:1px solid #555;">扫码时间</div><div style="width:128px;border:1px solid #555;">用户姓名</div><div style="width:128px;border:1px solid #555;">用户账号</div><div style="width:53px;border:1px solid #555;">区域</div><div style="width:128px;border:1px solid #555;">奖项</div><div style="width:53px;border:1px solid #555;">状态</div></li>
-          <li style="background:#eee;"><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:128px;"></div><div style="width:53px;"></div><div style="width:128px;"></div><div style="width:53px;"></div></li>
+          <li>
+            <div style="width:128px; border:1px solid #555;">渠道码</div>
+            <div style="width:128px;border:1px solid #555;">扫码时间</div>
+            <div style="width:128px;border:1px solid #555;">用户姓名</div>
+            <div style="width:128px;border:1px solid #555;">用户账号</div>
+            <div style="width:53px;border:1px solid #555;">区域</div>
+            <div style="width:128px;border:1px solid #555;">奖项</div>
+            <div style="width:53px;border:1px solid #555;">状态</div>
+          </li>
+          <li style="background:#eee;">
+            <div style="width:128px;"></div>
+            <div style="width:128px;"></div>
+            <div style="width:128px;"></div>
+            <div style="width:128px;"></div>
+            <div style="width:53px;"></div>
+            <div style="width:128px;"></div>
+            <div style="width:53px;"></div>
+          </li>
         </ul>
       </div>
     </div>
@@ -194,11 +234,11 @@
       <div class="scroll">
         <h3>
           <span>关联</span>
-          <img src="../../../assets/no.png" @click="exit">
+          <img src="../../../assets/no.png" @click="exit" />
         </h3>
         <div class="main">
           <span>关联数量：</span>
-          <input type="text" readonly="readonly" value="1">
+          <input type="text" readonly="readonly" value="1" />
           <span>
             <i>*</i>关联渠道活动：
           </span>
@@ -220,7 +260,7 @@
             v-show="row.productsId==null?false:true"
             style="display:inline-block;background:#1abc9c;color:#fff;height:30px;text-align:center;line-height:30px;width:auto;padding:0 15px 0;"
           >{{row.productsName}}</span>
-          <select name="useractive" v-model="firstlist" v-show="row.productsId==null?true:false">
+          <select name="useractive" v-model="firstlist" v-show="row.productsId==null?true:false" style="margin-left:45px;">
             <option
               v-for="(firstlist,index) in goodsclasslist"
               :value="firstlist"
@@ -257,12 +297,15 @@
           </select>
           <div style="width:152px;height:36px;margin:0px auto;clear:both;padding-top:45px;">
             <span
-              style="width:152px;height:50px;background:#1abc9c;text-align:center;line-height:50px;margin:30px auto;clear:both;"
+              style="width:152px;height:50px;background:#1abc9c;text-align:center;line-height:50px;margin:30px auto;clear:both;color:#fff;border-radius:8px;"
               @click="subrelation"
             >确定</span>
           </div>
         </div>
       </div>
+    </div>
+    <div class="codeimgcover" v-if="codeurl" @click="exit">
+      <img :src="codeurl" class="codeimg">
     </div>
   </div>
 </template>
@@ -274,6 +317,8 @@ import Axios from "axios";
 export default {
   data() {
     return {
+      //码路径
+      codeurl:"",
       batchId: "",
       //更多操作弹框
       moreoperationscanvas: false,
@@ -289,14 +334,14 @@ export default {
       //渠道活动id
       activityid: "",
       //SA码状态
-      SAcodetype:"",
+      SAcodetype: "",
       //小程序码状态
-      usercodetype:"",
+      usercodetype: "",
       barActivityId: "",
       //活动列表
       activitylist: "",
       row: {},
-       searchgoodsclasslist: [],
+      searchgoodsclasslist: [],
       //一级分类列表
       searchfirstlist: [],
       //二级分类列表
@@ -325,11 +370,13 @@ export default {
       qrdetailscanvas: false,
       totalCount: 1,
       pagesize: 10,
-      currentPage: 1
+      currentPage: 1,
+      qrId: "",
+      timer: ""
     };
   },
   created() {
-    // console.log(this.$route.query);
+    console.log(this.$route.query);
     this.batchId = this.$route.query.data.batchId;
     this.batchName = this.$route.query.data.batchName;
     this.detailslist();
@@ -346,13 +393,13 @@ export default {
           batchId: this.batchId,
           pageNo: this.currentPage,
           barActivityId: this.activityid,
-          qrStatus:this.usercodetype,
+          qrStatus: this.usercodetype,
           barStatus: this.SAcodetype,
           qrId: this.codeid,
-          productSId: this.productSId,
+          productSId: this.productSId
         }
       }).then(data => {
-        // console.log(data);
+        console.log(data);
         this.totalCount = data.data.data.codePage.total;
         this.pagesize = data.data.data.codePage.size;
         this.currentPage = data.data.data.codePage.current;
@@ -379,14 +426,43 @@ export default {
         method: "get",
         params: {
           pageNo: "1",
-          pageSize: ""
+          pageSize: "90"
         }
       }).then(data => {
         // console.log(data);
         this.activitylist = data.data.data.activityPage.records;
       });
     },
-
+    resset() {
+      Axios({
+        url: "qrcode/codeManager/batchDetail",
+        method: "get",
+        params: {
+          batchId: this.batchId,
+          pageNo: this.currentPage,
+          barActivityId: this.activityid,
+          qrStatus: this.usercodetype,
+          barStatus: this.SAcodetype,
+          qrId: this.codeid,
+          productSId: this.productSId
+        }
+      }).then(data => {
+        // console.log(data);
+        if (data.data.code == 0) {
+          this.$message({
+            type: "success",
+            message: "刷新成功!"
+          });
+        }
+        this.totalCount = data.data.data.codePage.total;
+        this.pagesize = data.data.data.codePage.size;
+        this.currentPage = data.data.data.codePage.current;
+        this.tabledata = data.data.data.codePage.records;
+      });
+    },
+    bigcode(url) {
+      this.codeurl=url;
+    },
     back() {
       this.$router.back();
     },
@@ -399,10 +475,21 @@ export default {
     details(row) {
       //查看详情
       this.qrdetailscanvas = true;
-      console.log(row)
+      // console.log(row);
     },
     //下载单码
-    download(row) {},
+    download(row) {
+      window.location.href =
+        "qrcode/codeManager/downloadQrCodeFromCodeList?codeId=" + row.qrId;
+      // console.log("111");
+      this.timer = setTimeout(function() {
+        window.location.href =
+          "qrcode/codeManager/downloadBarCodeFromCodeList?codeId=" + row.qrId;
+        // console.log("222")
+      }, 3000);
+
+      this.qrId = row.qrId;
+    },
     relation(row) {
       // console.log(row);
       this.row = row;
@@ -420,14 +507,14 @@ export default {
         //获取活动列表
         this.relationcanvas = true;
         Axios({
-          url: "api/activityManager/activityList",
+          url: "api/activityManager/selectActivityByProductId",
           method: "get",
           params: {
-            pageNo: "1"
+            productsIds: row.productsId
           }
         }).then(data => {
           // console.log(data);
-          this.SAactivitylist = data.data.data.activityPage.records;
+          this.SAactivitylist = data.data.data[row.productsId];
         });
       } else {
         //未关联商品和SA活动
@@ -466,9 +553,9 @@ export default {
         this.goodslist = data.data.data.productList;
       });
     },
-    searchselectthree(){
+    searchselectthree() {
       // console.log(this.searchgoodsclasslist)
-       Axios({
+      Axios({
         url: "api/productsManager/getProductsForCatId",
         method: "get",
         params: {
@@ -481,7 +568,7 @@ export default {
     },
     selegoodsearch(val) {
       // console.log(val);
-     this.detailslist();
+      this.detailslist();
     },
     //选择商品之后
     selegood() {
@@ -533,6 +620,7 @@ export default {
       });
     },
     exit() {
+      this.codeurl="";
       this.relationcanvas = false;
       this.qrdetailscanvas = false;
       this.SAactivitylist = [];
@@ -565,7 +653,7 @@ export default {
             message: "撤回成功！"
           });
           this.detailslist();
-        }else{
+        } else {
           this.$message({
             type: "error",
             message: "撤回失败！"
@@ -584,21 +672,18 @@ export default {
     codeid(val) {
       this.detailslist();
     },
-    activityid(val){
+    activityid(val) {
       this.detailslist();
     },
-    SAcodetype(val){
-      this.detailslist();
-
-    },
-    usercodetype(val){
+    SAcodetype(val) {
       this.detailslist();
     },
-    productSId(val){
+    usercodetype(val) {
       this.detailslist();
-
+    },
+    productSId(val) {
+      this.detailslist();
     }
-
   }
 };
 </script>
@@ -606,8 +691,26 @@ export default {
 <style lang="scss" scoped>
 .wrap {
   width: 90%;
+  height: auto;
   margin: 0 auto;
   padding-top: 60px;
+  .codeimgcover {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 111;
+    background:rgba(211, 208, 208, 0.7);
+    .codeimg {
+      display: block;
+      width: 300px;
+      background:#fff;
+      margin: 0 auto;
+      margin-top: 200px;
+      
+    }
+  }
   .header {
     width: 100%;
     height: 62px;
@@ -779,16 +882,16 @@ export default {
         margin-right: 13px;
         margin-top: 15px;
       }
-      ul{
+      ul {
         width: 760px;
         height: 80px;
         margin: 20px auto;
-        li{
+        li {
           width: 100%;
           list-style: none;
           height: 40px;
           display: flex;
-          div{
+          div {
             height: 38px;
             text-align: center;
             line-height: 38px;

@@ -99,6 +99,12 @@ import statistics from '@/components/statistics'
   import dotawarddetails from '@/components/statistics/dotawarddetails/dotawarddetails'
   //访问统计
   import visitstatistics from '@/components/statistics/visitstatistics'
+  //查看漏斗事件
+  import funnelEvent from '@/components/statistics/visitstatistics/funnelEvent'
+  //查看
+  import funneldetails from '@/components/statistics/visitstatistics/funneldetails'
+  //创建漏斗
+  import createfunnel from '@/components/statistics/visitstatistics/createfunnel'
 //系统管理
 import systemmanagement from '@/components/systemmanagement'
   //员工列表
@@ -583,6 +589,36 @@ export default new Router({
       meta:{
         flag:true,
         requireAuth:true
+      }
+    },
+    //统计 查看漏斗事件
+    {
+      path:'/funnelEvent',
+      name:'funnelEvent',
+      component:funnelEvent,
+      meta:{
+        flag:true,
+        requireAuth:true,
+      }
+    },
+    //漏斗查看
+    {
+      path:'/funneldetails',
+      name:'funneldetails',
+      component:funneldetails,
+      meta:{
+        flag:true,
+        requireAuth:true,
+      }
+    },
+    //创建漏斗
+    {
+      path:'/createfunnel',
+      name:'createfunnel',
+      component:createfunnel,
+      meta:{
+        flag:true,
+        requireAuth:true,
       }
     },
     {

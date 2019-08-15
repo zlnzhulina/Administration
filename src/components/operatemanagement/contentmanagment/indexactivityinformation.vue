@@ -28,10 +28,10 @@
         </template>
         <textarea></textarea>
       </el-table-column>
-      <el-table-column prop="url" label="置顶" width="78px">
-        <!-- <template slot-scope="scope">
-          <span>{{scope}}</span>
-        </template>-->
+      <el-table-column label="置顶" width="78px">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="top(scope.row)">置顶</el-button>
+        </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="98px">
         <template slot-scope="scope">
@@ -86,6 +86,23 @@ export default {
       })
       // console.log(row)
     },
+    //置顶功能
+    top(row){
+      // console.log(row)
+      Axios({
+        url:"api/contentManager/changeTop",
+        method:"get",
+        params:{
+          newsId:row.newId
+        }
+      }).then(data=>{
+        // console.log(data);
+        if(data.data.code==0){
+          this.$message.success("置顶成功");
+          this.activityinfolist();
+        }
+      })
+    },
     edit(val) {
       // this.cl = true;
       // console.log(val);
@@ -102,12 +119,12 @@ export default {
         .then(() => {
           Axios({
             url: "api/contentManager/delNews",
-            method: "post",
-            data: {
+            method: "get",
+            params: {
               newsId: this.newId
             }
           }).then(data => {
-            // console.log(data);
+            //  console.log(data);
             if (data.data.code == 0) {
               this.$message({
                 type: "success",

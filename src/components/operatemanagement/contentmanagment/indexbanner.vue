@@ -24,8 +24,7 @@
       <el-table-column prop="url" label="链接"></el-table-column>
       <el-table-column fixed="right" label="操作" width="195px">
         <template slot-scope="scope">
-          <el-button type="text" size="small">上移</el-button>
-          <el-button type="text" size="small">下移</el-button>
+         
           <el-button type="text" size="small" @click="edit(scope.row)">更换</el-button>
           <el-button type="text" size="small" @click="delbanner(scope.row)">删除</el-button>
         </template>
@@ -56,6 +55,7 @@
                 class="avatar-uploader"
                 action="api/upload/uploadImage"
                 :show-file-list="false"
+                :before-upload="beforeAvatarUpload"
                 :on-success="handleAvatarSuccess"
               >
                 <img v-if="imageUrl" :src="imageUrl" style="width:144px;display:block">
@@ -92,6 +92,7 @@
                 action="api/upload/uploadImage"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
               >
                 <img v-if="imageUrl" :src="imageUrl" style="width:144px;display:block">
                 <i v-else>
@@ -171,8 +172,9 @@ export default {
     },
     //编辑
     edit(row) {
-      // console.log(row);
+      //  console.log(row);
       this.bannerId = row.bannerId;
+      this.imageUrl=row.img;
       this.name = row.bannerName;
       this.link = row.url;
       this.editbannercanvas = true;
@@ -279,6 +281,10 @@ export default {
       this.delcanvas = false;
       this.addbannercanvas = false;
       this.editbannercanvas = false;
+      this.bannerId = "";
+      this.imageUrl="";
+      this.name = "";
+      this.link = "";
     },
 
     delbanner(row) {
@@ -312,7 +318,22 @@ export default {
             message: "已取消删除"
           });
         });
-    }
+    },
+    //上传限制
+    beforeAvatarUpload(file) {
+        const isJPG = file.type === 'image/jpeg';
+        const isPNG = file.type === 'image/png';
+        const isLt2M = file.size / 1024 / 1024 < 10;
+
+        if (!isJPG && !isPNG) {
+          this.$message.error('上传图片只能是 JPG 或者 PNG 格式!');
+        }
+      
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        return isJPG || isPNG && isLt10M;
+      }
   }
 };
 </script>

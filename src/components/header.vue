@@ -1,8 +1,8 @@
 <template>
     <div class="header">
-        <p class="logo">壳家人-福田戴姆勒管理端</p>
+        <p class="logo">壳家人-福田戴姆勒</p>
         <ul>
-            <li v-for="(item,index) in navlist">
+            <li v-for="(item,index) in navlist" @click="ccc(index)" :class="index==i?'active':''">
                 <router-link :to="{name:item.name}">{{item.title}}</router-link>
             </li>
         </ul>
@@ -22,6 +22,7 @@ export default {
     data(){
         return {
             name:"",
+            i:"",
             navlist:[
                     {title:"首页",name:"index"},
                     {title:"运营管理",name:"operatemanagement"},
@@ -37,6 +38,9 @@ export default {
         this.name=localStorage.getItem("name")
     },
     methods:{
+        ccc(i){
+            this.i=i;
+        },
         first(){
             this.$router.push("/index");
         },
@@ -95,14 +99,21 @@ export default {
         float: left;
         justify-content: space-between;
         li{
-            line-height: 60px;
+            line-height: 70px;
             list-style: none;
             a{
-                color: #fff;
-                font-size: 14px;
+                color: #f0eded;
+                font-size: 16px;
             }
         }
 
+    }
+    .active{
+        border-bottom: 2px solid #dd1d21;
+        a{
+            color: #fff;
+            font-weight: bold;
+        }
     }
     .search{
         width: auto;
